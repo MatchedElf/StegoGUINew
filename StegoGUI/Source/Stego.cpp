@@ -1,4 +1,4 @@
-﻿#include "../Include/Stego.h"
+#include "../Include/Stego.h"
 
 BYTE sat(float x)
 {
@@ -476,7 +476,7 @@ string decodeLSB(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect,
 	//
 }
 //
-RGB** ReadFile(const char* _filename, int& h, int& w, int& size, string& retStr)
+RGB** ReadFile(const char* _filename, int& h, int& w, int& size, juce::String& retStr1)
 {
 	BITMAPFILEHEADER bmfHeader;
 	BITMAPINFOHEADER bmiHeader;
@@ -493,22 +493,26 @@ RGB** ReadFile(const char* _filename, int& h, int& w, int& size, string& retStr)
 		fputs("File info header corrupted?", stderr);
 		return NULL;
 	}
-	retStr = "";
-	retStr += "Size = ";
-	retStr += to_string(bmfHeader.bfSize);
+	juce::String retStr = "";
+	retStr += juce::String((std::wstring(L"Size = ")).c_str());
+	retStr += juce::String(to_string(bmfHeader.bfSize));
+	retStr += juce::String((std::wstring(L" bytes")).c_str());
 	retStr += "\n";
-	retStr += "Width = ";
-	retStr += to_string(bmiHeader.biWidth);
+	retStr += juce::String((std::wstring(L"Width = ")).c_str());
+	retStr += juce::String(to_string(bmiHeader.biWidth));
+	retStr += juce::String((std::wstring(L" pixels")).c_str());
 	retStr += "\n";
-	retStr += "Height = ";
-	retStr += to_string(bmiHeader.biHeight);
+	retStr += juce::String((std::wstring(L"Height = ")).c_str());
+	retStr += juce::String(to_string(bmiHeader.biHeight));
+	retStr += juce::String((std::wstring(L" pixels")).c_str());
 	retStr += "\n";
 	retStr += "bibit = ";
-	retStr += to_string(bmiHeader.biBitCount);
+	retStr += juce::String(to_string(bmiHeader.biBitCount));
 	retStr += "\n";
 	retStr += "biclr = ";
-	retStr += to_string(bmiHeader.biClrUsed);
+	retStr += juce::String(to_string(bmiHeader.biClrUsed));
 	retStr += "\n";
+	retStr1 = retStr;
 	h = bmiHeader.biHeight;
 	w = bmiHeader.biWidth;
 	size = bmiHeader.biWidth * bmiHeader.biHeight;
@@ -693,7 +697,7 @@ void CreateDiffFile(const char* _filename1, const char* _filename2, const char* 
 	int height;
 	int width;
 	int size;
-	string info;
+	juce::String info;
 	//
 	RGB** pixels1 = ReadFile(_filename1, height, width, size, info);
 	RGB** pixels2 = ReadFile(_filename2, height, width, size, info);

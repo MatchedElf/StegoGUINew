@@ -20,13 +20,14 @@
       <FILE id="XIyEWp" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="nOHbPp" name="MenuComponent.cpp" compile="1" resource="0"
             file="Source/MenuComponent.cpp"/>
+      <FILE id="UIbbcs" name="Stego.cpp" compile="1" resource="0" file="Source/Stego.cpp"/>
       <FILE id="eNtL6B" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
-      <FILE id="UIbbcs" name="Stego.cpp" compile="1" resource="0" file="Source/Stego.cpp"/>
     </GROUP>
     <FILE id="Pb5KV2" name="logo1.png" compile="0" resource="1" file="Builds/VisualStudio2022/logo1.png"/>
     <FILE id="Q4jCa0" name="logo2.png" compile="0" resource="1" file="Builds/VisualStudio2022/logo2.png"/>
     <FILE id="bwXxQ7" name="logo3.png" compile="0" resource="1" file="Builds/VisualStudio2022/logo3.png"/>
+    <FILE id="PGb5Lb" name="logo4.png" compile="0" resource="1" file="Builds/VisualStudio2022/logo4.png"/>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
@@ -38,7 +39,7 @@
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
-    <VS2022 targetFolder="Builds/VisualStudio2022" smallIcon="bwXxQ7" bigIcon="bwXxQ7">
+    <VS2022 targetFolder="Builds/VisualStudio2022" smallIcon="PGb5Lb" bigIcon="PGb5Lb">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="StegoGUI"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="StegoGUI"/>

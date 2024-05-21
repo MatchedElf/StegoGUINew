@@ -17,8 +17,11 @@ namespace BinaryData
     extern const char*   logo3_png;
     const int            logo3_pngSize = 416931;
 
+    extern const char*   logo4_png;
+    const int            logo4_pngSize = 559092;
+
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 3;
+    const int namedResourceListSize = 4;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

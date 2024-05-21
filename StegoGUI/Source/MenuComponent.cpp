@@ -161,7 +161,7 @@ void MenuComponent::LoadFile(bool image)
                imageName = "-1";
             }
             auto url = URL(choosedFile);
-            imageName = choosedFile.getFileName();
+            imageName = choosedFile.getFullPathName();
          });
    }
    else
@@ -173,7 +173,7 @@ void MenuComponent::LoadFile(bool image)
                secrName = "-1";
             }
             auto url = URL(choosedFile);
-            secrName = choosedFile.getFileName();
+            secrName = choosedFile.getFullPathName();
          });
    }
    repaint();

@@ -15,6 +15,7 @@
 #include <vector>
 #include <cmath>
 #include <complex>
+#include <JuceHeader.h>
 
 #define PI 3.1415926
 
@@ -57,7 +58,7 @@ void encodeLSB(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, b
 //
 string decodeLSB(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat);
 //
-RGB** ReadFile(const char* _filename, int& h, int& w, int& size, string& retStr);
+RGB** ReadFile(const char* _filename, int& h, int& w, int& size, juce::String& retStr1);
 //
 FILE* Create_File(const char* _filename, const char* _origFile);
 //

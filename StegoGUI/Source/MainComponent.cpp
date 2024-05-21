@@ -214,14 +214,14 @@ void MainComponent::resized()
       //
       if (hided)
       {
-         hideBut->setBounds(0, 0, getWidth() * 0.025 - 10, getHeight() * 0.025 - 5);
-         startBut->setBounds(getWidth() * 0.025, 0, getWidth() * 0.025 - 10, getHeight() * 0.025 - 5);
+         /*hideBut->setBounds(0, 0, getWidth() * 0.025 - 10, getHeight() * 0.025 - 5);
+         startBut->setBounds(getWidth() * 0.025, 0, getWidth() * 0.025 - 10, getHeight() * 0.025 - 5);*/
          grid.performLayout(juce::Rectangle<int>(0, getHeight() * 0.05, getWidth(), getHeight() * 0.95));
       }
       else
       {
-         hideBut->setBounds(0, 0, getWidth() * 0.05 - 10, getHeight() * 0.05 - 5);
-         startBut->setBounds(getWidth() * 0.05, 0, getWidth() * 0.05 - 10, getHeight() * 0.05 - 5);
+         /*hideBut->setBounds(0, 0, getWidth() * 0.05 - 10, getHeight() * 0.05 - 5);
+         startBut->setBounds(getWidth() * 0.05, 0, getWidth() * 0.05 - 10, getHeight() * 0.05 - 5);*/
          grid.performLayout(juce::Rectangle<int>(getWidth() * 0.1, 0, getWidth() * 0.9, getHeight()));
 
       }
@@ -244,6 +244,8 @@ void MainComponent::buttonClicked(Button* butt)
        else
        {
           startScreen = false;
+          openLogo->setVisible(false);
+          openTitle->setVisible(false);
           resized();
        }
     }
@@ -292,7 +294,7 @@ void MainComponent::startDecode()
     int width;
     int size;
     //
-    string info;
+    String info;
     //
     RGB** pixels = ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
     RGB** pixelsNew;
