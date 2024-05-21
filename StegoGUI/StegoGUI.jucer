@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="kNm5L6" name="StegoGUI" projectType="guiapp" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
+  <MAINGROUP id="GBHFw2" name="StegoGUI">
+    <GROUP id="{C220BD63-8500-8030-62CC-914C79846B0B}" name="Include">
+      <FILE id="yHmqDY" name="ClockComponent.h" compile="0" resource="0"
+            file="Include/ClockComponent.h"/>
+      <FILE id="AcXrsg" name="DecodeBMP.h" compile="0" resource="0" file="Include/DecodeBMP.h"/>
+      <FILE id="DFJvKc" name="lodepng.h" compile="0" resource="0" file="Include/lodepng.h"/>
+      <FILE id="GDsmJj" name="MainComponent.h" compile="0" resource="0" file="Include/MainComponent.h"/>
+      <FILE id="LzRD0B" name="MenuComponent.h" compile="0" resource="0" file="Include/MenuComponent.h"/>
+      <FILE id="HmPHc3" name="Stego.h" compile="0" resource="0" file="Include/Stego.h"/>
+    </GROUP>
+    <GROUP id="{81993D6A-C3A4-F312-6BF9-6CACC5203333}" name="Source">
+      <FILE id="h0IbVe" name="ClockComponent.cpp" compile="1" resource="0"
+            file="Source/ClockComponent.cpp"/>
+      <FILE id="QUgUkR" name="DecodeBMP.cpp" compile="1" resource="0" file="Source/DecodeBMP.cpp"/>
+      <FILE id="EEMYWv" name="lodepng.cpp" compile="1" resource="0" file="Source/lodepng.cpp"/>
+      <FILE id="XIyEWp" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="nOHbPp" name="MenuComponent.cpp" compile="1" resource="0"
+            file="Source/MenuComponent.cpp"/>
+      <FILE id="eNtL6B" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+      <FILE id="UIbbcs" name="Stego.cpp" compile="1" resource="0" file="Source/Stego.cpp"/>
+    </GROUP>
+    <FILE id="Pb5KV2" name="logo1.png" compile="0" resource="1" file="Builds/VisualStudio2022/logo1.png"/>
+    <FILE id="Q4jCa0" name="logo2.png" compile="0" resource="1" file="Builds/VisualStudio2022/logo2.png"/>
+    <FILE id="bwXxQ7" name="logo3.png" compile="0" resource="1" file="Builds/VisualStudio2022/logo3.png"/>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <EXPORTFORMATS>
+    <VS2022 targetFolder="Builds/VisualStudio2022" smallIcon="bwXxQ7" bigIcon="bwXxQ7">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="StegoGUI"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="StegoGUI"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2022>
+  </EXPORTFORMATS>
+</JUCERPROJECT>

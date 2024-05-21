@@ -30,6 +30,9 @@ private:
     //StretchableLayoutManager* FSizer;
     //StretchableLayoutManager* imagesSizer;
     //Grid* grid1;
+    ImageComponent* openLogo;
+    ImageComponent* openTitle;
+    //
     Label* origTitle;
     Label* diffTitle;
     Label* newTitle;
@@ -47,15 +50,25 @@ private:
     //
     //Component** compsList;
     //
-    Label* origInfo;
-    Label* decodeInfo;
-    Label* decodeText;
+    Label* origLabel;
+    Label* decodeLabel;
+    Label* textLabel;
+    // 
+    //Label* origInfo;
+    //Label* decodeInfo;
+    //Label* decodeText;
+    TextEditor* origInfo;
+    TextEditor* decodeInfo;
+    TextEditor* decodeText;
     //
     //SidePanel* sdPanel;
     //
     //int selectedTr = 1;
     //
     bool hided = false;
+    //
+    bool loadingFlag = false;
+    bool startScreen = true;
     //
     MenuComponent* menuC;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)

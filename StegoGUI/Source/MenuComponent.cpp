@@ -158,15 +158,9 @@ void MenuComponent::LoadFile(bool image)
          {
             File choosedFile(chooser.getResult());
             if (choosedFile.getFullPathName().isEmpty()) {
-               //check = false;
-               //vid->setVisible(false);
-               //logo->setVisible(true);
-               imageName = "$Error$";
+               imageName = "-1";
             }
-            //loadMoose(mooseFile);
             auto url = URL(choosedFile);
-            //auto result = vid->load(url);
-            //title->setText(choosedFile.getFileName(), dontSendNotification);
             imageName = choosedFile.getFileName();
          });
    }
@@ -176,19 +170,13 @@ void MenuComponent::LoadFile(bool image)
          {
             File choosedFile(chooser.getResult());
             if (choosedFile.getFullPathName().isEmpty()) {
-               //check = false;
-               //vid->setVisible(false);
-               //logo->setVisible(true);
-               secrName = "$Error$";
+               secrName = "-1";
             }
-            //loadMoose(mooseFile);
             auto url = URL(choosedFile);
-            //auto result = vid->load(url);
-            //title->setText(choosedFile.getFileName(), dontSendNotification);
             secrName = choosedFile.getFileName();
          });
    }
-   
+   repaint();
 }
 
 void MenuComponent::startDecode()
