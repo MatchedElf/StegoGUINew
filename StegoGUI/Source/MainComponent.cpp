@@ -4,12 +4,12 @@
 MainComponent::MainComponent()
     : Component("MainComponent")
 {
-    //compsList = new Component * [10];
     Font font;
     int ttt = 255 * (5 < 1);
     font.setHeight(25);
     //
     setOpaque(true);
+    addMouseListener(this, true);
     //
     openLogo = new ImageComponent();
     openLogo->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("logo4.png")));
@@ -36,18 +36,15 @@ MainComponent::MainComponent()
     //
     Image startLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("play.png"));
     startBut = new ImageButton();
-    //addAndMakeVisible(startBut);
     startBut->addListener(this);
     startBut->setImages(false, true, true, startLogo, 1, Colours::transparentWhite, startLogo, 0.3, Colours::transparentWhite, startLogo, 1, Colours::transparentWhite);
     //
     Image menuLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("menu.png"));
     hideBut = new ImageButton();
-    //addAndMakeVisible(hideBut);
     hideBut->addListener(this);
     hideBut->setImages(false, true, true, menuLogo, 1, Colours::transparentWhite, menuLogo, 0.3, Colours::transparentWhite, menuLogo, 1, Colours::transparentWhite);
     //
     orig = new ImageComponent();
-    //orig->setHelpText("ORIIIG");
     orig->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
     addAndMakeVisible(orig);
     //
@@ -58,11 +55,6 @@ MainComponent::MainComponent()
     newIm = new ImageComponent();
     newIm->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
     addAndMakeVisible(newIm);
-    //
-    //Image popLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("orig.png"));
-    //bool tmp = popLogo.isValid();
-    //bool tmp1 = popLogo.isNull();
-    //Image popLogo = ImageCache::getFromFile("C:\\Users\\andre\\source\\repos\\StegoGui\\Source\\orig.bmp");
     //
     font.setHeight(25);
     //
@@ -81,15 +73,12 @@ MainComponent::MainComponent()
     textLabel->setText(String((std::wstring(L"Извлеченный текст")).c_str()), dontSendNotification);
     addAndMakeVisible(textLabel);
     //
-    //origInfo = new Label();
     origInfo = new TextEditor();
     origInfo->setCaretVisible(false);
     origInfo->setMultiLine(true);
     origInfo->setReadOnly(true);
     origInfo->setScrollbarsShown(true);
-    //origInfo.
     origInfo->setFont(font);
-    //origInfo->setText(String((std::wstring(L"Информация об изображении")).c_str()), dontSendNotification);
     addAndMakeVisible(origInfo);
     //
     //decodeInfo = new Label();
@@ -99,7 +88,6 @@ MainComponent::MainComponent()
     decodeInfo->setReadOnly(true);
     decodeInfo->setScrollbarsShown(true);
     decodeInfo->setFont(font);
-    //decodeInfo->setText(String((std::wstring(L"Информация о проведенном извлечении")).c_str()), dontSendNotification);
     addAndMakeVisible(decodeInfo);
     //
     //decodeText = new Label();
@@ -109,24 +97,7 @@ MainComponent::MainComponent()
     decodeText->setReadOnly(true);
     decodeText->setScrollbarsShown(true);
     decodeText->setFont(font);
-    //decodeText->setText(String((std::wstring(L"Извлеченный текст")).c_str()), dontSendNotification);
     addAndMakeVisible(decodeText);
-    //
-    /*attack = new ToggleButton("ddd");
-    attack->setButtonText("Attack");
-    attack->addListener(this);
-    addAndMakeVisible(attack);*/
-    //
-    /*compsList[0] = orig;
-    compsList[1] = diff;
-    compsList[2] = newIm;
-    compsList[3] = imageCh;*/
-    //
-    /*FSizer = new StretchableLayoutManager();
-    FSizer->setItemLayout(0, 50, 1000, -1);
-    FSizer->setItemLayout(1, 50, 1000, -1);
-    FSizer->setItemLayout(2, 50, 1000, -1);
-    FSizer->setItemLayout(3, 50, 100, -0.06);*/
     //
     menuC = new MenuComponent();
     addAndMakeVisible(menuC);
@@ -134,15 +105,19 @@ MainComponent::MainComponent()
     addAndMakeVisible(hideBut);
     //
     clock = new ImageComponent();
-    //orig->setHelpText("ORIIIG");
     clock->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("clock.png")));
     addAndMakeVisible(clock);
     clock->setVisible(false);
-
-    //sdPanel = new SidePanel("Menu", 100, true);
-    //sdPanel->setContent(menuC);
-    //addAndMakeVisible(sdPanel);
-    //grid1 = new Grid();
+    //
+    error = new ImageComponent();
+    error->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("error.png")));
+    addAndMakeVisible(error);
+    error->setVisible(false);
+    //
+    closeErr = new TextButton(String((std::wstring(L"Файлы не выбраны!!!\nНажать сюда для закрытия")).c_str()));
+    closeErr->addListener(this);
+    addAndMakeVisible(closeErr);
+    closeErr->setVisible(false);
     //
     setSize(600, 400);
 }
@@ -167,22 +142,21 @@ MainComponent::~MainComponent()
     deleteAndZero(decodeText);
     deleteAndZero(menuC);
     deleteAndZero(clock);
+    deleteAndZero(error);
+    deleteAndZero(closeErr);
 }
 
 //==============================================================================
 void MainComponent::paint(juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
    if (loadingFlag) { 
       g.fillAll(Colours::red);
    }
    else { 
       g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId)); 
    }
-    //g.fillRect(0, 0, )
     g.setFont(juce::Font(16.0f));
     g.setColour(juce::Colours::white);
-    //g.drawText ("Hello World!", getLocalBounds(), juce::Justification::centred, true);
 
 }
 
@@ -206,7 +180,6 @@ void MainComponent::resized()
       //
       grid.items = { GridItem(origTitle), GridItem(diffTitle), GridItem(newTitle), GridItem(orig), GridItem(diff), GridItem(newIm), GridItem(origLabel), GridItem(decodeLabel), GridItem(textLabel), GridItem(origInfo), GridItem(decodeInfo), GridItem(decodeText) };
       //
-      //menuC->setBounds(0, getHeight() * 0.05, getWidth() * 0.1 - 10, getHeight() * 0.95);
       menuC->setBounds(0, 0, getWidth() * 0.1 - 10, getHeight() * 1);
 
       hideBut->setBounds(0, 0, getWidth() * 0.05 - 10, getHeight() * 0.05 - 5);
@@ -214,33 +187,35 @@ void MainComponent::resized()
       //
       if (hided)
       {
-         /*hideBut->setBounds(0, 0, getWidth() * 0.025 - 10, getHeight() * 0.025 - 5);
-         startBut->setBounds(getWidth() * 0.025, 0, getWidth() * 0.025 - 10, getHeight() * 0.025 - 5);*/
          grid.performLayout(juce::Rectangle<int>(0, getHeight() * 0.05, getWidth(), getHeight() * 0.95));
       }
       else
       {
-         /*hideBut->setBounds(0, 0, getWidth() * 0.05 - 10, getHeight() * 0.05 - 5);
-         startBut->setBounds(getWidth() * 0.05, 0, getWidth() * 0.05 - 10, getHeight() * 0.05 - 5);*/
          grid.performLayout(juce::Rectangle<int>(getWidth() * 0.1, 0, getWidth() * 0.9, getHeight()));
-
       }
       clock->setBounds(getWidth() * 0.4, getHeight() * 0.3, getWidth() * 0.2, getHeight() * 0.4);
+      error->setBounds(getWidth() * 0.35, getHeight() * 0.25, getWidth() * 0.3, getHeight() * 0.3);
+      closeErr->setBounds(getWidth() * 0.4, getHeight() * 0.55, getWidth() * 0.2, getHeight() * 0.2);
       juce::Rectangle test(0, 0, 1, 1);
    }
-    
-    
-    //grid.performLayout(getLocalBounds());
-    //
-    //
 }
 
 void MainComponent::buttonClicked(Button* butt)
 {
     if (butt == startBut)
     {
-       if(!startScreen)
-          startDecode();
+       if (!startScreen)
+       {
+          if( (menuC->imageName != "-1") && (menuC->secrName != "-1"))
+            startDecode();
+          else
+          {
+             error->setVisible(true);
+             closeErr->setVisible(true);
+             resized();
+          }
+       }
+
        else
        {
           startScreen = false;
@@ -255,16 +230,21 @@ void MainComponent::buttonClicked(Button* butt)
        menuC->setVisible(!(menuC->isVisible()));
        resized();
     }
+    else if (butt == closeErr)
+    {
+       error->setVisible(false);
+       closeErr->setVisible(false);
+       resized();
+       //closeErr->setEnabled(false);
+    }
 }
-//
-//void MainComponent::comboBoxChanged(ComboBox* cb)
+//void MainComponent::mouseUp(const MouseEvent& event)
 //{
-//    if (cb == secrCh)
-//    {
-//        selectedTr = cb->getSelectedId();
-//    }
+//   int tmp = 1;
+//   if (error->isVisible())
+//      error->setVisible(false);
 //}
-
+//
 void MainComponent::startDecode()
 {
    //
@@ -332,10 +312,7 @@ void MainComponent::startDecode()
         {
             vector<int> key1 = CreateKey("key.txt", size, vect.size(), true);
             //
-            /*vector<float**> ret = */encodeDCP(height, width, pixelsNew, vect, secr_size, difference, key1);
-            /*for (int i = 0; i < ret.size(); i++)
-                delete ret[i];
-            ret.clear();*/
+            encodeDCP(height, width, pixelsNew, vect, secr_size, difference, key1);
             WriteToFile(newFile, pixelsNew, height, width);
             //
             string result = decodeDCP(height, width, pixels, pixelsNew, vect, true, vectSzhat, key1);
@@ -348,10 +325,7 @@ void MainComponent::startDecode()
         {
             vector<int> key1 = CreateKey("key.txt", size, vect.size(), true);
             //
-            /*vector<complex<double>**> ret = */encodeFurie(height, width, pixelsNew, vect, secr_size, differenceComplex, key1);
-            /*for (int i = 0; i < ret.size(); i++)
-                delete ret[i];
-            ret.clear();*/
+            encodeFurie(height, width, pixelsNew, vect, secr_size, differenceComplex, key1);
             WriteToFile(newFile, pixelsNew, height, width);
             //
             string result = decodeFurie(height, width, pixels, pixelsNew, vect, vectSzhat, key1);

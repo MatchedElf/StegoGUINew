@@ -10,7 +10,7 @@ using namespace juce;
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent : public Component, public Button::Listener/*, public ComboBox::Listener*/
+class MainComponent : public Component, public Button::Listener/*, public MouseListener*//*, public ComboBox::Listener*/
 {
 public:
     //==============================================================================
@@ -21,6 +21,7 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
     void buttonClicked(Button* butt) override;
+    //void mouseUp(const MouseEvent &event) override;
     //void comboBoxChanged(ComboBox* cb) override;
     void startDecode();
     //
@@ -40,7 +41,10 @@ private:
     ImageComponent* orig;
     ImageComponent* diff;
     ImageComponent* newIm;
+    //
     ImageComponent* clock;
+    ImageComponent* error;
+    TextButton* closeErr;
     //
     //TextButton* imageCh;
     //ComboBox* secrCh;

@@ -15,13 +15,13 @@ MenuComponent::MenuComponent()
    //
    imageTitle = new Label();
    imageTitle->setFont(font);
-   imageTitle->setText(String((std::wstring(L"Выбрать изображение")).c_str()), dontSendNotification);
-   //addAndMakeVisible(imageTitle);
+   imageTitle->setText("Image: " + imageName, dontSendNotification);
+   addAndMakeVisible(imageTitle);
    //
    secrTitle = new Label();
    secrTitle->setFont(font);
-   secrTitle->setText(String((std::wstring(L"Выбрать скрываемое сообщение")).c_str()), dontSendNotification);
-   //addAndMakeVisible(secrTitle);
+   secrTitle->setText("Text: " + secrName, dontSendNotification);
+   addAndMakeVisible(secrTitle);
    //
    algTitle = new Label();
    algTitle->setFont(font);
@@ -60,14 +60,14 @@ MenuComponent::MenuComponent()
    //
    compsList[0] = menuTitle;
    //compsList[1] = startBut;
-   //compsList[1] = imageTitle;
-   compsList[1] = imageCh;
-   //compsList[3] = secrTitle;
-   compsList[2] = secrCh;
-   compsList[3] = algTitle;
-   compsList[4] = algCh;
-   compsList[5] = attackTitle;
-   compsList[6] = attack;
+   compsList[1] = imageTitle;
+   compsList[2] = imageCh;
+   compsList[3] = secrTitle;
+   compsList[4] = secrCh;
+   compsList[5] = algTitle;
+   compsList[6] = algCh;
+   compsList[7] = attackTitle;
+   compsList[8] = attack;
    //
    FSizer = new StretchableLayoutManager();
    FSizer->setItemLayout(0, 1, 100000, -1);
@@ -77,9 +77,9 @@ MenuComponent::MenuComponent()
    FSizer->setItemLayout(4, 1, 100000, -1);
    FSizer->setItemLayout(5, 1, 100000, -1);
    FSizer->setItemLayout(6, 1, 100000, -1);
-   /*FSizer->setItemLayout(7, 1, 100000, -1);
+   FSizer->setItemLayout(7, 1, 100000, -1);
    FSizer->setItemLayout(8, 1, 100000, -1);
-   FSizer->setItemLayout(9, 1, 100000, -1);*/
+   //FSizer->setItemLayout(9, 1, 100000, -1);
 
 }
 
@@ -111,7 +111,7 @@ void MenuComponent::paint(juce::Graphics& g)
 
 void MenuComponent::resized()
 {
-   FSizer->layOutComponents(compsList, 7, 0, 0, getWidth(), getHeight(), true, true);
+   FSizer->layOutComponents(compsList, 9, 0, 0, getWidth(), getHeight(), true, true);
 }
 
 void MenuComponent::buttonClicked(Button* butt)
@@ -159,9 +159,14 @@ void MenuComponent::LoadFile(bool image)
             File choosedFile(chooser.getResult());
             if (choosedFile.getFullPathName().isEmpty()) {
                imageName = "-1";
+               imageTitle->setText("Image: not choosed", dontSendNotification);
             }
-            auto url = URL(choosedFile);
-            imageName = choosedFile.getFullPathName();
+            else
+            {
+               auto url = URL(choosedFile);
+               imageName = choosedFile.getFullPathName();
+               imageTitle->setText("Image: " + choosedFile.getFileName(), dontSendNotification);
+            }
          });
    }
    else
@@ -171,9 +176,14 @@ void MenuComponent::LoadFile(bool image)
             File choosedFile(chooser.getResult());
             if (choosedFile.getFullPathName().isEmpty()) {
                secrName = "-1";
+               secrTitle->setText("Text: not choosed", dontSendNotification);
             }
-            auto url = URL(choosedFile);
-            secrName = choosedFile.getFullPathName();
+            else
+            {
+               auto url = URL(choosedFile);
+               secrName = choosedFile.getFullPathName();
+               secrTitle->setText("Text: " + choosedFile.getFileName(), dontSendNotification);
+            }
          });
    }
    repaint();
