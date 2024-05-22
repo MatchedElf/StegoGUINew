@@ -44,6 +44,8 @@ void ODFP(RGB** pixels, complex<double>** result, int x, int y);
 //
 void PSNR(RGB** orig, RGB** re, long double& r, long double& g, long double& b, int height, int width);
 //
+double AverageIntensity(RGB** orig, int height, int width);
+//
 double CorrCoef(RGB** orig, RGB** re, int height, int width);
 //
 vector<float**> encodeDCP(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key);

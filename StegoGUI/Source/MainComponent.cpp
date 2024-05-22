@@ -394,6 +394,11 @@ void MainComponent::startDecode()
     inf += String(to_string(dolya));
     inf += "\n";
     //
+    inf += String((std::wstring(L"Коэффициент корреляции = ")).c_str());
+    double corr = CorrCoef(pixels, pixelsNew, height, width);
+    inf += String(to_string(corr));
+    inf += "\n";
+    //
     CreateDiffFile(menuC->imageName.toRawUTF8(), "new.bmp", "diff.bmp");
     doDecode("diff.bmp", "diff.png");
     //

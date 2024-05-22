@@ -118,10 +118,55 @@ void PSNR(RGB** orig, RGB** re, long double& r, long double& g, long double& b, 
 	}
 	b = 10 * log10(height * width * pow(pow(2, 8) - 1, 2) / znam);
 }
+double AverageIntensity(RGB** orig, int height, int width)
+{
+	double ret = 0.0;
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			ret += orig[i][j].blue;
+		}
+	}
+	return ret / (width * height);
+}
 //
 double CorrCoef(RGB** orig, RGB** re, int height, int width)
 {
-	return 0.0;
+	double origAv = AverageIntensity(orig, height, width);
+	double reAv = AverageIntensity(re, height, width);
+	double chisl = 0.0;
+	//
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			chisl += (orig[i][j].blue - origAv) * (re[i][j].blue - reAv);
+		}
+	}
+	//
+	double znam = 0.0;
+	//
+	double origSum = 0.0;
+	//
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			origSum += pow((orig[i][j].blue - origAv), 2);
+		}
+	}
+	double reSum = 0.0;
+	//
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			reSum += pow((re[i][j].blue - reAv), 2);
+		}
+	}
+	znam = sqrt(origSum * reSum);
+	return chisl / znam;
 }
 //
 vector<float**> encodeDCP(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key) {
