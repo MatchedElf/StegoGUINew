@@ -76,6 +76,7 @@ public:
 #endif
          setFullScreen(true);
          setVisible(true);
+         setResizeLimits(1200, 800, 10000, 10000);
       }
 
       void closeButtonPressed() override
