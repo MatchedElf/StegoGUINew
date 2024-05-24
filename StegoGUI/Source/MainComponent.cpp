@@ -107,8 +107,6 @@ MainComponent::MainComponent()
     //
     clock = new ImageComponent();
     clock->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("clock.png")));
-    addAndMakeVisible(clock);
-    clock->setVisible(false);
     //
     error = new ImageComponent();
     error->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("error.png")));
@@ -122,6 +120,13 @@ MainComponent::MainComponent()
     //
     chooseChecker->addComponentListener(this);
     setSize(600, 400);
+    addAndMakeVisible(clock);
+    clock->setVisible(false);
+    //
+    // = new bool(false);
+    //LoadComponent* loadC = new LoadComponent(*loadingFlag);
+    //addAndMakeVisible(loadC);
+    //loadC->setBounds(getWidth() * 0.4, getHeight() * 0.3, getWidth() * 0.2, getHeight() * 0.4);
 }
 
 MainComponent::~MainComponent()
@@ -147,17 +152,14 @@ MainComponent::~MainComponent()
     deleteAndZero(error);
     deleteAndZero(closeErr);
     deleteAndZero(chooseChecker);
+    //deleteAndZero(loadC);
+    //delete loadingFlag;
 }
 
 //==============================================================================
 void MainComponent::paint(juce::Graphics& g)
 {
-   if (loadingFlag) { 
-      g.fillAll(Colours::red);
-   }
-   else { 
-      g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId)); 
-   }
+    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
     g.setFont(juce::Font(16.0f));
     g.setColour(juce::Colours::white);
 
@@ -199,7 +201,6 @@ void MainComponent::resized()
       clock->setBounds(getWidth() * 0.4, getHeight() * 0.3, getWidth() * 0.2, getHeight() * 0.4);
       error->setBounds(getWidth() * 0.35, getHeight() * 0.25, getWidth() * 0.3, getHeight() * 0.3);
       closeErr->setBounds(getWidth() * 0.4, getHeight() * 0.55, getWidth() * 0.2, getHeight() * 0.2);
-      juce::Rectangle test(0, 0, 1, 1);
    }
 }
 
@@ -210,8 +211,15 @@ void MainComponent::buttonClicked(Button* butt)
     {
        if (!startScreen)
        {
-          if( (menuC->imageName != "-1") && (menuC->secrName != "-1"))
-            startDecode();
+          if ((menuC->imageName != "-1") && (menuC->secrName != "-1"))
+          {
+             //clock->setVisible(true);
+             resized();
+             repaint();
+             chooseChecker->setName("Load");
+             startDecode();
+
+          }
           else
           {
              error->setVisible(true);
@@ -242,23 +250,41 @@ void MainComponent::buttonClicked(Button* butt)
        resized();
     }
 }
+//
 void MainComponent::componentNameChanged(Component& component)
 {
-   paintOrig();
+   if (component.getName() == "Load")
+   {
+      //clock->setVisible(true);
+      resized();
+      repaint();
+   }
+   else
+   {
+      paintOrig((menuC->imageName == "-1"));
+   }
 }
-void MainComponent::paintOrig()
+//
+void MainComponent::paintOrig(bool error)
 {
-
-   doDecode(menuC->imageName.toRawUTF8(), "orig.png");
-   orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
-   //
-   int height;
-   int width;
-   int size;
-   String info;
-   //
-   ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
-   origInfo->setText(info, sendNotification);
+   if (!error)
+   {
+      doDecode(menuC->imageName.toRawUTF8(), "orig.png");
+      orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
+      //
+      int height;
+      int width;
+      int size;
+      String info;
+      //
+      ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
+      origInfo->setText(info, sendNotification);
+   }
+   else
+   {
+      orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("empty.png")), sendNotification);
+      origInfo->setText("", sendNotification);
+   }
    diff->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
    newIm->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
    decodeInfo->setText("", sendNotification);
@@ -267,6 +293,8 @@ void MainComponent::paintOrig()
 //
 void MainComponent::startDecode()
 {
+    //*loadingFlag = true;
+    //loadC->setVisible(true);
     srand(time(NULL));
     if (menuC->imageName == "")
     {
@@ -423,7 +451,10 @@ void MainComponent::startDecode()
     delete[] pixels;
     delete[] pixelsNew;
     //
-    clock->setVisible(false);
+    //clock->setVisible(false);
+    //deleteAndZero(loadC);
+    //*loadingFlag = false;
+    //loadC->setVisible(false);
     resized();
     repaint();
 }

@@ -4,6 +4,8 @@
 #include "Stego.h"
 #include "DecodeBMP.h"
 #include "MenuComponent.h"
+#include "LoadComponent.h"
+//
 using namespace juce;
 //==============================================================================
 /*
@@ -22,7 +24,7 @@ public:
     void resized() override;
     void buttonClicked(Button* butt) override;
     void componentNameChanged(Component& component) override;
-    void paintOrig();
+    void paintOrig(bool error);
     void startDecode();
     //
 private:
@@ -56,9 +58,10 @@ private:
     //
     bool hided = false;
     //
-    bool loadingFlag = false;
+    //bool *loadingFlag;
     bool startScreen = true;
     //
     MenuComponent* menuC;
+    LoadComponent* loadC;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

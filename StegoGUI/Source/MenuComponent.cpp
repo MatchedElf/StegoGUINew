@@ -165,8 +165,8 @@ void MenuComponent::LoadFile(bool image)
                auto url = URL(choosedFile);
                imageName = choosedFile.getFullPathName();
                imageTitle->setText("Image: " + choosedFile.getFileName(), dontSendNotification);
-               costyl->setName(String(rand()));
             }
+            costyl->setName(String(rand()));
          });
    }
    else

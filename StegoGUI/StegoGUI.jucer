@@ -7,12 +7,15 @@
       <FILE id="yHmqDY" name="ClockComponent.h" compile="0" resource="0"
             file="Include/ClockComponent.h"/>
       <FILE id="AcXrsg" name="DecodeBMP.h" compile="0" resource="0" file="Include/DecodeBMP.h"/>
+      <FILE id="hHuvXC" name="LoadComponent.h" compile="0" resource="0" file="Include/LoadComponent.h"/>
       <FILE id="DFJvKc" name="lodepng.h" compile="0" resource="0" file="Include/lodepng.h"/>
       <FILE id="GDsmJj" name="MainComponent.h" compile="0" resource="0" file="Include/MainComponent.h"/>
       <FILE id="LzRD0B" name="MenuComponent.h" compile="0" resource="0" file="Include/MenuComponent.h"/>
       <FILE id="HmPHc3" name="Stego.h" compile="0" resource="0" file="Include/Stego.h"/>
     </GROUP>
     <GROUP id="{81993D6A-C3A4-F312-6BF9-6CACC5203333}" name="Source">
+      <FILE id="d7SD8n" name="LoadComponent.cpp" compile="1" resource="0"
+            file="Source/LoadComponent.cpp"/>
       <FILE id="h0IbVe" name="ClockComponent.cpp" compile="1" resource="0"
             file="Source/ClockComponent.cpp"/>
       <FILE id="QUgUkR" name="DecodeBMP.cpp" compile="1" resource="0" file="Source/DecodeBMP.cpp"/>
