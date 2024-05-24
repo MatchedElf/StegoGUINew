@@ -1,12 +1,14 @@
 #include "../Include/MenuComponent.h"
 
-MenuComponent::MenuComponent()
+MenuComponent::MenuComponent(Component* _costyl)
 {
    setOpaque(true);
    Font font;
    font.setHeight(25);
    //
    compsList = new Component * [10];
+   //
+   addComponentListener(this);
    //
    menuTitle = new Label();
    menuTitle->setFont(font);
@@ -49,17 +51,12 @@ MenuComponent::MenuComponent()
    addAndMakeVisible(algCh);
    algCh->addListener(this);
    //
-   /*startBut = new TextButton("Start decode");
-   addAndMakeVisible(startBut);
-   startBut->addListener(this);*/
-   //
    attack = new ToggleButton("ddd");
    attack->setButtonText("Attack");
    attack->addListener(this);
    addAndMakeVisible(attack);
    //
    compsList[0] = menuTitle;
-   //compsList[1] = startBut;
    compsList[1] = imageTitle;
    compsList[2] = imageCh;
    compsList[3] = secrTitle;
@@ -79,8 +76,7 @@ MenuComponent::MenuComponent()
    FSizer->setItemLayout(6, 1, 100000, -1);
    FSizer->setItemLayout(7, 1, 100000, -1);
    FSizer->setItemLayout(8, 1, 100000, -1);
-   //FSizer->setItemLayout(9, 1, 100000, -1);
-
+   costyl = _costyl;
 }
 
 MenuComponent::~MenuComponent()
@@ -90,11 +86,9 @@ MenuComponent::~MenuComponent()
    deleteAndZero(secrTitle);
    deleteAndZero(algTitle);
    deleteAndZero(attackTitle);
-   //
    deleteAndZero(imageCh);
    deleteAndZero(secrCh);
    deleteAndZero(algCh);
-   //deleteAndZero(startBut);
    deleteAndZero(attack);
    deleteAndZero(FSizer);
    myChooser.reset();
@@ -103,7 +97,6 @@ MenuComponent::~MenuComponent()
 
 void MenuComponent::paint(juce::Graphics& g)
 {
-   //g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
    g.fillAll(Colour::fromRGB(50, 50, 50));
    g.setFont(juce::Font(16.0f));
    g.setColour(juce::Colours::white);
@@ -127,6 +120,7 @@ void MenuComponent::buttonClicked(Button* butt)
    else if (butt == attack)
    {
       isAttack = butt->getToggleState();
+      setName("HIIIIIIIII");
    }
 }
 
@@ -136,6 +130,11 @@ void MenuComponent::comboBoxChanged(ComboBox* cb)
    {
       selectedTr = cb->getSelectedId();
    }
+}
+
+void MenuComponent::componentNameChanged(Component& component)
+{
+   int t = 1;
 }
 
 void MenuComponent::LoadFile(bool image)
@@ -166,6 +165,7 @@ void MenuComponent::LoadFile(bool image)
                auto url = URL(choosedFile);
                imageName = choosedFile.getFullPathName();
                imageTitle->setText("Image: " + choosedFile.getFileName(), dontSendNotification);
+               costyl->setName(String(rand()));
             }
          });
    }
@@ -187,6 +187,7 @@ void MenuComponent::LoadFile(bool image)
          });
    }
    repaint();
+   changed = true;
 }
 
 void MenuComponent::startDecode()

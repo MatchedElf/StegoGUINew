@@ -21,10 +21,8 @@ float coef(int i) {
 }
 //
 void DCP(RGB** pixels, float** result, int x, int y) {
-	// Öèêë çàïîëíåíèÿ ÄÊÏ ìàòðèöû 
 	for (int u = 0; u < 8; u++) {
 		for (int v = 0; v < 8; v++) {
-			//Öèêë ñóììèðîâàíèÿ ýëåìåíòîâ äëÿ îäíîãî ýëåìåíòà ÄÊÏ
 			float cu = coef(u);
 			float cv = coef(v);
 			float sum = 0;
@@ -34,7 +32,6 @@ void DCP(RGB** pixels, float** result, int x, int y) {
 				}
 			}
 			result[u][v] = cu * cv * sum;
-			//result[u][v] = 0;
 		}
 	}
 }
@@ -55,11 +52,8 @@ void ODCP(RGB** pixels, float** result, int x, int y) {
 }
 //
 void DFP(RGB** pixels, complex<double>** result, int x, int y) {
-	// Öèêë çàïîëíåíèÿ ÄPF ìàòðèöû 
 	for (int u = 0; u < 8; u++) {
 		for (int v = 0; v < 8; v++) {
-			//Öèêë ñóììèðîâàíèÿ ýëåìåíòîâ äëÿ îäíîãî ýëåìåíòà ÄÊÏ
-			//float sum = 0;
 			complex<double> sum(0.0, 0.0);
 			complex<double> NN(64.0, 0.0);
 			for (int k = 0; k < 8; k++) {
@@ -70,7 +64,6 @@ void DFP(RGB** pixels, complex<double>** result, int x, int y) {
 				}
 			}
 			result[u][v] = sum / NN;
-			//result[u][v] = 0;
 		}
 	}
 }
@@ -112,8 +105,6 @@ void PSNR(RGB** orig, RGB** re, long double& r, long double& g, long double& b, 
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
 			znam += pow((orig[i][j].blue - re[i][j].blue), 2);
-			//cout << (float)orig[i][j].blue << " - " << (float)re[i][j].blue << endl;
-			//if (orig[i][j].blue != re[i][j].blue) cout << "!=" << endl;
 		}
 	}
 	b = 10 * log10(height * width * pow(pow(2, 8) - 1, 2) / znam);
@@ -146,7 +137,6 @@ double CorrCoef(RGB** orig, RGB** re, int height, int width)
 	}
 	//
 	double znam = 0.0;
-	//
 	double origSum = 0.0;
 	//
 	for (int i = 0; i < height; i++)
@@ -173,18 +163,6 @@ vector<float**> encodeDCP(int height, int width, RGB** pixelsNew, vector<bitset<
 	vector<float**> matrixes;
 	cout << "Before DCP" << endl;
 	int count = 0;
-	/*for (int i = 0; i < height; i += 8) {
-		for (int j = 0; j < width; j += 8) {
-			float** res = new float* [8];
-			for (int z = 0; z < 8; z++) {
-				res[z] = new float[8];
-			}
-			DCP(pixelsNew, res, i, j);
-			matrixes.push_back(res);
-			count++;
-		}
-		if (count >= vect.size() * 8) break;
-	}*/
 	while (count < vect.size() * 8) {
 		float** res = new float* [8];
 		for (int z = 0; z < 8; z++) {
@@ -217,14 +195,6 @@ vector<float**> encodeDCP(int height, int width, RGB** pixelsNew, vector<bitset<
 		}
 		pixCount++;
 	}
-	/*int indCount = 0;
-	for (int i = 0; i < height; i += 8) {
-		for (int j = 0; j < width; j += 8) {
-			ODCP(pixelsNew, matrixes[indCount], i, j);
-			indCount++;
-		}
-		if (indCount >= vect.size() * 8) break;
-	}*/
 	int indCount = 0;
 	while (indCount < vect.size() * 8) {
 		ODCP(pixelsNew, matrixes[indCount], 8 * (key[indCount] / (width / 8)), 8 * (key[indCount] % (width / 8)));
@@ -260,10 +230,8 @@ string decodeDCP(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 				res[z] = new float[8];
 			}
 			DCP(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
-			//DCP(pixels, res, x, y);
 			double cf1 = res[4][3];
 			DCP(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
-			//DCP(pixelsNew, res, x, y);
 			double cf2 = res[4][3];
 			for (int z = 0; z < 8; z++) {
 				delete[] res[z];
@@ -285,7 +253,6 @@ string decodeDCP(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 				pixCount++;
 				if ((pixCount % 8) == 0) {
 					result += read.to_ulong();
-					//cout << result << endl;
 					if (flag) {
 						vectSzhat.push_back(read);
 					}
@@ -303,19 +270,6 @@ vector<complex<double>**> encodeFurie(int height, int width, RGB** pixelsNew, ve
 	vector<complex<double>**> matrixes;
 	cout << "Before DFP" << endl;
 	int count = 0;
-	/*for (int i = 0; i < height; i += 8) {
-		for (int j = 0; j < width; j += 8) {
-			complex<double>** res = new complex<double>*[8];
-			for (int z = 0; z < 8; z++) {
-				res[z] = new complex<double>[8];
-			}
-			DFP(pixelsNew, res, i, j);
-			matrixes.push_back(res);
-			count++;
-
-		}
-		if (count >= vect.size() * 8) break;
-	}*/
 	while (count < vect.size() * 8) {
 		complex<double>** res = new complex<double>*[8];
 		for (int z = 0; z < 8; z++) {
@@ -349,13 +303,6 @@ vector<complex<double>**> encodeFurie(int height, int width, RGB** pixelsNew, ve
 		pixCount++;
 	}
 	int indCount = 0;
-	/*for (int i = 0; i < height; i += 8) {
-		for (int j = 0; j < width; j += 8) {
-			ODFP(pixelsNew, matrixes[indCount], i, j);
-			indCount++;
-		}
-		if (indCount >= vect.size() * 8) break;
-	}*/
 	while (indCount < vect.size() * 8) {
 		ODFP(pixelsNew, matrixes[indCount], 8 * (key[indCount] / (width / 8)), 8 * (key[indCount] % (width / 8)));
 		indCount++;
@@ -390,10 +337,8 @@ string decodeFurie(int height, int width, RGB** pixels, RGB** pixelsNew, vector<
 			for (int z = 0; z < 8; z++) {
 				res[z] = new complex<double>[8];
 			}
-			//DFP(pixels, res, x, y);
 			DFP(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
 			complex<double> cf1 = res[4][3];
-			//DFP(pixelsNew, res, x, y);
 			DFP(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
 			complex<double> cf2 = res[4][3];
 			for (int z = 0; z < 8; z++) {
@@ -441,15 +386,9 @@ void encodeLSB(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, b
 			if (i < 16) {
 				if (secr_size[i] == 1) {
 					pixelsNew[index / width][index % width].blue |= 1;
-					//colorsNewBits[0] = 255;
-					//colorsNewBits[1] = 255;
-					//colorsNewBits[2] = 255;
 				}
 				else {
 					pixelsNew[index / width][index % width].blue &= ~(1);
-					//colorsNewBits[0] = 0;
-					//colorsNewBits[1] = 0;
-					//colorsNewBits[2] = 0;
 				}
 			}
 			else
@@ -457,15 +396,9 @@ void encodeLSB(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, b
 				if ((vect[i / 8][i % 8] == 1))
 				{
 					pixelsNew[index / width][index % width].blue |= 1;
-					//colorsNewBits[0] = 255;
-					//colorsNewBits[1] = 255;
-					//colorsNewBits[2] = 255;
 				}
 				else {
 					pixelsNew[index / width][index % width].blue &= ~(1);
-					//colorsNewBits[0] = 0;
-					//colorsNewBits[1] = 0;
-					//colorsNewBits[2] = 0;
 				}
 			}
 		}
@@ -518,7 +451,6 @@ string decodeLSB(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect,
 		}
 	}
 	return result;
-	//
 }
 //
 RGB** ReadFile(const char* _filename, int& h, int& w, int& size, juce::String& retStr1)
@@ -626,6 +558,7 @@ FILE* Create_File(const char* _filename, const char* _origFile)
 //
 vector<int> CreateKey(const char* _filename, int size, int vectSize, bool blocks)
 {
+	random_device gen;
 	ofstream keyFile(_filename);
 	if (!(keyFile.is_open())) {
 		cout << "Error while opening file." << endl;
@@ -638,22 +571,16 @@ vector<int> CreateKey(const char* _filename, int size, int vectSize, bool blocks
 		int rand_num = 0;
 		if (blocks)
 		{
-			//rand_num = rand() * (size / 32767) % (size / 64);
-			rand_num = rand() % (size / 64);
-
+			rand_num = gen() % (size / 64);
 		}
 		else
 		{
-			rand_num = rand() * (size / RAND_MAX) % size;
-			//rand_num = rand() % size;
+			rand_num = gen() % size;
 		}
 		if (count(key.begin(), key.end(), rand_num) == 0) {
 			key.push_back(rand_num);
 			keyFile << rand_num << " ";
 			i++;
-			//if (i % (vect.size() * 8 / 100) == 0) {
-			//	cout << i / (vect.size() * 8 / 100) << "%" << endl;
-			//}
 		}
 	}
 	keyFile.close();
@@ -704,7 +631,7 @@ vector<bitset<8>> ReadWord(const char* _filename, int& word_size)
 	{
 		secr += line;
 	}
-	//wordFile >> secr;
+	//
 	word_size = secr.size();
 	vector<bitset<8>> vect;
 	bitset<16> secr_size(secr.size());
@@ -754,22 +681,10 @@ void CreateDiffFile(const char* _filename1, const char* _filename2, const char* 
 			if (pixels1[i][j].blue != pixels2[i][j].blue)
 			{
 				int diff = fabs(pixels1[i][j].blue - pixels2[i][j].blue);
-
+				//
 				pixelsNew[i][j].red = sat(0 + 100 * ( (diff - 2)));
 				pixelsNew[i][j].green = sat(255 - 200 * (diff - 1));
 				pixelsNew[i][j].blue = sat(255 * (diff > 1) - 100 * (diff - 2));
-				/*if (fabs(pixels1[i][j].blue - pixels2[i][j].blue) >=1)
-				{
-					pixelsNew[i][j].red = 255;
-					pixelsNew[i][j].green = 255;
-					pixelsNew[i][j].blue = 255;
-				}*/
-				/*else
-				{
-					pixelsNew[i][j].red = 0;
-					pixelsNew[i][j].green = 0;
-					pixelsNew[i][j].blue = 220;
-				}*/
 			}
 			else
 			{

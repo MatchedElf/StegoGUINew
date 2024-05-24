@@ -81,7 +81,6 @@ MainComponent::MainComponent()
     origInfo->setFont(font);
     addAndMakeVisible(origInfo);
     //
-    //decodeInfo = new Label();
     decodeInfo = new TextEditor();
     decodeInfo->setCaretVisible(false);
     decodeInfo->setMultiLine(true);
@@ -90,7 +89,6 @@ MainComponent::MainComponent()
     decodeInfo->setFont(font);
     addAndMakeVisible(decodeInfo);
     //
-    //decodeText = new Label();
     decodeText = new TextEditor();
     decodeText->setCaretVisible(false);
     decodeText->setMultiLine(true);
@@ -99,7 +97,10 @@ MainComponent::MainComponent()
     decodeText->setFont(font);
     addAndMakeVisible(decodeText);
     //
-    menuC = new MenuComponent();
+    chooseChecker = new Component("1");
+    chooseChecker->addComponentListener(this);
+    menuC = new MenuComponent(chooseChecker);
+    //
     addAndMakeVisible(menuC);
     addAndMakeVisible(startBut);
     addAndMakeVisible(hideBut);
@@ -119,6 +120,7 @@ MainComponent::MainComponent()
     addAndMakeVisible(closeErr);
     closeErr->setVisible(false);
     //
+    chooseChecker->addComponentListener(this);
     setSize(600, 400);
 }
 
@@ -144,6 +146,7 @@ MainComponent::~MainComponent()
     deleteAndZero(clock);
     deleteAndZero(error);
     deleteAndZero(closeErr);
+    deleteAndZero(chooseChecker);
 }
 
 //==============================================================================
@@ -202,6 +205,7 @@ void MainComponent::resized()
 
 void MainComponent::buttonClicked(Button* butt)
 {
+   int t = 1;
     if (butt == startBut)
     {
        if (!startScreen)
@@ -226,6 +230,7 @@ void MainComponent::buttonClicked(Button* butt)
     }
     else if (butt == hideBut)
     {
+       menuC->setName("HI");
        hided = !hided;
        menuC->setVisible(!(menuC->isVisible()));
        resized();
@@ -235,19 +240,33 @@ void MainComponent::buttonClicked(Button* butt)
        error->setVisible(false);
        closeErr->setVisible(false);
        resized();
-       //closeErr->setEnabled(false);
     }
 }
-//void MainComponent::mouseUp(const MouseEvent& event)
-//{
-//   int tmp = 1;
-//   if (error->isVisible())
-//      error->setVisible(false);
-//}
+void MainComponent::componentNameChanged(Component& component)
+{
+   paintOrig();
+}
+void MainComponent::paintOrig()
+{
+
+   doDecode(menuC->imageName.toRawUTF8(), "orig.png");
+   orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
+   //
+   int height;
+   int width;
+   int size;
+   String info;
+   //
+   ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
+   origInfo->setText(info, sendNotification);
+   diff->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
+   newIm->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
+   decodeInfo->setText("", sendNotification);
+   decodeText->setText("", sendNotification);
+}
 //
 void MainComponent::startDecode()
 {
-   //
     srand(time(NULL));
     if (menuC->imageName == "")
     {
@@ -259,8 +278,8 @@ void MainComponent::startDecode()
     decodeInfo->setText("In progress", sendNotification);
     decodeText->setText("In progress", sendNotificationAsync);
     //
-    int difference = 15;
-    complex<double> differenceComplex(2.0, 0.0);
+    int difference = 5;
+    complex<double> differenceComplex(1.0, 0.0);
     int word_size = 0;
     //
     vector<bitset<8>> vect = ReadWord(menuC->secrName.toRawUTF8(), word_size);

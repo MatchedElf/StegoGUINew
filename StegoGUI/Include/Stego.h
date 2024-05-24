@@ -15,6 +15,7 @@
 #include <vector>
 #include <cmath>
 #include <complex>
+#include <random>
 #include <JuceHeader.h>
 
 #define PI 3.1415926
