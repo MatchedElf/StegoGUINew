@@ -26,8 +26,8 @@ public:
    int selectedTr = 1;
    bool isAttack = false;
    bool changed = false;
-   String imageName = "orig.bmp";
-   String secrName = "secr.txt";
+   String imageName = "-1";
+   String secrName = "-1";
    TextButton* imageCh;
 private:
    std::unique_ptr<FileChooser> myChooser;

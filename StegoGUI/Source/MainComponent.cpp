@@ -127,6 +127,7 @@ MainComponent::MainComponent()
     //LoadComponent* loadC = new LoadComponent(*loadingFlag);
     //addAndMakeVisible(loadC);
     //loadC->setBounds(getWidth() * 0.4, getHeight() * 0.3, getWidth() * 0.2, getHeight() * 0.4);
+    doDecode("orig.bmp", "orig.png");
 }
 
 MainComponent::~MainComponent()
@@ -185,18 +186,18 @@ void MainComponent::resized()
       //
       grid.items = { GridItem(origTitle), GridItem(diffTitle), GridItem(newTitle), GridItem(orig), GridItem(diff), GridItem(newIm), GridItem(origLabel), GridItem(decodeLabel), GridItem(textLabel), GridItem(origInfo), GridItem(decodeInfo), GridItem(decodeText) };
       //
-      menuC->setBounds(0, 0, getWidth() * 0.1 - 10, getHeight() * 1);
+      menuC->setBounds(0, 0, getWidth() * 0.1 - 10, getHeight());
 
       hideBut->setBounds(0, 0, getWidth() * 0.05 - 10, getHeight() * 0.05 - 5);
       startBut->setBounds(getWidth() * 0.05, 0, getWidth() * 0.05 - 10, getHeight() * 0.05 - 5);
       //
       if (hided)
       {
-         grid.performLayout(juce::Rectangle<int>(0, getHeight() * 0.05, getWidth(), getHeight() * 0.95));
+         grid.performLayout(juce::Rectangle<int>(0, getHeight() * 0.05, getWidth(), getHeight() * 0.94));
       }
       else
       {
-         grid.performLayout(juce::Rectangle<int>(getWidth() * 0.1, 0, getWidth() * 0.9, getHeight()));
+         grid.performLayout(juce::Rectangle<int>(getWidth() * 0.1, 0, getWidth() * 0.9, getHeight() * 0.99));
       }
       clock->setBounds(getWidth() * 0.4, getHeight() * 0.3, getWidth() * 0.2, getHeight() * 0.4);
       error->setBounds(getWidth() * 0.35, getHeight() * 0.25, getWidth() * 0.3, getHeight() * 0.3);
@@ -233,6 +234,7 @@ void MainComponent::buttonClicked(Button* butt)
           startScreen = false;
           openLogo->setVisible(false);
           openTitle->setVisible(false);
+          startBut->setEnabled(false);
           resized();
        }
     }
@@ -269,8 +271,6 @@ void MainComponent::paintOrig(bool error)
 {
    if (!error)
    {
-      doDecode(menuC->imageName.toRawUTF8(), "orig.png");
-      orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
       //
       int height;
       int width;
@@ -279,6 +279,17 @@ void MainComponent::paintOrig(bool error)
       //
       ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
       origInfo->setText(info, sendNotification);
+      if ((size < 100) || (height < 32) || (height > 5000) || (width < 32) || (width > 5000))
+      {
+         orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("error.png")), sendNotification);
+         startBut->setEnabled(false);
+      }
+      else
+      {
+         doDecode(menuC->imageName.toRawUTF8(), "orig.png");
+         orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
+         startBut->setEnabled(true);
+      }
    }
    else
    {
@@ -296,12 +307,8 @@ void MainComponent::startDecode()
     //*loadingFlag = true;
     //loadC->setVisible(true);
     srand(time(NULL));
-    if (menuC->imageName == "")
-    {
-       menuC->imageName = "orig.bmp";
-    }
-    doDecode(menuC->imageName.toRawUTF8(), "orig.png");
-    orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
+    //doDecode(menuC->imageName.toRawUTF8(), "orig.png");
+    //orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
     origInfo->setText("In progress", sendNotification);
     decodeInfo->setText("In progress", sendNotification);
     decodeText->setText("In progress", sendNotificationAsync);
@@ -330,7 +337,7 @@ void MainComponent::startDecode()
     //
     if (menuC->isAttack)
     {
-        pixelsNew = ReadFile("new.bmp", height, width, size, info);
+        pixelsNew = ReadFile("../../Images/new.bmp", height, width, size, info);
         vector<int> key = ReadKey("key.txt", vect);
         //
         if (menuC->selectedTr == 1)
@@ -351,7 +358,7 @@ void MainComponent::startDecode()
     }
     else
     {
-        FILE* newFile = Create_File("new.bmp", menuC->imageName.toRawUTF8());
+        FILE* newFile = Create_File("../../Images/new.bmp", menuC->imageName.toRawUTF8());
         //
         pixelsNew = ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
         //
@@ -420,22 +427,23 @@ void MainComponent::startDecode()
     inf += String(to_string(corr));
     inf += "\n";
     //
-    CreateDiffFile(menuC->imageName.toRawUTF8(), "new.bmp", "diff.bmp");
+    CreateDiffFile(menuC->imageName.toRawUTF8(), "../../Images/new.bmp", "diff.bmp");
     doDecode("diff.bmp", "diff.png");
     //
     decodeInfo->setText(inf, sendNotification);
     diff->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("diff.png")));
     diff->repaint();
-    doDecode("new.bmp", "new.png");
+    doDecode("../../Images/new.bmp", "new.png");
     newIm->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("new.png")));
     newIm->repaint();
     repaint();
     resized();
-    const char* tmp = menuC->imageName.toRawUTF8();
-    const char* origTmp = "orig.bmp";
-    if (*origTmp != *tmp)
+    //const char* tmp = menuC->imageName.toRawUTF8();
+    String origTmp = "..\\..\\Images\\orig.bmp";
+    String tmp = File(menuC->imageName).getRelativePathFrom(File::getCurrentWorkingDirectory());
+    if (tmp != origTmp)
     {
-       FILE* origCopyFile = Create_File("orig.bmp", menuC->imageName.toRawUTF8());
+       FILE* origCopyFile = Create_File("../../Images/orig.bmp", menuC->imageName.toRawUTF8());
        if (origCopyFile != NULL)
        {
          WriteToFile(origCopyFile, pixels, height, width);

@@ -17,12 +17,12 @@ MenuComponent::MenuComponent(Component* _costyl)
    //
    imageTitle = new Label();
    imageTitle->setFont(font);
-   imageTitle->setText("Image: " + imageName, dontSendNotification);
+   imageTitle->setText(String((std::wstring(L"Изображение:\nне выбрано")).c_str()), dontSendNotification);
    addAndMakeVisible(imageTitle);
    //
    secrTitle = new Label();
    secrTitle->setFont(font);
-   secrTitle->setText("Text: " + secrName, dontSendNotification);
+   secrTitle->setText(String((std::wstring(L"Сообщение:\nне выбрано")).c_str()), dontSendNotification);
    addAndMakeVisible(secrTitle);
    //
    algTitle = new Label();
@@ -32,7 +32,7 @@ MenuComponent::MenuComponent(Component* _costyl)
    //
    attackTitle = new Label();
    attackTitle->setFont(font);
-   attackTitle->setText(String((std::wstring(L"Проводится ли атака на заполненный контейнер?")).c_str()), dontSendNotification);
+   attackTitle->setText(String((std::wstring(L"Проводится ли атака\nна контейнер?")).c_str()), dontSendNotification);
    addAndMakeVisible(attackTitle);
    //
    imageCh = new TextButton(String((std::wstring(L"Выбрать изображение")).c_str()));
@@ -52,7 +52,7 @@ MenuComponent::MenuComponent(Component* _costyl)
    algCh->addListener(this);
    //
    attack = new ToggleButton("ddd");
-   attack->setButtonText("Attack");
+   attack->setButtonText(String((std::wstring(L"Только извлечение")).c_str()));
    attack->addListener(this);
    addAndMakeVisible(attack);
    //
@@ -104,7 +104,7 @@ void MenuComponent::paint(juce::Graphics& g)
 
 void MenuComponent::resized()
 {
-   FSizer->layOutComponents(compsList, 9, 0, 0, getWidth(), getHeight(), true, true);
+   FSizer->layOutComponents(compsList, 9, 0, getHeight() * 0.05, getWidth(), getHeight() * 0.95, true, true);
 }
 
 void MenuComponent::buttonClicked(Button* butt)
@@ -140,12 +140,12 @@ void MenuComponent::componentNameChanged(Component& component)
 void MenuComponent::LoadFile(bool image)
 {
    if(image)
-      myChooser = std::make_unique<FileChooser>("Please select the file you want to load...",
-         File::getCurrentWorkingDirectory(),
+      myChooser = std::make_unique<FileChooser>(String((std::wstring(L"Выберите нужный файл")).c_str()),
+         File(File::getCurrentWorkingDirectory().getFullPathName() + "/../../Images"),
          "*.bmp");
    else
-      myChooser = std::make_unique<FileChooser>("Please select the file you want to load...",
-         File::getCurrentWorkingDirectory(),
+      myChooser = std::make_unique<FileChooser>(String((std::wstring(L"Выберите нужный файл")).c_str()),
+         File(File::getCurrentWorkingDirectory().getFullPathName() +"/../../Messages"),
          "*.txt");
    
 
@@ -158,13 +158,13 @@ void MenuComponent::LoadFile(bool image)
             File choosedFile(chooser.getResult());
             if (choosedFile.getFullPathName().isEmpty()) {
                imageName = "-1";
-               imageTitle->setText("Image: not choosed", dontSendNotification);
+               imageTitle->setText(String((std::wstring(L"Изображение:\nне выбрано")).c_str()), dontSendNotification);
             }
             else
             {
                auto url = URL(choosedFile);
                imageName = choosedFile.getFullPathName();
-               imageTitle->setText("Image: " + choosedFile.getFileName(), dontSendNotification);
+               imageTitle->setText(String((std::wstring(L"Изображение:\n")).c_str()) + choosedFile.getFileName(), dontSendNotification);
             }
             costyl->setName(String(rand()));
          });
@@ -176,13 +176,13 @@ void MenuComponent::LoadFile(bool image)
             File choosedFile(chooser.getResult());
             if (choosedFile.getFullPathName().isEmpty()) {
                secrName = "-1";
-               secrTitle->setText("Text: not choosed", dontSendNotification);
+               secrTitle->setText(String((std::wstring(L"Сообщение:\nне выбрано")).c_str()), dontSendNotification);
             }
             else
             {
                auto url = URL(choosedFile);
                secrName = choosedFile.getFullPathName();
-               secrTitle->setText("Text: " + choosedFile.getFileName(), dontSendNotification);
+               secrTitle->setText(String((std::wstring(L"Сообщение:\n")).c_str()) + choosedFile.getFileName(), dontSendNotification);
             }
          });
    }

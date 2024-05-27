@@ -471,17 +471,17 @@ RGB** ReadFile(const char* _filename, int& h, int& w, int& size, juce::String& r
 		return NULL;
 	}
 	juce::String retStr = "";
-	retStr += juce::String((std::wstring(L"Size = ")).c_str());
+	retStr += juce::String((std::wstring(L"Размер = ")).c_str());
 	retStr += juce::String(to_string(bmfHeader.bfSize));
-	retStr += juce::String((std::wstring(L" bytes")).c_str());
+	retStr += juce::String((std::wstring(L" байт")).c_str());
 	retStr += "\n";
-	retStr += juce::String((std::wstring(L"Width = ")).c_str());
+	retStr += juce::String((std::wstring(L"Ширина = ")).c_str());
 	retStr += juce::String(to_string(bmiHeader.biWidth));
-	retStr += juce::String((std::wstring(L" pixels")).c_str());
+	retStr += juce::String((std::wstring(L" пикселей")).c_str());
 	retStr += "\n";
-	retStr += juce::String((std::wstring(L"Height = ")).c_str());
+	retStr += juce::String((std::wstring(L"Высота = ")).c_str());
 	retStr += juce::String(to_string(bmiHeader.biHeight));
-	retStr += juce::String((std::wstring(L" pixels")).c_str());
+	retStr += juce::String((std::wstring(L" пикселей")).c_str());
 	retStr += "\n";
 	retStr += "bibit = ";
 	retStr += juce::String(to_string(bmiHeader.biBitCount));
@@ -489,11 +489,18 @@ RGB** ReadFile(const char* _filename, int& h, int& w, int& size, juce::String& r
 	retStr += "biclr = ";
 	retStr += juce::String(to_string(bmiHeader.biClrUsed));
 	retStr += "\n";
-	retStr1 = retStr;
 	h = bmiHeader.biHeight;
 	w = bmiHeader.biWidth;
 	size = bmiHeader.biWidth * bmiHeader.biHeight;
 	//
+	if ((size < 100) || (h < 32) || (h > 5000) || (w < 32) || (w > 5000))
+	{
+		retStr += "Bad file!!!\n";
+		fclose(_file);
+		retStr1 = retStr;
+		return NULL;
+	}
+	retStr1 = retStr;
 	RGB** pixels = new RGB * [h + 2];
 	for (int i = 0; i < h + 2; i++) pixels[i] = new RGB[w + 1];
 	//
@@ -630,6 +637,7 @@ vector<bitset<8>> ReadWord(const char* _filename, int& word_size)
 	while (getline(wordFile, line))
 	{
 		secr += line;
+		secr += "\n";
 	}
 	//
 	word_size = secr.size();

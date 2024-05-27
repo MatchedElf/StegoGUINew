@@ -62,6 +62,6 @@ private:
     bool startScreen = true;
     //
     MenuComponent* menuC;
-    LoadComponent* loadC;
+    //LoadComponent* loadC;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };
