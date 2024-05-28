@@ -4,7 +4,7 @@
 #include "Stego.h"
 #include "DecodeBMP.h"
 #include "MenuComponent.h"
-#include "LoadComponent.h"
+#include "LoadWindow.h"
 //
 using namespace juce;
 //==============================================================================

@@ -20,7 +20,7 @@ float coef(int i) {
 	else return sqrt(2.0 / 8.0);
 }
 //
-void DCP(RGB** pixels, float** result, int x, int y) {
+void DCT(RGB** pixels, float** result, int x, int y) {
 	for (int u = 0; u < 8; u++) {
 		for (int v = 0; v < 8; v++) {
 			float cu = coef(u);
@@ -36,7 +36,7 @@ void DCP(RGB** pixels, float** result, int x, int y) {
 	}
 }
 //
-void ODCP(RGB** pixels, float** result, int x, int y) {
+void IDCT(RGB** pixels, float** result, int x, int y) {
 	for (int k = 0; k < 8; k++) {
 		for (int l = 0; l < 8; l++) {
 			float sum = 0;
@@ -51,7 +51,7 @@ void ODCP(RGB** pixels, float** result, int x, int y) {
 
 }
 //
-void DFP(RGB** pixels, complex<double>** result, int x, int y) {
+void DFT(RGB** pixels, complex<double>** result, int x, int y) {
 	for (int u = 0; u < 8; u++) {
 		for (int v = 0; v < 8; v++) {
 			complex<double> sum(0.0, 0.0);
@@ -68,7 +68,7 @@ void DFP(RGB** pixels, complex<double>** result, int x, int y) {
 	}
 }
 //
-void ODFP(RGB** pixels, complex<double>** result, int x, int y) {
+void IDFT(RGB** pixels, complex<double>** result, int x, int y) {
 	for (int k = 0; k < 8; k++) {
 		for (int l = 0; l < 8; l++) {
 			complex<double> sum(0.0, 0.0);
@@ -159,21 +159,21 @@ double CorrCoef(RGB** orig, RGB** re, int height, int width)
 	return chisl / znam;
 }
 //
-vector<float**> encodeDCP(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key) {
+vector<float**> encodeDCT(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key) {
 	vector<float**> matrixes;
-	cout << "Before DCP" << endl;
+	cout << "Before DCT" << endl;
 	int count = 0;
 	while (count < vect.size() * 8) {
 		float** res = new float* [8];
 		for (int z = 0; z < 8; z++) {
 			res[z] = new float[8];
 		}
-		DCP(pixelsNew, res, 8 * (key[count] / (width / 8)), 8 * (key[count] % (width / 8)));
+		DCT(pixelsNew, res, 8 * (key[count] / (width / 8)), 8 * (key[count] % (width / 8)));
 		matrixes.push_back(res);
 		count++;
 
 	}
-	cout << "After DCP" << endl;
+	cout << "After DCT" << endl;
 	int pixCount = 0;
 	while ((pixCount / 8) < vect.size()) {
 
@@ -197,7 +197,7 @@ vector<float**> encodeDCP(int height, int width, RGB** pixelsNew, vector<bitset<
 	}
 	int indCount = 0;
 	while (indCount < vect.size() * 8) {
-		ODCP(pixelsNew, matrixes[indCount], 8 * (key[indCount] / (width / 8)), 8 * (key[indCount] % (width / 8)));
+		IDCT(pixelsNew, matrixes[indCount], 8 * (key[indCount] / (width / 8)), 8 * (key[indCount] % (width / 8)));
 		indCount++;
 
 	}
@@ -209,12 +209,12 @@ vector<float**> encodeDCP(int height, int width, RGB** pixelsNew, vector<bitset<
 		}
 		delete[] matrixes[i];
 	}
-	cout << "After ODCP" << endl;
+	cout << "After IDCT" << endl;
 	return matrixes;
 
 }
 //
-string decodeDCP(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat, vector<int> key) {
+string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat, vector<int> key) {
 	bitset<8> read;
 	bitset<16> readSize;
 
@@ -229,9 +229,9 @@ string decodeDCP(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 			for (int z = 0; z < 8; z++) {
 				res[z] = new float[8];
 			}
-			DCP(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			DCT(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
 			double cf1 = res[4][3];
-			DCP(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			DCT(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
 			double cf2 = res[4][3];
 			for (int z = 0; z < 8; z++) {
 				delete[] res[z];
@@ -262,25 +262,25 @@ string decodeDCP(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 			}
 		}
 	}
-	cout << "After decoding DCP" << endl;
+	cout << "After decoding DCT" << endl;
 	return result;
 }
 //
-vector<complex<double>**> encodeFurie(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key) {
+vector<complex<double>**> encodeDFT(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key) {
 	vector<complex<double>**> matrixes;
-	cout << "Before DFP" << endl;
+	cout << "Before DFT" << endl;
 	int count = 0;
 	while (count < vect.size() * 8) {
 		complex<double>** res = new complex<double>*[8];
 		for (int z = 0; z < 8; z++) {
 			res[z] = new complex<double>[8];
 		}
-		DFP(pixelsNew, res, 8 * (key[count] / (width / 8)), 8 * (key[count] % (width / 8)));
+		DFT(pixelsNew, res, 8 * (key[count] / (width / 8)), 8 * (key[count] % (width / 8)));
 		matrixes.push_back(res);
 		count++;
 
 	}
-	cout << "After DFP" << endl;
+	cout << "After DFT" << endl;
 	int pixCount = 0;
 	while ((pixCount / 8) < vect.size()) {
 
@@ -304,7 +304,7 @@ vector<complex<double>**> encodeFurie(int height, int width, RGB** pixelsNew, ve
 	}
 	int indCount = 0;
 	while (indCount < vect.size() * 8) {
-		ODFP(pixelsNew, matrixes[indCount], 8 * (key[indCount] / (width / 8)), 8 * (key[indCount] % (width / 8)));
+		IDFT(pixelsNew, matrixes[indCount], 8 * (key[indCount] / (width / 8)), 8 * (key[indCount] % (width / 8)));
 		indCount++;
 
 	}
@@ -316,13 +316,13 @@ vector<complex<double>**> encodeFurie(int height, int width, RGB** pixelsNew, ve
 		}
 		delete[] matrixes[i];
 	}
-	cout << "After ODFP" << endl;
+	cout << "After IDFT" << endl;
 	return matrixes;
 
 
 }
 //
-string decodeFurie(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key) {
+string decodeDFT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key) {
 	bitset<8> read;
 	bitset<16> readSize;
 
@@ -337,9 +337,9 @@ string decodeFurie(int height, int width, RGB** pixels, RGB** pixelsNew, vector<
 			for (int z = 0; z < 8; z++) {
 				res[z] = new complex<double>[8];
 			}
-			DFP(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			DFT(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
 			complex<double> cf1 = res[4][3];
-			DFP(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			DFT(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
 			complex<double> cf2 = res[4][3];
 			for (int z = 0; z < 8; z++) {
 				delete[] res[z];
@@ -369,7 +369,7 @@ string decodeFurie(int height, int width, RGB** pixels, RGB** pixelsNew, vector<
 			}
 		}
 	}
-	cout << "After decoding DFP" << endl;
+	cout << "After decoding DFT" << endl;
 	return result;
 }
 //

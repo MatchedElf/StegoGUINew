@@ -39,13 +39,13 @@ MenuComponent::MenuComponent(Component* _costyl)
    addAndMakeVisible(imageCh);
    imageCh->addListener(this);
    //
-   secrCh = new TextButton(String((std::wstring(L"Выбрать скрываемое сообщение")).c_str()));
+   secrCh = new TextButton(String((std::wstring(L"Выбрать\nскрываемое сообщение")).c_str()));
    addAndMakeVisible(secrCh);
    secrCh->addListener(this);
    //
    algCh = new ComboBox();
-   algCh->addItem("DCP", 1);
-   algCh->addItem("Furie", 2);
+   algCh->addItem("DCT", 1);
+   algCh->addItem("Fourier", 2);
    algCh->addItem("LSB", 3);
    algCh->setSelectedId(1);
    addAndMakeVisible(algCh);
@@ -73,7 +73,7 @@ MenuComponent::MenuComponent(Component* _costyl)
    FSizer->setItemLayout(3, 1, 100000, -1);
    FSizer->setItemLayout(4, 1, 100000, -1);
    FSizer->setItemLayout(5, 1, 100000, -1);
-   FSizer->setItemLayout(6, 1, 100000, -1);
+   FSizer->setItemLayout(6, 1, 100000, 400);
    FSizer->setItemLayout(7, 1, 100000, -1);
    FSizer->setItemLayout(8, 1, 100000, -1);
    costyl = _costyl;

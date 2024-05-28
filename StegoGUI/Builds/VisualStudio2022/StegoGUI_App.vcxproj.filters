@@ -241,10 +241,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\LoadComponent.cpp">
-      <Filter>StegoGUI\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\ClockComponent.cpp">
+    <ClCompile Include="..\..\Source\LoadWindow.cpp">
       <Filter>StegoGUI\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\DecodeBMP.cpp">
@@ -1713,13 +1710,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Include\ClockComponent.h">
-      <Filter>StegoGUI\Include</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\DecodeBMP.h">
       <Filter>StegoGUI\Include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\LoadComponent.h">
+    <ClInclude Include="..\..\Include\LoadWindow.h">
       <Filter>StegoGUI\Include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\lodepng.h">

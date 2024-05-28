@@ -215,10 +215,23 @@ void MainComponent::buttonClicked(Button* butt)
           if ((menuC->imageName != "-1") && (menuC->secrName != "-1"))
           {
              //clock->setVisible(true);
-             resized();
+             /*resized();
              repaint();
              chooseChecker->setName("Load");
-             startDecode();
+             startDecode();*/
+             /*AlertWindow*/LoadWindow* processWnd = new /*AlertWindow*/LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
+                                                       TRANS(std::wstring(L"Процесс идет...").c_str()),
+                                                       MessageBoxIconType::NoIcon);
+             processWnd->setBounds(getWidth() * 0.4, getHeight() * 0.3, getWidth() * 0.2, getHeight() * 0.4);
+             processWnd->enterModalState(true, nullptr, true);
+             /*Flag = */MessageManager::callAsync([this, processWnd]()
+                {
+                   startDecode();
+                   if (nullptr != processWnd)
+                   {
+                      processWnd->exitModalState();
+                   }
+                });
 
           }
           else
@@ -314,7 +327,7 @@ void MainComponent::startDecode()
     decodeText->setText("In progress", sendNotificationAsync);
     //
     int difference = 5;
-    complex<double> differenceComplex(1.0, 0.0);
+    complex<double> differenceComplex(2.0, 0.0);
     int word_size = 0;
     //
     vector<bitset<8>> vect = ReadWord(menuC->secrName.toRawUTF8(), word_size);
@@ -342,12 +355,12 @@ void MainComponent::startDecode()
         //
         if (menuC->selectedTr == 1)
         {
-            string result = decodeDCP(height, width, pixels, pixelsNew, vect, true, vectSzhat, key);
+            string result = decodeDCT(height, width, pixels, pixelsNew, vect, true, vectSzhat, key);
             decodeText->setText(result, sendNotification);
         }
         else if (menuC->selectedTr == 2)
         {
-            string result = decodeFurie(height, width, pixels, pixelsNew, vect, vectSzhat, key);
+            string result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key);
             decodeText->setText(result, sendNotification);
         }
         else if (menuC->selectedTr == 3)
@@ -366,10 +379,10 @@ void MainComponent::startDecode()
         {
             vector<int> key1 = CreateKey("key.txt", size, vect.size(), true);
             //
-            encodeDCP(height, width, pixelsNew, vect, secr_size, difference, key1);
+            encodeDCT(height, width, pixelsNew, vect, secr_size, difference, key1);
             WriteToFile(newFile, pixelsNew, height, width);
             //
-            string result = decodeDCP(height, width, pixels, pixelsNew, vect, true, vectSzhat, key1);
+            string result = decodeDCT(height, width, pixels, pixelsNew, vect, true, vectSzhat, key1);
             decodeText->setText(result, sendNotification);
             //
 
@@ -379,10 +392,10 @@ void MainComponent::startDecode()
         {
             vector<int> key1 = CreateKey("key.txt", size, vect.size(), true);
             //
-            encodeFurie(height, width, pixelsNew, vect, secr_size, differenceComplex, key1);
+            encodeDFT(height, width, pixelsNew, vect, secr_size, differenceComplex, key1);
             WriteToFile(newFile, pixelsNew, height, width);
             //
-            string result = decodeFurie(height, width, pixels, pixelsNew, vect, vectSzhat, key1);
+            string result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key1);
             decodeText->setText(result, sendNotification);
         }
         //
@@ -403,6 +416,9 @@ void MainComponent::startDecode()
     long double redP, greenP, blueP;
     PSNR(pixels, pixelsNew, redP, greenP, blueP, height, width);
     String inf = "";
+    if (menuC->selectedTr == 1) inf += "DCT\n";
+    if (menuC->selectedTr == 2) inf += "DFT\n";
+    if (menuC->selectedTr == 3) inf += "LSB\n";
     inf += "PSNR = ";
     inf += String(to_string(blueP));
     inf += "\n";

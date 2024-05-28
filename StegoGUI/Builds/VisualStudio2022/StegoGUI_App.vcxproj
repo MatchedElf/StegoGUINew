@@ -141,8 +141,7 @@
     <Lib/>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\LoadComponent.cpp"/>
-    <ClCompile Include="..\..\Source\ClockComponent.cpp"/>
+    <ClCompile Include="..\..\Source\LoadWindow.cpp"/>
     <ClCompile Include="..\..\Source\DecodeBMP.cpp"/>
     <ClCompile Include="..\..\Source\lodepng.cpp"/>
     <ClCompile Include="..\..\Source\Main.cpp"/>
@@ -1479,9 +1478,8 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_gui_extra.cpp"/>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Include\ClockComponent.h"/>
     <ClInclude Include="..\..\Include\DecodeBMP.h"/>
-    <ClInclude Include="..\..\Include\LoadComponent.h"/>
+    <ClInclude Include="..\..\Include\LoadWindow.h"/>
     <ClInclude Include="..\..\Include\lodepng.h"/>
     <ClInclude Include="..\..\Include\MainComponent.h"/>
     <ClInclude Include="..\..\Include\MenuComponent.h"/>
