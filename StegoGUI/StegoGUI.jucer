@@ -26,6 +26,7 @@
     <FILE id="Q4jCa0" name="logo2.png" compile="0" resource="1" file="Builds/VisualStudio2022/logo2.png"/>
     <FILE id="bwXxQ7" name="logo3.png" compile="0" resource="1" file="Builds/VisualStudio2022/logo3.png"/>
     <FILE id="PGb5Lb" name="logo4.png" compile="0" resource="1" file="Builds/VisualStudio2022/logo4.png"/>
+    <FILE id="QRpcaH" name="logo5.png" compile="0" resource="1" file="Builds/VisualStudio2022/logo5.png"/>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
@@ -37,7 +38,7 @@
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
-    <VS2022 targetFolder="Builds/VisualStudio2022" smallIcon="PGb5Lb" bigIcon="PGb5Lb">
+    <VS2022 targetFolder="Builds/VisualStudio2022" smallIcon="QRpcaH" bigIcon="QRpcaH">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="StegoGUI"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="StegoGUI"/>

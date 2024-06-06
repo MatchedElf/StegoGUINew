@@ -238,6 +238,7 @@ void MainComponent::buttonClicked(Button* butt)
           {
              error->setVisible(true);
              closeErr->setVisible(true);
+             closeErr->enterModalState(true, nullptr, false);
              resized();
           }
        }
@@ -262,6 +263,7 @@ void MainComponent::buttonClicked(Button* butt)
     {
        error->setVisible(false);
        closeErr->setVisible(false);
+       closeErr->exitModalState();
        resized();
     }
 }
@@ -324,7 +326,7 @@ void MainComponent::startDecode()
     //orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
     origInfo->setText("In progress", sendNotification);
     decodeInfo->setText("In progress", sendNotification);
-    decodeText->setText("In progress", sendNotificationAsync);
+    decodeText->setText("-", sendNotificationAsync);
     //
     int difference = 5;
     complex<double> differenceComplex(2.0, 0.0);
@@ -350,7 +352,7 @@ void MainComponent::startDecode()
     //
     if (menuC->isAttack)
     {
-        pixelsNew = ReadFile("../../Images/new.bmp", height, width, size, info);
+        pixelsNew = ReadFile("../../Images/Results/new.bmp", height, width, size, info);
         vector<int> key = ReadKey("key.txt", vect);
         //
         if (menuC->selectedTr == 1)
@@ -371,10 +373,18 @@ void MainComponent::startDecode()
     }
     else
     {
-        FILE* newFile = Create_File("../../Images/new.bmp", menuC->imageName.toRawUTF8());
+        FILE* newFile = Create_File("../../Images/Results/new.bmp", menuC->imageName.toRawUTF8());
         //
         pixelsNew = ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
         //
+        if (menuC->selectedTr != 3)
+        {
+           if ( (vect.size() * 8) >= (size / 64))
+           {
+              decodeInfo->setText(String((std::wstring(L"Ошибка! Слишком большое сообщение.")).c_str()), sendNotification);
+              return;
+           }
+        }
         if (menuC->selectedTr == 1)
         {
             vector<int> key1 = CreateKey("key.txt", size, vect.size(), true);
@@ -430,7 +440,10 @@ void MainComponent::startDecode()
     inf += "\n";
     //
     inf += String((std::wstring(L"Коэффициент сокрытия = ")).c_str());
-    coef = (height * width) / 64.0 / (height * width);
+    if(menuC->selectedTr == 3) 
+       coef = 1;
+    else
+      coef = (height * width) / 64.0 / (height * width);
     inf += String(to_string(coef));
     inf += "\n";
     //
@@ -444,13 +457,13 @@ void MainComponent::startDecode()
     inf += String(to_string(corr));
     inf += "\n";
     //
-    CreateDiffFile(menuC->imageName.toRawUTF8(), "../../Images/new.bmp", "diff.bmp");
+    CreateDiffFile(menuC->imageName.toRawUTF8(), "../../Images/Results/new.bmp", "diff.bmp");
     doDecode("diff.bmp", "diff.png");
     //
     decodeInfo->setText(inf, sendNotification);
     diff->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("diff.png")));
     diff->repaint();
-    doDecode("../../Images/new.bmp", "new.png");
+    doDecode("../../Images/Results/new.bmp", "new.png");
     newIm->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("new.png")));
     newIm->repaint();
     repaint();

@@ -3221,6 +3221,9 @@
     <None Include="logo4.png">
       <Filter>StegoGUI</Filter>
     </None>
+    <None Include="logo5.png">
+      <Filter>StegoGUI</Filter>
+    </None>
     <None Include="..\..\..\modules\juce_core\native\java\README.txt">
       <Filter>JUCE Modules\juce_core\native\java</Filter>
     </None>
