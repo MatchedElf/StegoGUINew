@@ -222,7 +222,7 @@ void MainComponent::buttonClicked(Button* butt)
              /*AlertWindow*/LoadWindow* processWnd = new /*AlertWindow*/LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
                                                        TRANS(std::wstring(L"Процесс идет...").c_str()),
                                                        MessageBoxIconType::NoIcon);
-             processWnd->setBounds(getWidth() * 0.4, getHeight() * 0.3, getWidth() * 0.2, getHeight() * 0.4);
+             processWnd->setBounds(getWidth() * 0.45, getHeight() * 0.3, getWidth() * 0.1, getHeight() * 0.4);
              processWnd->enterModalState(true, nullptr, true);
              /*Flag = */MessageManager::callAsync([this, processWnd]()
                 {
@@ -416,6 +416,7 @@ void MainComponent::startDecode()
     long double redP, greenP, blueP;
     PSNR(pixels, pixelsNew, redP, greenP, blueP, height, width);
     String inf = "";
+    inf += String((std::wstring(L"Алгоритм: ")).c_str());
     if (menuC->selectedTr == 1) inf += "DCT\n";
     if (menuC->selectedTr == 2) inf += "DFT\n";
     if (menuC->selectedTr == 3) inf += "LSB\n";

@@ -680,7 +680,7 @@ void CreateDiffFile(const char* _filename1, const char* _filename2, const char* 
 	juce::String info;
 	//
 	RGB** pixels1 = ReadFile(_filename1, height, width, size, info);
-	RGB** pixels2 = ReadFile(_filename2, height, width, size, info);
+	RGB** pixels2 = ReadFile(_filename2, height, width, size, info);  
 	//
 	RGB** pixelsNew = new RGB * [height + 2];
 	for (int i = 0; i < height + 2; i++) pixelsNew[i] = new RGB[width + 1];

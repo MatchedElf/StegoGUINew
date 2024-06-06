@@ -11,18 +11,22 @@ MenuComponent::MenuComponent(Component* _costyl)
    addComponentListener(this);
    //
    menuTitle = new Label();
+   font.setUnderline(true);
    menuTitle->setFont(font);
    menuTitle->setText(String((std::wstring(L"Настройки запуска")).c_str()), dontSendNotification);
    addAndMakeVisible(menuTitle);
    //
+   font.setUnderline(false);
    imageTitle = new Label();
    imageTitle->setFont(font);
    imageTitle->setText(String((std::wstring(L"Изображение:\nне выбрано")).c_str()), dontSendNotification);
+   imageTitle->setColour(imageTitle->textColourId, Colours::red);
    addAndMakeVisible(imageTitle);
    //
    secrTitle = new Label();
    secrTitle->setFont(font);
    secrTitle->setText(String((std::wstring(L"Сообщение:\nне выбрано")).c_str()), dontSendNotification);
+   secrTitle->setColour(secrTitle->textColourId, Colours::red);
    addAndMakeVisible(secrTitle);
    //
    algTitle = new Label();
@@ -45,7 +49,7 @@ MenuComponent::MenuComponent(Component* _costyl)
    //
    algCh = new ComboBox();
    algCh->addItem("DCT", 1);
-   algCh->addItem("Fourier", 2);
+   algCh->addItem("DFT", 2);
    algCh->addItem("LSB", 3);
    algCh->setSelectedId(1);
    addAndMakeVisible(algCh);
@@ -54,6 +58,7 @@ MenuComponent::MenuComponent(Component* _costyl)
    attack = new ToggleButton("ddd");
    attack->setButtonText(String((std::wstring(L"Только извлечение")).c_str()));
    attack->addListener(this);
+   
    addAndMakeVisible(attack);
    //
    compsList[0] = menuTitle;
@@ -69,9 +74,9 @@ MenuComponent::MenuComponent(Component* _costyl)
    FSizer = new StretchableLayoutManager();
    FSizer->setItemLayout(0, 1, 100000, -1);
    FSizer->setItemLayout(1, 1, 100000, -1);
-   FSizer->setItemLayout(2, 1, 100000, -1);
+   FSizer->setItemLayout(2, 1, 100000, 600);
    FSizer->setItemLayout(3, 1, 100000, -1);
-   FSizer->setItemLayout(4, 1, 100000, -1);
+   FSizer->setItemLayout(4, 1, 100000, 600);
    FSizer->setItemLayout(5, 1, 100000, -1);
    FSizer->setItemLayout(6, 1, 100000, 400);
    FSizer->setItemLayout(7, 1, 100000, -1);
@@ -159,12 +164,14 @@ void MenuComponent::LoadFile(bool image)
             if (choosedFile.getFullPathName().isEmpty()) {
                imageName = "-1";
                imageTitle->setText(String((std::wstring(L"Изображение:\nне выбрано")).c_str()), dontSendNotification);
+               imageTitle->setColour(imageTitle->textColourId, Colours::red);
             }
             else
             {
                auto url = URL(choosedFile);
                imageName = choosedFile.getFullPathName();
                imageTitle->setText(String((std::wstring(L"Изображение:\n")).c_str()) + choosedFile.getFileName(), dontSendNotification);
+               imageTitle->setColour(imageTitle->textColourId, Colours::green);
             }
             costyl->setName(String(rand()));
          });
@@ -177,12 +184,14 @@ void MenuComponent::LoadFile(bool image)
             if (choosedFile.getFullPathName().isEmpty()) {
                secrName = "-1";
                secrTitle->setText(String((std::wstring(L"Сообщение:\nне выбрано")).c_str()), dontSendNotification);
+               secrTitle->setColour(secrTitle->textColourId, Colours::red);
             }
             else
             {
                auto url = URL(choosedFile);
                secrName = choosedFile.getFullPathName();
                secrTitle->setText(String((std::wstring(L"Сообщение:\n")).c_str()) + choosedFile.getFileName(), dontSendNotification);
+               secrTitle->setColour(secrTitle->textColourId, Colours::green);
             }
          });
    }
