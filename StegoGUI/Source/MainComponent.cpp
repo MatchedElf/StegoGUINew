@@ -106,7 +106,7 @@ MainComponent::MainComponent()
     addAndMakeVisible(hideBut);
     //
     clock = new ImageComponent();
-    clock->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("clock.png")));
+    clock->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("clock.png")));
     //
     error = new ImageComponent();
     error->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("error.png")));
@@ -122,6 +122,7 @@ MainComponent::MainComponent()
     setSize(600, 400);
     addAndMakeVisible(clock);
     clock->setVisible(false);
+    clock->setOpaque(true);
     //
     // = new bool(false);
     //LoadComponent* loadC = new LoadComponent(*loadingFlag);
@@ -224,6 +225,7 @@ void MainComponent::buttonClicked(Button* butt)
                                                        MessageBoxIconType::NoIcon);
              processWnd->setBounds(getWidth() * 0.45, getHeight() * 0.3, getWidth() * 0.1, getHeight() * 0.4);
              processWnd->enterModalState(true, nullptr, true);
+             processWnd->setOpaque(true);
              /*Flag = */MessageManager::callAsync([this, processWnd]()
                 {
                    startDecode();

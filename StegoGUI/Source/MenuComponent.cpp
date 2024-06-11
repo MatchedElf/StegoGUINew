@@ -169,7 +169,7 @@ void MenuComponent::LoadFile(bool image)
             else
             {
                auto url = URL(choosedFile);
-               imageName = choosedFile.getFullPathName();
+               imageName = String((std::wstring(choosedFile.getFullPathName().toWideCharPointer())).c_str());
                imageTitle->setText(String((std::wstring(L"Изображение:\n")).c_str()) + choosedFile.getFileName(), dontSendNotification);
                imageTitle->setColour(imageTitle->textColourId, Colours::green);
             }
@@ -189,7 +189,7 @@ void MenuComponent::LoadFile(bool image)
             else
             {
                auto url = URL(choosedFile);
-               secrName = choosedFile.getFullPathName();
+               secrName = String((std::wstring(choosedFile.getFullPathName().toWideCharPointer())).c_str());
                secrTitle->setText(String((std::wstring(L"Сообщение:\n")).c_str()) + choosedFile.getFileName(), dontSendNotification);
                secrTitle->setColour(secrTitle->textColourId, Colours::green);
             }
