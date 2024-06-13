@@ -2,9 +2,10 @@
 
 MenuComponent::MenuComponent(Component* _costyl)
 {
+   setLookAndFeel(this);
    setOpaque(true);
    Font font;
-   font.setHeight(25);
+   font.setHeight(20);
    //
    compsList = new Component * [10];
    //
@@ -86,6 +87,7 @@ MenuComponent::MenuComponent(Component* _costyl)
 
 MenuComponent::~MenuComponent()
 {
+   setLookAndFeel(nullptr);
    deleteAndZero(menuTitle);
    deleteAndZero(imageTitle);
    deleteAndZero(secrTitle);
@@ -201,4 +203,29 @@ void MenuComponent::LoadFile(bool image)
 
 void MenuComponent::startDecode()
 {
+}
+//
+void MenuComponent::drawToggleButton(Graphics& g, ToggleButton& button, 
+                                     bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
+{
+   auto fontSize = jmin(20.0f, (float)button.getHeight() * 0.8f);
+   auto tickWidth = fontSize * 1.1f;
+
+   drawTickBox(g, button, 4.0f, ((float)button.getHeight() - tickWidth) * 0.5f,
+      tickWidth, tickWidth,
+      button.getToggleState(),
+      button.isEnabled(),
+      shouldDrawButtonAsHighlighted,
+      shouldDrawButtonAsDown);
+
+   g.setColour(button.findColour(ToggleButton::textColourId));
+   g.setFont(fontSize);
+
+   if (!button.isEnabled())
+      g.setOpacity(0.5f);
+
+   g.drawFittedText(button.getButtonText(),
+      button.getLocalBounds().withTrimmedLeft(roundToInt(tickWidth) + 10)
+      .withTrimmedRight(2),
+      Justification::centredLeft, 10);
 }

@@ -4,6 +4,7 @@
 MainComponent::MainComponent()
     : Component("MainComponent")
 {
+    setLookAndFeel(this);
     Font font;
     int ttt = 255 * (5 < 1);
     font.setHeight(25);
@@ -133,6 +134,7 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
+    setLookAndFeel(nullptr);
     deleteAndZero(openLogo);
     deleteAndZero(openTitle);
     deleteAndZero(origTitle);
@@ -497,4 +499,9 @@ void MainComponent::startDecode()
     //loadC->setVisible(false);
     resized();
     repaint();
+}
+//
+Font MainComponent::getTextButtonFont(TextButton&, int buttonHeight)
+{
+   return { jmin(25.0f, (float)buttonHeight * 0.8f) };
 }

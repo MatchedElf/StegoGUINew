@@ -12,7 +12,7 @@ using namespace juce;
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent : public Component, public Button::Listener, public ComponentListener/*, public MouseListener*//*, public ComboBox::Listener*/
+class MainComponent : public Component, public Button::Listener, public ComponentListener, public LookAndFeel_V4/*, public MouseListener*//*, public ComboBox::Listener*/
 {
 public:
     //==============================================================================
@@ -26,6 +26,7 @@ public:
     void componentNameChanged(Component& component) override;
     void paintOrig(bool error);
     void startDecode();
+    Font getTextButtonFont(TextButton&, int buttonHeight) override;
     //
 private:
     ImageComponent* openLogo;

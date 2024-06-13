@@ -7,7 +7,7 @@ using namespace juce;
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MenuComponent : public Component, public Button::Listener, public ComboBox::Listener, public ComponentListener
+class MenuComponent : public Component, public Button::Listener, public ComboBox::Listener, public ComponentListener, public LookAndFeel_V4
 {
 public:
    //==============================================================================
@@ -22,6 +22,8 @@ public:
    void componentNameChanged(Component& component) override;
    void LoadFile(bool image);
    void startDecode();
+   void drawToggleButton(Graphics& g, ToggleButton& button,
+                         bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
    //
    int selectedTr = 1;
    bool isAttack = false;
