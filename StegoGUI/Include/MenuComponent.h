@@ -19,7 +19,6 @@ public:
    void resized() override;
    void buttonClicked(Button* butt) override;
    void comboBoxChanged(ComboBox* cb) override;
-   void componentNameChanged(Component& component) override;
    void LoadFile(bool image);
    void startDecode();
    void drawToggleButton(Graphics& g, ToggleButton& button,

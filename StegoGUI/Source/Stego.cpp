@@ -16,8 +16,8 @@ RGB MakeColor(BYTE r, BYTE g, BYTE b) {
 }
 //
 float coef(int i) {
-	if (i == 0) return sqrt(1.0 / 8.0);
-	else return sqrt(2.0 / 8.0);
+	if (i == 0) return (float)sqrt(1.0 / 8.0);
+	else return (float)sqrt(2.0 / 8.0);
 }
 //
 void DCT(RGB** pixels, float** result, int x, int y) {
@@ -688,7 +688,7 @@ void CreateDiffFile(const char* _filename1, const char* _filename2, const char* 
 		for (int j = 0; j < width; j++) {
 			if (pixels1[i][j].blue != pixels2[i][j].blue)
 			{
-				int diff = fabs(pixels1[i][j].blue - pixels2[i][j].blue);
+				int diff = (int)fabs(pixels1[i][j].blue - pixels2[i][j].blue);
 				//
 				pixelsNew[i][j].red = sat(0 + 100 * ( (diff - 2)));
 				pixelsNew[i][j].green = sat(255 - 200 * (diff - 1));

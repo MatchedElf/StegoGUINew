@@ -138,12 +138,7 @@ void MenuComponent::comboBoxChanged(ComboBox* cb)
       selectedTr = cb->getSelectedId();
    }
 }
-
-void MenuComponent::componentNameChanged(Component& component)
-{
-   int t = 1;
-}
-
+//
 void MenuComponent::LoadFile(bool image)
 {
    if(image)
@@ -192,6 +187,8 @@ void MenuComponent::LoadFile(bool image)
             {
                auto url = URL(choosedFile);
                secrName = String((std::wstring(choosedFile.getFullPathName().toWideCharPointer())).c_str());
+               //secrName = choosedFile.getRelativePathFrom(File::getCurrentWorkingDirectory());
+               //File(menuC->imageName).getRelativePathFrom(File::getCurrentWorkingDirectory());
                secrTitle->setText(String((std::wstring(L"Сообщение:\n")).c_str()) + choosedFile.getFileName(), dontSendNotification);
                secrTitle->setColour(secrTitle->textColourId, Colours::green);
             }

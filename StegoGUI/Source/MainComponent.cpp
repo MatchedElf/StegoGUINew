@@ -6,7 +6,6 @@ MainComponent::MainComponent()
 {
     setLookAndFeel(this);
     Font font;
-    int ttt = 255 * (5 < 1);
     font.setHeight(25);
     //
     setOpaque(true);
@@ -173,9 +172,9 @@ void MainComponent::resized()
 {
    if (startScreen)
    {
-      openTitle->setBounds(getWidth() * 0.3, getHeight() * 0.22, getWidth() * 0.4, getHeight() * 0.08);
-      openLogo->setBounds(getWidth() * 0.3, getHeight() * 0.3, getWidth() * 0.4, getHeight() * 0.4);
-      startBut->setBounds(getWidth() * 0.45, getHeight() * 0.75, getWidth() * 0.1, getHeight() * 0.1);
+      openTitle->setBounds((int)getWidth() * 0.3, (int)getHeight() * 0.22, (int)getWidth() * 0.4, (int)getHeight() * 0.08);
+      openLogo->setBounds((int)getWidth() * 0.3, (int)getHeight() * 0.3, (int)getWidth() * 0.4, (int)getHeight() * 0.4);
+      startBut->setBounds((int)getWidth() * 0.45, (int)getHeight() * 0.75, (int)getWidth() * 0.1, (int)getHeight() * 0.1);
    }
    else
    {
@@ -189,22 +188,22 @@ void MainComponent::resized()
       //
       grid.items = { GridItem(origTitle), GridItem(diffTitle), GridItem(newTitle), GridItem(orig), GridItem(diff), GridItem(newIm), GridItem(origLabel), GridItem(decodeLabel), GridItem(textLabel), GridItem(origInfo), GridItem(decodeInfo), GridItem(decodeText) };
       //
-      menuC->setBounds(0, 0, getWidth() * 0.1 - 10, getHeight());
+      menuC->setBounds(0, 0, (int)getWidth() * 0.1 - 10, (int)getHeight());
 
-      hideBut->setBounds(0, 0, getWidth() * 0.05 - 10, getHeight() * 0.05 - 5);
-      startBut->setBounds(getWidth() * 0.05, 0, getWidth() * 0.05 - 10, getHeight() * 0.05 - 5);
+      hideBut->setBounds(0, 0, (int)getWidth() * 0.05 - 10, (int)(int)getHeight() * 0.05 - 5);
+      startBut->setBounds((int)getWidth() * 0.05, 0, (int)getWidth() * 0.05 - 10, (int)getHeight() * 0.05 - 5);
       //
       if (hided)
       {
-         grid.performLayout(juce::Rectangle<int>(0, getHeight() * 0.05, getWidth(), getHeight() * 0.94));
+         grid.performLayout(juce::Rectangle<int>(0, (int)getHeight() * 0.05, getWidth(), (int)getHeight() * 0.94));
       }
       else
       {
-         grid.performLayout(juce::Rectangle<int>(getWidth() * 0.1, 0, getWidth() * 0.9, getHeight() * 0.99));
+         grid.performLayout(juce::Rectangle<int>((int)getWidth() * 0.1, 0, (int)getWidth() * 0.9, (int)getHeight() * 0.99));
       }
-      clock->setBounds(getWidth() * 0.4, getHeight() * 0.3, getWidth() * 0.2, getHeight() * 0.4);
-      error->setBounds(getWidth() * 0.35, getHeight() * 0.25, getWidth() * 0.3, getHeight() * 0.3);
-      closeErr->setBounds(getWidth() * 0.4, getHeight() * 0.55, getWidth() * 0.2, getHeight() * 0.2);
+      clock->setBounds((int)(getWidth() * 0.4), (int)getHeight() * 0.3, (int)getWidth() * 0.2, (int)getHeight() * 0.4);
+      error->setBounds((int)(getWidth() * 0.35), (int)getHeight() * 0.25, (int)getWidth() * 0.3, (int)getHeight() * 0.3);
+      closeErr->setBounds((int)(getWidth() * 0.4), (int)getHeight() * 0.55, (int)getWidth() * 0.2, (int)getHeight() * 0.2);
    }
 }
 
@@ -225,7 +224,7 @@ void MainComponent::buttonClicked(Button* butt)
              /*AlertWindow*/LoadWindow* processWnd = new /*AlertWindow*/LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
                                                        TRANS(std::wstring(L"Процесс идет...").c_str()),
                                                        MessageBoxIconType::NoIcon);
-             processWnd->setBounds(getWidth() * 0.45, getHeight() * 0.3, getWidth() * 0.1, getHeight() * 0.4);
+             processWnd->setBounds((int)getWidth() * 0.45, (int)getHeight() * 0.3, (int)getWidth() * 0.1, (int)getHeight() * 0.4);
              processWnd->enterModalState(true, nullptr, true);
              processWnd->setOpaque(true);
              /*Flag = */MessageManager::callAsync([this, processWnd]()
@@ -286,9 +285,9 @@ void MainComponent::componentNameChanged(Component& component)
    }
 }
 //
-void MainComponent::paintOrig(bool error)
+void MainComponent::paintOrig(bool _error)
 {
-   if (!error)
+   if (!_error)
    {
       //
       int height;
