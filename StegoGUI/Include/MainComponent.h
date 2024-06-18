@@ -40,7 +40,6 @@ private:
     ImageComponent* diff;
     ImageComponent* newIm;
     //
-    ImageComponent* clock;
     ImageComponent* error;
     TextButton* closeErr;
     //
@@ -59,10 +58,8 @@ private:
     //
     bool hided = false;
     //
-    //bool *loadingFlag;
     bool startScreen = true;
     //
     MenuComponent* menuC;
-    //LoadComponent* loadC;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

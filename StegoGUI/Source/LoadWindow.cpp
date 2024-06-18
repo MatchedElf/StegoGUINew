@@ -13,7 +13,7 @@
 LoadWindow::LoadWindow(const String& title, const String& message, MessageBoxIconType iconType, Component* associatedComponent)
    : AlertWindow(title,  message, iconType)
 {
-   //setOpaque(true);
+   setOpaque(false);
    setSize(360, 670);
    startTimer(100);
 }
@@ -26,12 +26,12 @@ void LoadWindow::timerCallback()
 {
    repaint();
 }
-
+//
 void LoadWindow::paint(juce::Graphics& g)
 {
-   String file = "clock" + status + ".png";
-   Image clock = ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile(file));
    juce::Rectangle<float> rec(getWidth(), getHeight());
-   g.drawImage(clock, rec);
+   String file = "clock" + status + ".png";
+   Image clockIm = ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile(file));
+   g.drawImage(clockIm, rec, true);
    status = (status == "0") ? "1" : "0";
 }

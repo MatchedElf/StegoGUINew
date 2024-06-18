@@ -105,9 +105,6 @@ MainComponent::MainComponent()
     addAndMakeVisible(startBut);
     addAndMakeVisible(hideBut);
     //
-    clock = new ImageComponent();
-    clock->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("clock.png")));
-    //
     error = new ImageComponent();
     error->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("error.png")));
     addAndMakeVisible(error);
@@ -120,14 +117,7 @@ MainComponent::MainComponent()
     //
     chooseChecker->addComponentListener(this);
     setSize(600, 400);
-    addAndMakeVisible(clock);
-    clock->setVisible(false);
-    clock->setOpaque(true);
     //
-    // = new bool(false);
-    //LoadComponent* loadC = new LoadComponent(*loadingFlag);
-    //addAndMakeVisible(loadC);
-    //loadC->setBounds(getWidth() * 0.4, getHeight() * 0.3, getWidth() * 0.2, getHeight() * 0.4);
     doDecode("orig.bmp", "orig.png");
 }
 
@@ -151,12 +141,9 @@ MainComponent::~MainComponent()
     deleteAndZero(decodeInfo);
     deleteAndZero(decodeText);
     deleteAndZero(menuC);
-    deleteAndZero(clock);
     deleteAndZero(error);
     deleteAndZero(closeErr);
     deleteAndZero(chooseChecker);
-    //deleteAndZero(loadC);
-    //delete loadingFlag;
 }
 
 //==============================================================================
@@ -201,7 +188,6 @@ void MainComponent::resized()
       {
          grid.performLayout(juce::Rectangle<int>((int)getWidth() * 0.1, 0, (int)getWidth() * 0.9, (int)getHeight() * 0.99));
       }
-      clock->setBounds((int)(getWidth() * 0.4), (int)getHeight() * 0.3, (int)getWidth() * 0.2, (int)getHeight() * 0.4);
       error->setBounds((int)(getWidth() * 0.35), (int)getHeight() * 0.25, (int)getWidth() * 0.3, (int)getHeight() * 0.3);
       closeErr->setBounds((int)(getWidth() * 0.4), (int)getHeight() * 0.55, (int)getWidth() * 0.2, (int)getHeight() * 0.2);
    }
@@ -216,18 +202,13 @@ void MainComponent::buttonClicked(Button* butt)
        {
           if ((menuC->imageName != "-1") && (menuC->secrName != "-1"))
           {
-             //clock->setVisible(true);
-             /*resized();
-             repaint();
-             chooseChecker->setName("Load");
-             startDecode();*/
-             /*AlertWindow*/LoadWindow* processWnd = new /*AlertWindow*/LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
+             LoadWindow* processWnd = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
                                                        TRANS(std::wstring(L"Процесс идет...").c_str()),
                                                        MessageBoxIconType::NoIcon);
+             processWnd->setColour(processWnd->backgroundColourId, juce::Colour::fromRGBA(255, 255, 255, 255));
              processWnd->setBounds((int)getWidth() * 0.45, (int)getHeight() * 0.3, (int)getWidth() * 0.1, (int)getHeight() * 0.4);
              processWnd->enterModalState(true, nullptr, true);
-             processWnd->setOpaque(true);
-             /*Flag = */MessageManager::callAsync([this, processWnd]()
+             MessageManager::callAsync([this, processWnd]()
                 {
                    startDecode();
                    if (nullptr != processWnd)
@@ -242,6 +223,7 @@ void MainComponent::buttonClicked(Button* butt)
              error->setVisible(true);
              closeErr->setVisible(true);
              closeErr->enterModalState(true, nullptr, false);
+             
              resized();
           }
        }
@@ -275,7 +257,6 @@ void MainComponent::componentNameChanged(Component& component)
 {
    if (component.getName() == "Load")
    {
-      //clock->setVisible(true);
       resized();
       repaint();
    }
@@ -322,11 +303,7 @@ void MainComponent::paintOrig(bool _error)
 //
 void MainComponent::startDecode()
 {
-    //*loadingFlag = true;
-    //loadC->setVisible(true);
     srand(time(NULL));
-    //doDecode(menuC->imageName.toRawUTF8(), "orig.png");
-    //orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
     origInfo->setText("In progress", sendNotification);
     decodeInfo->setText("In progress", sendNotification);
     decodeText->setText("-", sendNotificationAsync);
@@ -471,7 +448,6 @@ void MainComponent::startDecode()
     newIm->repaint();
     repaint();
     resized();
-    //const char* tmp = menuC->imageName.toRawUTF8();
     String origTmp = "..\\..\\Images\\orig.bmp";
     String tmp = File(menuC->imageName).getRelativePathFrom(File::getCurrentWorkingDirectory());
     if (tmp != origTmp)
@@ -492,10 +468,6 @@ void MainComponent::startDecode()
     delete[] pixels;
     delete[] pixelsNew;
     //
-    //clock->setVisible(false);
-    //deleteAndZero(loadC);
-    //*loadingFlag = false;
-    //loadC->setVisible(false);
     resized();
     repaint();
 }

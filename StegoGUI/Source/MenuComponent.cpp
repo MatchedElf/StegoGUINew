@@ -186,6 +186,7 @@ void MenuComponent::LoadFile(bool image)
             else
             {
                auto url = URL(choosedFile);
+               //secrName = url.toString(false);
                secrName = String((std::wstring(choosedFile.getFullPathName().toWideCharPointer())).c_str());
                //secrName = choosedFile.getRelativePathFrom(File::getCurrentWorkingDirectory());
                //File(menuC->imageName).getRelativePathFrom(File::getCurrentWorkingDirectory());
