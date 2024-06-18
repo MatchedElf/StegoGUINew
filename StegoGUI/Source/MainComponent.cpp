@@ -37,12 +37,12 @@ MainComponent::MainComponent()
     Image startLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("play.png"));
     startBut = new ImageButton();
     startBut->addListener(this);
-    startBut->setImages(false, true, true, startLogo, 1.0, Colours::transparentWhite, startLogo, 0.3, Colours::transparentWhite, startLogo, 1.0, Colours::transparentWhite);
+    startBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 1.0f, Colours::transparentWhite);
     //
     Image menuLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("menu.png"));
     hideBut = new ImageButton();
     hideBut->addListener(this);
-    hideBut->setImages(false, true, true, menuLogo, 1.0, Colours::transparentWhite, menuLogo, 0.3, Colours::transparentWhite, menuLogo, 1.0, Colours::transparentWhite);
+    hideBut->setImages(false, true, true, menuLogo, 1.0f, Colours::transparentWhite, menuLogo, 0.3f, Colours::transparentWhite, menuLogo, 1.0f, Colours::transparentWhite);
     //
     orig = new ImageComponent();
     orig->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
@@ -55,7 +55,7 @@ MainComponent::MainComponent()
     newIm = new ImageComponent();
     newIm->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
     addAndMakeVisible(newIm);
-    //
+    ///
     font.setHeight(25);
     //
     origLabel = new Label();
@@ -304,7 +304,7 @@ void MainComponent::paintOrig(bool _error)
 //
 void MainComponent::startDecode()
 {
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
     origInfo->setText("In progress", sendNotification);
     decodeInfo->setText("In progress", sendNotification);
     decodeText->setText("-", sendNotification);
@@ -368,7 +368,7 @@ void MainComponent::startDecode()
         }
         if (menuC->selectedTr == 1)
         {
-            vector<int> key1 = CreateKey("key.txt", size, vect.size(), true);
+            vector<int> key1 = CreateKey("key.txt", size, (int)vect.size(), true);
             //
             encodeDCT(width, pixelsNew, vect, secr_size, difference, key1);
             WriteToFile(newFile, pixelsNew, height, width);
@@ -381,7 +381,7 @@ void MainComponent::startDecode()
         //
         else if (menuC->selectedTr == 2)
         {
-            vector<int> key1 = CreateKey("key.txt", size, vect.size(), true);
+            vector<int> key1 = CreateKey("key.txt", size, (int)vect.size(), true);
             //
             encodeDFT(width, pixelsNew, vect, secr_size, differenceComplex, key1);
             WriteToFile(newFile, pixelsNew, height, width);
@@ -392,7 +392,7 @@ void MainComponent::startDecode()
         //
         else if (menuC->selectedTr == 3)
         {
-            vector<int> key = CreateKey("key.txt", size, vect.size(), false);
+            vector<int> key = CreateKey("key.txt", size, (int)vect.size(), false);
             //
             encodeLSB(width, pixelsNew, vect, secr_size);
             WriteToFile(newFile, pixelsNew, height, width);

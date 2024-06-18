@@ -28,7 +28,7 @@ void DCT(RGB** pixels, float** result, int x, int y) {
 			float sum = 0;
 			for (int k = 0; k < 8; k++) {
 				for (int l = 0; l < 8; l++) {
-					sum += pixels[x + k][y + l].blue * cos((2 * k + 1) * u * PI / 16) * cos((2 * l + 1) * v * PI / 16);
+					sum += (float)(pixels[x + k][y + l].blue * cos((2 * k + 1) * u * PI / 16) * cos((2 * l + 1) * v * PI / 16));
 				}
 			}
 			result[u][v] = cu * cv * sum;
@@ -42,7 +42,7 @@ void IDCT(RGB** pixels, float** result, int x, int y) {
 			float sum = 0;
 			for (int u = 0; u < 8; u++) {
 				for (int v = 0; v < 8; v++) {
-					sum += coef(u) * coef(v) * result[u][v] * cos((2 * k + 1) * u * PI / 16) * cos((2 * l + 1) * v * PI / 16);
+					sum += (float)(coef(u) * coef(v) * result[u][v] * cos((2 * k + 1) * u * PI / 16) * cos((2 * l + 1) * v * PI / 16));
 				}
 			}
 			pixels[x + k][y + l].blue = sat(sum);
@@ -640,7 +640,7 @@ vector<bitset<8>> ReadWord(const char* _filename, int& word_size)
 		secr += "\n";
 	}
 	//
-	word_size = secr.size();
+	word_size = (int)secr.size();
 	vector<bitset<8>> vect;
 	bitset<16> secr_size(secr.size());
 	bitset<8> empty;
@@ -690,9 +690,9 @@ void CreateDiffFile(const char* _filename1, const char* _filename2, const char* 
 			{
 				int diff = (int)fabs(pixels1[i][j].blue - pixels2[i][j].blue);
 				//
-				pixelsNew[i][j].red = sat(0 + 100 * ( (diff - 2)));
-				pixelsNew[i][j].green = sat(255 - 200 * (diff - 1));
-				pixelsNew[i][j].blue = sat(255 * (diff > 1) - 100 * (diff - 2));
+				pixelsNew[i][j].red = sat((float)(0 + 100 * ( (diff - 2))));
+				pixelsNew[i][j].green = sat((float)(255 - 200 * (diff - 1)));
+				pixelsNew[i][j].blue = sat((float)(255 * (diff > 1) - 100 * (diff - 2)));
 			}
 			else
 			{

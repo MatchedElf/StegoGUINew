@@ -29,7 +29,7 @@ void LoadWindow::timerCallback()
 //
 void LoadWindow::paint(juce::Graphics& g)
 {
-   juce::Rectangle<float> rec(getWidth(), getHeight());
+   juce::Rectangle<float> rec((float)getWidth(), (float)getHeight());
    String file = "clock" + status + ".png";
    Image clockIm = ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile(file));
    g.drawImage(clockIm, rec, true);

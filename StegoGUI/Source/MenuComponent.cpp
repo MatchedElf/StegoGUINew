@@ -111,7 +111,7 @@ void MenuComponent::paint(juce::Graphics& g)
 
 void MenuComponent::resized()
 {
-   FSizer->layOutComponents(compsList, 9, 0, getHeight() * 0.05, getWidth(), getHeight() * 0.95, true, true);
+   FSizer->layOutComponents(compsList, 9, 0, (int)(getHeight() * 0.05), getWidth(), (int)(getHeight() * 0.95), true, true);
 }
 
 void MenuComponent::buttonClicked(Button* butt)
