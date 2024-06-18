@@ -37,12 +37,12 @@ MainComponent::MainComponent()
     Image startLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("play.png"));
     startBut = new ImageButton();
     startBut->addListener(this);
-    startBut->setImages(false, true, true, startLogo, 1, Colours::transparentWhite, startLogo, 0.3, Colours::transparentWhite, startLogo, 1, Colours::transparentWhite);
+    startBut->setImages(false, true, true, startLogo, 1.0, Colours::transparentWhite, startLogo, 0.3, Colours::transparentWhite, startLogo, 1.0, Colours::transparentWhite);
     //
     Image menuLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("menu.png"));
     hideBut = new ImageButton();
     hideBut->addListener(this);
-    hideBut->setImages(false, true, true, menuLogo, 1, Colours::transparentWhite, menuLogo, 0.3, Colours::transparentWhite, menuLogo, 1, Colours::transparentWhite);
+    hideBut->setImages(false, true, true, menuLogo, 1.0, Colours::transparentWhite, menuLogo, 0.3, Colours::transparentWhite, menuLogo, 1.0, Colours::transparentWhite);
     //
     orig = new ImageComponent();
     orig->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
@@ -159,9 +159,9 @@ void MainComponent::resized()
 {
    if (startScreen)
    {
-      openTitle->setBounds((int)getWidth() * 0.3, (int)getHeight() * 0.22, (int)getWidth() * 0.4, (int)getHeight() * 0.08);
-      openLogo->setBounds((int)getWidth() * 0.3, (int)getHeight() * 0.3, (int)getWidth() * 0.4, (int)getHeight() * 0.4);
-      startBut->setBounds((int)getWidth() * 0.45, (int)getHeight() * 0.75, (int)getWidth() * 0.1, (int)getHeight() * 0.1);
+      openTitle->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.22), (int)(getWidth() * 0.4), (int)(getHeight() * 0.08));
+      openLogo->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.3), (int)(getWidth() * 0.4), (int)(getHeight() * 0.4));
+      startBut->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.75), (int)(getWidth() * 0.1), (int)(getHeight() * 0.1));
    }
    else
    {
@@ -175,27 +175,28 @@ void MainComponent::resized()
       //
       grid.items = { GridItem(origTitle), GridItem(diffTitle), GridItem(newTitle), GridItem(orig), GridItem(diff), GridItem(newIm), GridItem(origLabel), GridItem(decodeLabel), GridItem(textLabel), GridItem(origInfo), GridItem(decodeInfo), GridItem(decodeText) };
       //
-      menuC->setBounds(0, 0, (int)getWidth() * 0.1 - 10, (int)getHeight());
-
-      hideBut->setBounds(0, 0, (int)getWidth() * 0.05 - 10, (int)(int)getHeight() * 0.05 - 5);
-      startBut->setBounds((int)getWidth() * 0.05, 0, (int)getWidth() * 0.05 - 10, (int)getHeight() * 0.05 - 5);
+      menuC->setBounds(0, 0, (int)(getWidth() * 0.1) - 10, getHeight());
+      //
+      hideBut->setBounds(0, 0, (int)(getWidth() * 0.05) - 10, (int)(getHeight() * 0.05) - 5);
+      startBut->setBounds((int)(getWidth() * 0.05), 0, (int)(getWidth() * 0.05) - 10, (int)(getHeight() * 0.05) - 5);
       //
       if (hided)
       {
-         grid.performLayout(juce::Rectangle<int>(0, (int)getHeight() * 0.05, getWidth(), (int)getHeight() * 0.94));
+         grid.performLayout(juce::Rectangle<int>(0, (int)(getHeight() * 0.05), getWidth(), (int)(getHeight() * 0.94)));
+         error->setBounds((int)(getWidth() * 0.35), (int)(getHeight() * 0.25), (int)(getWidth() * 0.3), (int)(getHeight() * 0.3));
+         closeErr->setBounds((int)(getWidth() * 0.4), (int)(getHeight() * 0.55), (int)(getWidth() * 0.2), (int)(getHeight() * 0.2));
       }
       else
       {
-         grid.performLayout(juce::Rectangle<int>((int)getWidth() * 0.1, 0, (int)getWidth() * 0.9, (int)getHeight() * 0.99));
+         grid.performLayout(juce::Rectangle<int>((int)(getWidth() * 0.1), 0, (int)(getWidth() * 0.9), (int)(getHeight() * 0.99)));
+         error->setBounds((int)(getWidth() * 0.4), (int)(getHeight() * 0.25), (int)(getWidth() * 0.3), (int)(getHeight() * 0.3));
+         closeErr->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.55), (int)(getWidth() * 0.2), (int)(getHeight() * 0.2));
       }
-      error->setBounds((int)(getWidth() * 0.35), (int)getHeight() * 0.25, (int)getWidth() * 0.3, (int)getHeight() * 0.3);
-      closeErr->setBounds((int)(getWidth() * 0.4), (int)getHeight() * 0.55, (int)getWidth() * 0.2, (int)getHeight() * 0.2);
    }
 }
 
 void MainComponent::buttonClicked(Button* butt)
 {
-   int t = 1;
     if (butt == startBut)
     {
        if (!startScreen)
@@ -206,7 +207,7 @@ void MainComponent::buttonClicked(Button* butt)
                                                        TRANS(std::wstring(L"Процесс идет...").c_str()),
                                                        MessageBoxIconType::NoIcon);
              processWnd->setColour(processWnd->backgroundColourId, juce::Colour::fromRGBA(255, 255, 255, 255));
-             processWnd->setBounds((int)getWidth() * 0.45, (int)getHeight() * 0.3, (int)getWidth() * 0.1, (int)getHeight() * 0.4);
+             processWnd->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.3), (int)(getWidth() * 0.1), (int)(getHeight() * 0.4));
              processWnd->enterModalState(true, nullptr, true);
              MessageManager::callAsync([this, processWnd]()
                 {
@@ -306,7 +307,7 @@ void MainComponent::startDecode()
     srand(time(NULL));
     origInfo->setText("In progress", sendNotification);
     decodeInfo->setText("In progress", sendNotification);
-    decodeText->setText("-", sendNotificationAsync);
+    decodeText->setText("-", sendNotification);
     //
     int difference = 5;
     complex<double> differenceComplex(2.0, 0.0);
@@ -347,7 +348,7 @@ void MainComponent::startDecode()
         }
         else if (menuC->selectedTr == 3)
         {
-            string result = decodeLSB(height, width, pixelsNew, vect, true, vectSzhat);
+            string result = decodeLSB(width, pixelsNew, vect, true, vectSzhat);
             decodeText->setText(result, sendNotification);
         }
     }
@@ -369,7 +370,7 @@ void MainComponent::startDecode()
         {
             vector<int> key1 = CreateKey("key.txt", size, vect.size(), true);
             //
-            encodeDCT(height, width, pixelsNew, vect, secr_size, difference, key1);
+            encodeDCT(width, pixelsNew, vect, secr_size, difference, key1);
             WriteToFile(newFile, pixelsNew, height, width);
             //
             string result = decodeDCT(height, width, pixels, pixelsNew, vect, true, vectSzhat, key1);
@@ -382,7 +383,7 @@ void MainComponent::startDecode()
         {
             vector<int> key1 = CreateKey("key.txt", size, vect.size(), true);
             //
-            encodeDFT(height, width, pixelsNew, vect, secr_size, differenceComplex, key1);
+            encodeDFT(width, pixelsNew, vect, secr_size, differenceComplex, key1);
             WriteToFile(newFile, pixelsNew, height, width);
             //
             string result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key1);
@@ -393,15 +394,14 @@ void MainComponent::startDecode()
         {
             vector<int> key = CreateKey("key.txt", size, vect.size(), false);
             //
-            encodeLSB(height, width, pixelsNew, vect, secr_size);
+            encodeLSB(width, pixelsNew, vect, secr_size);
             WriteToFile(newFile, pixelsNew, height, width);
             //
-            string result = decodeLSB(height, width, pixelsNew, vect, true, vectSzhat);
+            string result = decodeLSB(width, pixelsNew, vect, true, vectSzhat);
             decodeText->setText(result, sendNotification);
         }
         fclose(newFile);
     }
-
     //
     long double redP, greenP, blueP;
     PSNR(pixels, pixelsNew, redP, greenP, blueP, height, width);

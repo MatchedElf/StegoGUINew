@@ -4,7 +4,7 @@ unsigned decodeBMP(std::vector<unsigned char>& image, unsigned& w, unsigned& h, 
 {
    static const unsigned MINHEADER = 54; //minimum BMP header size
 
-   if (bmp.size() < MINHEADER) return -1;
+   if (bmp.size() < MINHEADER) return (unsigned int) - 1;
    if (bmp[0] != 'B' || bmp[1] != 'M') return 1; //It's not a BMP file if it doesn't start with marker 'BM'
    unsigned pixeloffset = bmp[10] + 256 * bmp[11]; //where the pixel data starts
    //read width and height from BMP header
@@ -68,4 +68,5 @@ int doDecode(const char* in, const char* out)
    }
 
    lodepng::save_file(png, out);
+   return 0;
 }

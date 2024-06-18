@@ -4,7 +4,7 @@ BYTE sat(float x)
 {
 	if (x < 0) return 0;
 	if (x > 255) return 255;
-	else return x;
+	else return (BYTE)x;
 }
 //
 RGB MakeColor(BYTE r, BYTE g, BYTE b) {
@@ -79,7 +79,7 @@ void IDFT(RGB** pixels, complex<double>** result, int x, int y) {
 					sum += pixel * e;
 				}
 			}
-			pixels[x + k][y + l].blue = sat(sum.real());
+			pixels[x + k][y + l].blue = sat((float)sum.real());
 		}
 	}
 }
@@ -159,7 +159,7 @@ double CorrCoef(RGB** orig, RGB** re, int height, int width)
 	return chisl / znam;
 }
 //
-vector<float**> encodeDCT(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key) {
+vector<float**> encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key) {
 	vector<float**> matrixes;
 	cout << "Before DCT" << endl;
 	int count = 0;
@@ -266,7 +266,7 @@ string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 	return result;
 }
 //
-vector<complex<double>**> encodeDFT(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key) {
+vector<complex<double>**> encodeDFT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key) {
 	vector<complex<double>**> matrixes;
 	cout << "Before DFT" << endl;
 	int count = 0;
@@ -373,7 +373,7 @@ string decodeDFT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 	return result;
 }
 //
-void encodeLSB(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size) {
+void encodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size) {
 	ifstream keyRead("key.txt");
 	if (!(keyRead.is_open())) {
 		cout << "Error while opening file." << endl;
@@ -412,7 +412,7 @@ void encodeLSB(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, b
 	cout << "After LSB" << endl;
 }
 //
-string decodeLSB(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat) {
+string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat) {
 	BYTE channelByte;
 	ifstream keyRead1("key.txt");
 	if (!(keyRead1.is_open())) {

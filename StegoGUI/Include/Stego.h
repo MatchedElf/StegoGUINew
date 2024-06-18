@@ -2,8 +2,6 @@
 #define STEGO_H
 #endif // !STEGO_H
 
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
@@ -22,7 +20,7 @@
 
 using namespace std;
 
-typedef struct RGB {
+struct RGB {
 	BYTE blue;
 	BYTE green;
 	BYTE red;
@@ -49,17 +47,17 @@ double AverageIntensity(RGB** orig, int height, int width);
 //
 double CorrCoef(RGB** orig, RGB** re, int height, int width);
 //
-vector<float**> encodeDCT(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key);
+vector<float**> encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key);
 //
 string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat, vector<int> key);
 //
-vector<complex<double>**> encodeDFT(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key);
+vector<complex<double>**> encodeDFT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key);
 //
 string decodeDFT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key);
 //
-void encodeLSB(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size);
+void encodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size);
 //
-string decodeLSB(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat);
+string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat);
 //
 RGB** ReadFile(const char* _filename, int& h, int& w, int& size, juce::String& retStr1);
 //
