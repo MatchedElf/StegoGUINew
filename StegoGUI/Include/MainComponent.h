@@ -5,6 +5,7 @@
 #include "DecodeBMP.h"
 #include "MenuComponent.h"
 #include "LoadWindow.h"
+#include <cstdlib>
 //
 using namespace juce;
 //==============================================================================

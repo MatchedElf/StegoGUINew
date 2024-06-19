@@ -158,6 +158,8 @@ void MenuComponent::LoadFile(bool image)
       myChooser->launchAsync(folderChooserFlags, [this](const FileChooser& chooser)
          {
             File choosedFile(chooser.getResult());
+            String tmp = chooser.getURLResult().getFileName();
+            choosedFile.copyFileTo(File::getCurrentWorkingDirectory().getParentDirectory().getParentDirectory().getChildFile("Images/Results/origCopy.bmp"));
             if (choosedFile.getFullPathName().isEmpty()) {
                imageName = "-1";
                imageTitle->setText(String((std::wstring(L"Изображение:\nне выбрано")).c_str()), dontSendNotification);

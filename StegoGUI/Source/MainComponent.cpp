@@ -4,6 +4,13 @@
 MainComponent::MainComponent()
     : Component("MainComponent")
 {
+    //
+    ///*system("echo test > pwdTest.txt");
+    /*system("PowerShell > output.txt");
+    system("g++ --version > output.txt");*/
+    ////system("g++ main.cpp -o main.exe > output.txt");
+    //system("pause");
+    //std::cout << "Test" << std::endl;
     setLookAndFeel(this);
     Font font;
     font.setHeight(25);
@@ -277,7 +284,8 @@ void MainComponent::paintOrig(bool _error)
       int size;
       String info;
       //
-      ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
+      //ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
+      ReadFile("../../Images/Results/origCopy.bmp", height, width, size, info);
       origInfo->setText(info, sendNotification);
       if ((size < 100) || (height < 32) || (height > 5000) || (width < 32) || (width > 5000))
       {
@@ -286,7 +294,8 @@ void MainComponent::paintOrig(bool _error)
       }
       else
       {
-         doDecode(menuC->imageName.toRawUTF8(), "orig.png");
+         //doDecode(menuC->imageName.toRawUTF8(), "orig.png");
+         doDecode("../../Images/Results/origCopy.bmp", "orig.png");
          orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
          startBut->setEnabled(true);
       }
@@ -326,7 +335,8 @@ void MainComponent::startDecode()
     //
     String info;
     //
-    RGB** pixels = ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
+    //RGB** pixels = ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
+    RGB** pixels = ReadFile("../../Images/Results/origCopy.bmp", height, width, size, info);
     RGB** pixelsNew;
     //
     origInfo->setText(info, sendNotification);
@@ -354,9 +364,11 @@ void MainComponent::startDecode()
     }
     else
     {
-        FILE* newFile = Create_File("../../Images/Results/new.bmp", menuC->imageName.toRawUTF8());
+        //FILE* newFile = Create_File("../../Images/Results/new.bmp", menuC->imageName.toRawUTF8());
+        FILE* newFile = Create_File("../../Images/Results/new.bmp", "../../Images/Results/origCopy.bmp");
         //
-        pixelsNew = ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
+        //pixelsNew = ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
+        pixelsNew = ReadFile("../../Images/Results/origCopy.bmp", height, width, size, info);
         //
         if (menuC->selectedTr != 3)
         {
@@ -437,7 +449,8 @@ void MainComponent::startDecode()
     inf += String(to_string(corr));
     inf += "\n";
     //
-    CreateDiffFile(menuC->imageName.toRawUTF8(), "../../Images/Results/new.bmp", "diff.bmp");
+    //CreateDiffFile(menuC->imageName.toRawUTF8(), "../../Images/Results/new.bmp", "diff.bmp");
+    CreateDiffFile("../../Images/Results/origCopy.bmp", "../../Images/Results/new.bmp", "diff.bmp");
     doDecode("diff.bmp", "diff.png");
     //
     decodeInfo->setText(inf, sendNotification);
@@ -452,7 +465,8 @@ void MainComponent::startDecode()
     String tmp = File(menuC->imageName).getRelativePathFrom(File::getCurrentWorkingDirectory());
     if (tmp != origTmp)
     {
-       FILE* origCopyFile = Create_File("../../Images/orig.bmp", menuC->imageName.toRawUTF8());
+       //FILE* origCopyFile = Create_File("../../Images/orig.bmp", menuC->imageName.toRawUTF8());
+       FILE* origCopyFile = Create_File("../../Images/orig.bmp", "../../Images/Results/origCopy.bmp");
        if (origCopyFile != NULL)
        {
          WriteToFile(origCopyFile, pixels, height, width);

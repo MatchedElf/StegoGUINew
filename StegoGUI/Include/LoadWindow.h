@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+//#include <iostream>
 //
 using namespace juce;
 
@@ -13,4 +14,7 @@ public:
    void paint(juce::Graphics&) override;
 private:
    String status = "0";
+   //ImageComponent* clock;
+   std::vector<Image> vect;
+   int counter = 0;
 };
