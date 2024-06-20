@@ -114,15 +114,21 @@ MainComponent::MainComponent()
     //
     error = new ImageComponent();
     error->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("error.png")));
-    addAndMakeVisible(error);
-    error->setVisible(false);
     //
     closeErr = new TextButton(String((std::wstring(L"Файлы не выбраны!!!\nНажать сюда для закрытия")).c_str()));
     closeErr->addListener(this);
-    addAndMakeVisible(closeErr);
-    closeErr->setVisible(false);
     //
     chooseChecker->addComponentListener(this);
+    //
+    black = new Label();
+    addAndMakeVisible(black);
+    black->setColour(Label::backgroundColourId, juce::Colour::fromRGBA(0, 0, 0, 128));
+    //
+    addAndMakeVisible(error);
+    error->setVisible(false);
+    addAndMakeVisible(closeErr);
+    black->setVisible(false);
+    closeErr->setVisible(false);
     setSize(600, 400);
     //
     doDecode("orig.bmp", "orig.png");
@@ -151,6 +157,7 @@ MainComponent::~MainComponent()
     deleteAndZero(error);
     deleteAndZero(closeErr);
     deleteAndZero(chooseChecker);
+    deleteAndZero(black);
 }
 
 //==============================================================================
@@ -159,7 +166,6 @@ void MainComponent::paint(juce::Graphics& g)
     g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
     g.setFont(juce::Font(16.0f));
     g.setColour(juce::Colours::white);
-
 }
 
 void MainComponent::resized()
@@ -199,6 +205,7 @@ void MainComponent::resized()
          error->setBounds((int)(getWidth() * 0.4), (int)(getHeight() * 0.25), (int)(getWidth() * 0.3), (int)(getHeight() * 0.3));
          closeErr->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.55), (int)(getWidth() * 0.2), (int)(getHeight() * 0.2));
       }
+      black->setBounds(0, 0, getWidth(), getHeight());
    }
 }
 
@@ -229,9 +236,10 @@ void MainComponent::buttonClicked(Button* butt)
           else
           {
              error->setVisible(true);
+             black->setVisible(true);
+             repaint();
              closeErr->setVisible(true);
-             closeErr->enterModalState(true, nullptr, false);
-             
+             closeErr->enterModalState(true, nullptr, false);             
              resized();
           }
        }
@@ -256,6 +264,8 @@ void MainComponent::buttonClicked(Button* butt)
     {
        error->setVisible(false);
        closeErr->setVisible(false);
+       black->setVisible(false);
+       repaint();
        closeErr->exitModalState();
        resized();
     }
@@ -285,7 +295,7 @@ void MainComponent::paintOrig(bool _error)
       String info;
       //
       //ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
-      ReadFile("../../Images/Results/origCopy.bmp", height, width, size, info);
+      ReadFile("../../Images/orig.bmp", height, width, size, info);
       origInfo->setText(info, sendNotification);
       if ((size < 100) || (height < 32) || (height > 5000) || (width < 32) || (width > 5000))
       {
@@ -295,7 +305,7 @@ void MainComponent::paintOrig(bool _error)
       else
       {
          //doDecode(menuC->imageName.toRawUTF8(), "orig.png");
-         doDecode("../../Images/Results/origCopy.bmp", "orig.png");
+         doDecode("../../Images/orig.bmp", "orig.png");
          orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
          startBut->setEnabled(true);
       }
@@ -322,7 +332,7 @@ void MainComponent::startDecode()
     complex<double> differenceComplex(2.0, 0.0);
     int word_size = 0;
     //
-    vector<bitset<8>> vect = ReadWord(menuC->secrName.toRawUTF8(), word_size);
+    vector<bitset<8>> vect = ReadWord("../../Messages/message.txt", word_size);
     vector<bitset<8>> vectSzhat;
     bitset<16> secr_size(word_size);
     bitset<8> empty;
@@ -336,7 +346,7 @@ void MainComponent::startDecode()
     String info;
     //
     //RGB** pixels = ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
-    RGB** pixels = ReadFile("../../Images/Results/origCopy.bmp", height, width, size, info);
+    RGB** pixels = ReadFile("../../Images/orig.bmp", height, width, size, info);
     RGB** pixelsNew;
     //
     origInfo->setText(info, sendNotification);
@@ -365,10 +375,10 @@ void MainComponent::startDecode()
     else
     {
         //FILE* newFile = Create_File("../../Images/Results/new.bmp", menuC->imageName.toRawUTF8());
-        FILE* newFile = Create_File("../../Images/Results/new.bmp", "../../Images/Results/origCopy.bmp");
+        FILE* newFile = Create_File("../../Images/Results/new.bmp", "../../Images/orig.bmp");
         //
         //pixelsNew = ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
-        pixelsNew = ReadFile("../../Images/Results/origCopy.bmp", height, width, size, info);
+        pixelsNew = ReadFile("../../Images/orig.bmp", height, width, size, info);
         //
         if (menuC->selectedTr != 3)
         {
@@ -450,7 +460,7 @@ void MainComponent::startDecode()
     inf += "\n";
     //
     //CreateDiffFile(menuC->imageName.toRawUTF8(), "../../Images/Results/new.bmp", "diff.bmp");
-    CreateDiffFile("../../Images/Results/origCopy.bmp", "../../Images/Results/new.bmp", "diff.bmp");
+    CreateDiffFile("../../Images/orig.bmp", "../../Images/Results/new.bmp", "diff.bmp");
     doDecode("diff.bmp", "diff.png");
     //
     decodeInfo->setText(inf, sendNotification);
@@ -461,18 +471,18 @@ void MainComponent::startDecode()
     newIm->repaint();
     repaint();
     resized();
-    String origTmp = "..\\..\\Images\\orig.bmp";
-    String tmp = File(menuC->imageName).getRelativePathFrom(File::getCurrentWorkingDirectory());
-    if (tmp != origTmp)
-    {
-       //FILE* origCopyFile = Create_File("../../Images/orig.bmp", menuC->imageName.toRawUTF8());
-       FILE* origCopyFile = Create_File("../../Images/orig.bmp", "../../Images/Results/origCopy.bmp");
-       if (origCopyFile != NULL)
-       {
-         WriteToFile(origCopyFile, pixels, height, width);
-         fclose(origCopyFile);
-       }
-    }
+    //String origTmp = "..\\..\\Images\\orig.bmp";
+    //String tmp = File(menuC->imageName).getRelativePathFrom(File::getCurrentWorkingDirectory());
+    //if (tmp != origTmp)
+    //{
+    //   //FILE* origCopyFile = Create_File("../../Images/orig.bmp", menuC->imageName.toRawUTF8());
+    //   FILE* origCopyFile = Create_File("../../Images/orig.bmp", "../../Images/Results/origCopy.bmp");
+    //   if (origCopyFile != NULL)
+    //   {
+    //     WriteToFile(origCopyFile, pixels, height, width);
+    //     fclose(origCopyFile);
+    //   }
+    //}
     for (int i = 0; i < height + 2; i++)
     {
         delete[] pixels[i];

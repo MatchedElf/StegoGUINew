@@ -442,7 +442,6 @@ string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean fla
 			pixCount++;
 			if ((pixCount % 8) == 0) {
 				result += read.to_ulong();
-				//cout << result << endl;
 				if (flag) {
 					vectSzhat.push_back(read);
 				}

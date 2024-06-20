@@ -159,7 +159,6 @@ void MenuComponent::LoadFile(bool image)
          {
             File choosedFile(chooser.getResult());
             String tmp = chooser.getURLResult().getFileName();
-            choosedFile.copyFileTo(File::getCurrentWorkingDirectory().getParentDirectory().getParentDirectory().getChildFile("Images/Results/origCopy.bmp"));
             if (choosedFile.getFullPathName().isEmpty()) {
                imageName = "-1";
                imageTitle->setText(String((std::wstring(L"Изображение:\nне выбрано")).c_str()), dontSendNotification);
@@ -167,8 +166,10 @@ void MenuComponent::LoadFile(bool image)
             }
             else
             {
+               choosedFile.copyFileTo(File::getCurrentWorkingDirectory().getParentDirectory().getParentDirectory().getChildFile("Images/orig.bmp"));
                auto url = URL(choosedFile);
-               imageName = String((std::wstring(choosedFile.getFullPathName().toWideCharPointer())).c_str());
+               //imageName = String((std::wstring(choosedFile.getFullPathName().toWideCharPointer())).c_str());
+               imageName = choosedFile.getFullPathName().toWideCharPointer();
                imageTitle->setText(String((std::wstring(L"Изображение:\n")).c_str()) + choosedFile.getFileName(), dontSendNotification);
                imageTitle->setColour(imageTitle->textColourId, Colours::green);
             }
@@ -187,6 +188,7 @@ void MenuComponent::LoadFile(bool image)
             }
             else
             {
+               choosedFile.copyFileTo(File::getCurrentWorkingDirectory().getParentDirectory().getParentDirectory().getChildFile("Messages/message.txt"));
                auto url = URL(choosedFile);
                //secrName = url.toString(false);
                secrName = String((std::wstring(choosedFile.getFullPathName().toWideCharPointer())).c_str());
