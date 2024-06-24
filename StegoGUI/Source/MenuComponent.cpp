@@ -83,6 +83,9 @@ MenuComponent::MenuComponent(Component* _costyl)
    FSizer->setItemLayout(7, 1, 100000, -1);
    FSizer->setItemLayout(8, 1, 100000, -1);
    costyl = _costyl;
+
+   /*imageFile = new File();
+   messageFile = new File();*/
 }
 
 MenuComponent::~MenuComponent()
@@ -163,15 +166,14 @@ void MenuComponent::LoadFile(bool image)
                imageName = "-1";
                imageTitle->setText(String((std::wstring(L"Изображение:\nне выбрано")).c_str()), dontSendNotification);
                imageTitle->setColour(imageTitle->textColourId, Colours::red);
+               //imageFile = &nullptr;
             }
             else
             {
-               choosedFile.copyFileTo(File::getCurrentWorkingDirectory().getParentDirectory().getParentDirectory().getChildFile("Images/orig.bmp"));
-               auto url = URL(choosedFile);
-               //imageName = String((std::wstring(choosedFile.getFullPathName().toWideCharPointer())).c_str());
                imageName = choosedFile.getFullPathName().toWideCharPointer();
                imageTitle->setText(String((std::wstring(L"Изображение:\n")).c_str()) + choosedFile.getFileName(), dontSendNotification);
                imageTitle->setColour(imageTitle->textColourId, Colours::green);
+               imageFile = choosedFile;
             }
             costyl->setName(String(rand()));
          });
@@ -185,17 +187,14 @@ void MenuComponent::LoadFile(bool image)
                secrName = "-1";
                secrTitle->setText(String((std::wstring(L"Сообщение:\nне выбрано")).c_str()), dontSendNotification);
                secrTitle->setColour(secrTitle->textColourId, Colours::red);
+               //messageFile = nullptr;
             }
             else
             {
-               choosedFile.copyFileTo(File::getCurrentWorkingDirectory().getParentDirectory().getParentDirectory().getChildFile("Messages/message.txt"));
-               auto url = URL(choosedFile);
-               //secrName = url.toString(false);
                secrName = String((std::wstring(choosedFile.getFullPathName().toWideCharPointer())).c_str());
-               //secrName = choosedFile.getRelativePathFrom(File::getCurrentWorkingDirectory());
-               //File(menuC->imageName).getRelativePathFrom(File::getCurrentWorkingDirectory());
                secrTitle->setText(String((std::wstring(L"Сообщение:\n")).c_str()) + choosedFile.getFileName(), dontSendNotification);
                secrTitle->setColour(secrTitle->textColourId, Colours::green);
+               messageFile = choosedFile;
             }
          });
    }

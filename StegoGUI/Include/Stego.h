@@ -59,9 +59,9 @@ void encodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> se
 //
 string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat);
 //
-RGB** ReadFile(const char* _filename, int& h, int& w, int& size, juce::String& retStr1);
+RGB** ReadFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1);
 //
-FILE* Create_File(const char* _filename, const char* _origFile);
+FILE* Create_File(const char* _filename, const wchar_t* _origFile);
 //
 vector<int> CreateKey(const char* _filename, int size, int vectSize, bool blocks);
 //
@@ -69,8 +69,8 @@ vector<int> ReadKey(const char* _filename, vector<bitset<8>> vect);
 //
 void WriteToFile(FILE* newFile, RGB** pixels, int height, int width);
 //
-vector<bitset<8>> ReadWord(const char* _filename, int& word_size);
+vector<bitset<8>> ReadWord(const wchar_t* _filename, int& word_size);
 //
 double DolyaBitov(vector<bitset<8>> _orig, vector<bitset<8>> _new);
 //
-void CreateDiffFile(const char* _filename1, const char* _filename2, const char* _newfile);
+void CreateDiffFile(const wchar_t* _filename1, const wchar_t* _filename2, const char* _newfile);

@@ -46,7 +46,7 @@ unsigned decodeBMP(std::vector<unsigned char>& image, unsigned& w, unsigned& h, 
    return 0;
 }
 
-int doDecode(const char* in, const char* out)
+int doDecode(const wchar_t* in, const char* out)
 {
    std::vector<unsigned char> bmp;
    lodepng::load_file(bmp, in);

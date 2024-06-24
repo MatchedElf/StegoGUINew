@@ -122,7 +122,7 @@ MainComponent::MainComponent()
     //
     black = new Label();
     addAndMakeVisible(black);
-    black->setColour(Label::backgroundColourId, juce::Colour::fromRGBA(0, 0, 0, 128));
+    black->setColour(Label::backgroundColourId, juce::Colour::fromRGBA(0, 0, 0, 180));
     //
     addAndMakeVisible(error);
     error->setVisible(false);
@@ -130,8 +130,6 @@ MainComponent::MainComponent()
     black->setVisible(false);
     closeErr->setVisible(false);
     setSize(600, 400);
-    //
-    doDecode("orig.bmp", "orig.png");
 }
 
 MainComponent::~MainComponent()
@@ -294,8 +292,7 @@ void MainComponent::paintOrig(bool _error)
       int size;
       String info;
       //
-      //ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
-      ReadFile("../../Images/orig.bmp", height, width, size, info);
+      ReadFile(menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
       origInfo->setText(info, sendNotification);
       if ((size < 100) || (height < 32) || (height > 5000) || (width < 32) || (width > 5000))
       {
@@ -304,8 +301,7 @@ void MainComponent::paintOrig(bool _error)
       }
       else
       {
-         //doDecode(menuC->imageName.toRawUTF8(), "orig.png");
-         doDecode("../../Images/orig.bmp", "orig.png");
+         doDecode(menuC->imageFile.getFullPathName().toWideCharPointer(), "orig.png");
          orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
          startBut->setEnabled(true);
       }
@@ -332,7 +328,7 @@ void MainComponent::startDecode()
     complex<double> differenceComplex(2.0, 0.0);
     int word_size = 0;
     //
-    vector<bitset<8>> vect = ReadWord("../../Messages/message.txt", word_size);
+    vector<bitset<8>> vect = ReadWord(menuC->messageFile.getFullPathName().toWideCharPointer(), word_size);
     vector<bitset<8>> vectSzhat;
     bitset<16> secr_size(word_size);
     bitset<8> empty;
@@ -345,15 +341,14 @@ void MainComponent::startDecode()
     //
     String info;
     //
-    //RGB** pixels = ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
-    RGB** pixels = ReadFile("../../Images/orig.bmp", height, width, size, info);
+    RGB** pixels = ReadFile(menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
     RGB** pixelsNew;
     //
     origInfo->setText(info, sendNotification);
     //
     if (menuC->isAttack)
     {
-        pixelsNew = ReadFile("../../Images/Results/new.bmp", height, width, size, info);
+        pixelsNew = ReadFile(L"../../Images/Results/new.bmp", height, width, size, info);
         vector<int> key = ReadKey("key.txt", vect);
         //
         if (menuC->selectedTr == 1)
@@ -374,11 +369,9 @@ void MainComponent::startDecode()
     }
     else
     {
-        //FILE* newFile = Create_File("../../Images/Results/new.bmp", menuC->imageName.toRawUTF8());
-        FILE* newFile = Create_File("../../Images/Results/new.bmp", "../../Images/orig.bmp");
+        FILE* newFile = Create_File("../../Images/Results/new.bmp", menuC->imageFile.getFullPathName().toWideCharPointer());
         //
-        //pixelsNew = ReadFile(menuC->imageName.toRawUTF8(), height, width, size, info);
-        pixelsNew = ReadFile("../../Images/orig.bmp", height, width, size, info);
+        pixelsNew = ReadFile(menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
         //
         if (menuC->selectedTr != 3)
         {
@@ -459,14 +452,13 @@ void MainComponent::startDecode()
     inf += String(to_string(corr));
     inf += "\n";
     //
-    //CreateDiffFile(menuC->imageName.toRawUTF8(), "../../Images/Results/new.bmp", "diff.bmp");
-    CreateDiffFile("../../Images/orig.bmp", "../../Images/Results/new.bmp", "diff.bmp");
-    doDecode("diff.bmp", "diff.png");
+    CreateDiffFile(menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new.bmp", "diff.bmp");
+    doDecode(L"diff.bmp", "diff.png");
     //
     decodeInfo->setText(inf, sendNotification);
     diff->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("diff.png")));
     diff->repaint();
-    doDecode("../../Images/Results/new.bmp", "new.png");
+    doDecode(L"../../Images/Results/new.bmp", "new.png");
     newIm->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("new.png")));
     newIm->repaint();
     repaint();

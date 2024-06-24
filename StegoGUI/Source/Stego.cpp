@@ -452,11 +452,11 @@ string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean fla
 	return result;
 }
 //
-RGB** ReadFile(const char* _filename, int& h, int& w, int& size, juce::String& retStr1)
+RGB** ReadFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1)
 {
 	BITMAPFILEHEADER bmfHeader;
 	BITMAPINFOHEADER bmiHeader;
-	FILE* _file = fopen(_filename, "rb");
+	FILE* _file = _wfopen(_filename, L"rb");
 	if (_file == NULL) {
 		fputs("File opening error.", stderr);
 		return NULL;
@@ -534,11 +534,11 @@ RGB** ReadFile(const char* _filename, int& h, int& w, int& size, juce::String& r
 	return pixels;
 }
 //
-FILE* Create_File(const char* _filename, const char* _origFile)
+FILE* Create_File(const char* _filename, const wchar_t* _origFile)
 {
 	BITMAPFILEHEADER bmfHeader;
 	BITMAPINFOHEADER bmiHeader;
-	FILE* origFile = fopen(_origFile, "rb");
+	FILE* origFile = _wfopen(_origFile, L"rb");
 	FILE* newFile = fopen(_filename, "wb");
 	if (origFile == NULL) {
 		fputs("File opening error.", stderr);
@@ -624,7 +624,7 @@ void WriteToFile(FILE* newFile, RGB** pixels, int height, int width)
 	}
 }
 //
-vector<bitset<8>> ReadWord(const char* _filename, int& word_size)
+vector<bitset<8>> ReadWord(const wchar_t* _filename, int& word_size)
 {
 	ifstream wordFile(_filename);
 	if (!(wordFile.is_open())) {
@@ -671,7 +671,7 @@ double DolyaBitov(vector<bitset<8>> _orig, vector<bitset<8>> _new)
 	double ret = (double)count / countAll;
 	return ret;
 }
-void CreateDiffFile(const char* _filename1, const char* _filename2, const char* _newfile)
+void CreateDiffFile(const wchar_t* _filename1, const wchar_t* _filename2, const char* _newfile)
 {
 	int height;
 	int width;

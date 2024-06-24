@@ -347,10 +347,10 @@ static void lodepng_set32bitInt(unsigned char* buffer, unsigned value) {
 #ifdef LODEPNG_COMPILE_DISK
 
 /* returns negative value on error. This should be pure C compatible, so no fstat. */
-static long lodepng_filesize(const char* filename) {
+static long lodepng_filesize(const wchar_t* filename) {
   FILE* file;
   long size;
-  file = fopen(filename, "rb");
+  file = _wfopen(filename, L"rb");
   if(!file) return -1;
 
   if(fseek(file, 0, SEEK_END) != 0) {
@@ -365,9 +365,9 @@ static long lodepng_filesize(const char* filename) {
   fclose(file);
   return size;
 }
-static long lodepng_filesize1(const char* filename) {
+static long lodepng_filesize1(const wchar_t* filename) {
    BITMAPFILEHEADER bmfHeader;
-   FILE* _file = fopen(filename, "rb");
+   FILE* _file = _wfopen(filename, L"rb");
    if (_file == NULL) {
       fputs("File opening error.", stderr);
       return NULL;
@@ -381,10 +381,10 @@ static long lodepng_filesize1(const char* filename) {
 }
 
 /* load file into buffer that already has the correct allocated size. Returns error code.*/
-static unsigned lodepng_buffer_file(unsigned char* out, size_t size, const char* filename) {
+static unsigned lodepng_buffer_file(unsigned char* out, size_t size, const wchar_t* filename) {
   FILE* file;
   size_t readsize;
-  file = fopen(filename, "rb");
+  file = _wfopen(filename, L"rb");
   if(!file) return 78;
 
   readsize = fread(out, 1, size, file);
@@ -394,7 +394,7 @@ static unsigned lodepng_buffer_file(unsigned char* out, size_t size, const char*
   return 0;
 }
 
-unsigned lodepng_load_file(unsigned char** out, size_t* outsize, const char* filename) {
+unsigned lodepng_load_file(unsigned char** out, size_t* outsize, const wchar_t* filename) {
   long size = lodepng_filesize(filename);
   if(size < 0) return 78;
   *outsize = (size_t)size;
@@ -5437,7 +5437,7 @@ unsigned lodepng_decode24(unsigned char** out, unsigned* w, unsigned* h, const u
 }
 
 #ifdef LODEPNG_COMPILE_DISK
-unsigned lodepng_decode_file(unsigned char** out, unsigned* w, unsigned* h, const char* filename,
+unsigned lodepng_decode_file(unsigned char** out, unsigned* w, unsigned* h, const wchar_t* filename,
                              LodePNGColorType colortype, unsigned bitdepth) {
   unsigned char* buffer = 0;
   size_t buffersize;
@@ -5451,11 +5451,11 @@ unsigned lodepng_decode_file(unsigned char** out, unsigned* w, unsigned* h, cons
   return error;
 }
 
-unsigned lodepng_decode32_file(unsigned char** out, unsigned* w, unsigned* h, const char* filename) {
+unsigned lodepng_decode32_file(unsigned char** out, unsigned* w, unsigned* h, const wchar_t* filename) {
   return lodepng_decode_file(out, w, h, filename, LCT_RGBA, 8);
 }
 
-unsigned lodepng_decode24_file(unsigned char** out, unsigned* w, unsigned* h, const char* filename) {
+unsigned lodepng_decode24_file(unsigned char** out, unsigned* w, unsigned* h, const wchar_t* filename) {
   return lodepng_decode_file(out, w, h, filename, LCT_RGB, 8);
 }
 #endif /*LODEPNG_COMPILE_DISK*/
@@ -6815,12 +6815,12 @@ const char* lodepng_error_text(unsigned code) {
 namespace lodepng {
 
 #ifdef LODEPNG_COMPILE_DISK
-unsigned load_file(std::vector<unsigned char>& buffer, const std::string& filename) {
-  long size = lodepng_filesize1(filename.c_str());
+unsigned load_file(std::vector<unsigned char>& buffer, const wchar_t* filename) {
+  long size = lodepng_filesize1(filename);
   //size = 1920054;
   if(size < 0) return 78;
   buffer.resize((size_t)size);
-  return size == 0 ? 0 : lodepng_buffer_file(&buffer[0], (size_t)size, filename.c_str());
+  return size == 0 ? 0 : lodepng_buffer_file(&buffer[0], (size_t)size, filename);
 }
 
 /*write given buffer to the file, overwriting the file, it doesn't append to it.*/
@@ -6932,7 +6932,7 @@ unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h,
 }
 
 #ifdef LODEPNG_COMPILE_DISK
-unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h, const std::string& filename,
+unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h, const wchar_t* filename,
                 LodePNGColorType colortype, unsigned bitdepth) {
   std::vector<unsigned char> buffer;
   /* safe output values in case error happens */

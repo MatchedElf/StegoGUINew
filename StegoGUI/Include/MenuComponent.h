@@ -29,6 +29,8 @@ public:
    bool changed = false;
    String imageName = "-1";
    String secrName = "-1";
+   File imageFile;
+   File messageFile;
    TextButton* imageCh;
 private:
    std::unique_ptr<FileChooser> myChooser;
@@ -47,6 +49,7 @@ private:
    ToggleButton* attack;
    //
    Component* costyl;
+   //
    //
    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MenuComponent)
 };
