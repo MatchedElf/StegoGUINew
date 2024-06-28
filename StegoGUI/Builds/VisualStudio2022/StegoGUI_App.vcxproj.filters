@@ -241,6 +241,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\BlackComponent.cpp">
+      <Filter>StegoGUI\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\LoadWindow.cpp">
       <Filter>StegoGUI\Source</Filter>
     </ClCompile>
@@ -1710,6 +1713,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Include\BlackComponent.h">
+      <Filter>StegoGUI\Include</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Include\DecodeBMP.h">
       <Filter>StegoGUI\Include</Filter>
     </ClInclude>

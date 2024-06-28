@@ -52,6 +52,7 @@ MenuComponent::MenuComponent(Component* _costyl)
    algCh->addItem("DCT", 1);
    algCh->addItem("DFT", 2);
    algCh->addItem("LSB", 3);
+   algCh->addItem("DCT Koch", 4);
    algCh->setSelectedId(1);
    addAndMakeVisible(algCh);
    algCh->addListener(this);
@@ -59,7 +60,6 @@ MenuComponent::MenuComponent(Component* _costyl)
    attack = new ToggleButton("ddd");
    attack->setButtonText(String((std::wstring(L"Только извлечение")).c_str()));
    attack->addListener(this);
-   
    addAndMakeVisible(attack);
    //
    compsList[0] = menuTitle;
@@ -87,7 +87,7 @@ MenuComponent::MenuComponent(Component* _costyl)
    /*imageFile = new File();
    messageFile = new File();*/
 }
-
+//
 MenuComponent::~MenuComponent()
 {
    setLookAndFeel(nullptr);
@@ -104,19 +104,19 @@ MenuComponent::~MenuComponent()
    myChooser.reset();
    delete[] compsList;
 }
-
+//
 void MenuComponent::paint(juce::Graphics& g)
 {
    g.fillAll(Colour::fromRGB(50, 50, 50));
    g.setFont(juce::Font(16.0f));
    g.setColour(juce::Colours::white);
 }
-
+//
 void MenuComponent::resized()
 {
    FSizer->layOutComponents(compsList, 9, 0, (int)(getHeight() * 0.05), getWidth(), (int)(getHeight() * 0.95), true, true);
 }
-
+//
 void MenuComponent::buttonClicked(Button* butt)
 {
    if (butt == imageCh)
@@ -133,7 +133,7 @@ void MenuComponent::buttonClicked(Button* butt)
       setName("HIIIIIIIII");
    }
 }
-
+//
 void MenuComponent::comboBoxChanged(ComboBox* cb)
 {
    if (cb == algCh)
@@ -201,7 +201,7 @@ void MenuComponent::LoadFile(bool image)
    repaint();
    changed = true;
 }
-
+//
 void MenuComponent::startDecode()
 {
 }

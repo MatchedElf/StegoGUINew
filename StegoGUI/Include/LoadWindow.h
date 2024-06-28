@@ -4,7 +4,7 @@
 //#include <iostream>
 //
 using namespace juce;
-
+//
 class LoadWindow : public AlertWindow, public Timer
 {
 public:
@@ -17,4 +17,5 @@ private:
    //ImageComponent* clock;
    std::vector<Image> vect;
    int counter = 0;
+   float rotate = 0.0;
 };

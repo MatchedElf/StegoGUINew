@@ -120,9 +120,9 @@ MainComponent::MainComponent()
     //
     chooseChecker->addComponentListener(this);
     //
-    black = new Label();
+    black = new BlackComponent();
     addAndMakeVisible(black);
-    black->setColour(Label::backgroundColourId, juce::Colour::fromRGBA(0, 0, 0, 180));
+    //black->setColour(Label::backgroundColourId, juce::Colour::fromRGBA(0, 0, 0, 180));
     //
     addAndMakeVisible(error);
     error->setVisible(false);
@@ -130,6 +130,11 @@ MainComponent::MainComponent()
     black->setVisible(false);
     closeErr->setVisible(false);
     setSize(600, 400);
+    //
+    loadingGif = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
+       TRANS(std::wstring(L"Процесс идет...").c_str()),
+       MessageBoxIconType::NoIcon);
+    loadingGif->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.3), (int)(getWidth() * 0.4), (int)(getHeight() * 0.4));
 }
 
 MainComponent::~MainComponent()
@@ -156,6 +161,7 @@ MainComponent::~MainComponent()
     deleteAndZero(closeErr);
     deleteAndZero(chooseChecker);
     deleteAndZero(black);
+    deleteAndZero(loadingGif);
 }
 
 //==============================================================================
@@ -191,7 +197,7 @@ void MainComponent::resized()
       hideBut->setBounds(0, 0, (int)(getWidth() * 0.05) - 10, (int)(getHeight() * 0.05) - 5);
       startBut->setBounds((int)(getWidth() * 0.05), 0, (int)(getWidth() * 0.05) - 10, (int)(getHeight() * 0.05) - 5);
       //
-      if (hided)
+      if (hidden)
       {
          grid.performLayout(juce::Rectangle<int>(0, (int)(getHeight() * 0.05), getWidth(), (int)(getHeight() * 0.94)));
          error->setBounds((int)(getWidth() * 0.35), (int)(getHeight() * 0.25), (int)(getWidth() * 0.3), (int)(getHeight() * 0.3));
@@ -218,9 +224,10 @@ void MainComponent::buttonClicked(Button* butt)
              LoadWindow* processWnd = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
                                                        TRANS(std::wstring(L"Процесс идет...").c_str()),
                                                        MessageBoxIconType::NoIcon);
-             processWnd->setColour(processWnd->backgroundColourId, juce::Colour::fromRGBA(255, 255, 255, 255));
-             processWnd->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.3), (int)(getWidth() * 0.1), (int)(getHeight() * 0.4));
+             //processWnd->setColour(processWnd->backgroundColourId, juce::Colour::fromRGBA(255, 255, 255, 255));
+             processWnd->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.3), (int)(getWidth() * 0.4), (int)(getHeight() * 0.4));
              processWnd->enterModalState(true, nullptr, true);
+
              MessageManager::callAsync([this, processWnd]()
                 {
                    startDecode();
@@ -229,6 +236,17 @@ void MainComponent::buttonClicked(Button* butt)
                       processWnd->exitModalState();
                    }
                 });
+             //loadingGif->enterModalState(true, nullptr, true);
+             //startTimer(500);
+             //MessageManager::callAsync([this]()
+             //   {
+             //      if (nullptr != loadingGif)
+             //      {
+             //         //processWnd->exitModalState();
+             //      }
+             //   });
+             //   startDecode();
+
 
           }
           else
@@ -254,7 +272,7 @@ void MainComponent::buttonClicked(Button* butt)
     else if (butt == hideBut)
     {
        menuC->setName("HI");
-       hided = !hided;
+       hidden = !hidden;
        menuC->setVisible(!(menuC->isVisible()));
        resized();
     }
@@ -324,7 +342,7 @@ void MainComponent::startDecode()
     decodeInfo->setText("In progress", sendNotification);
     decodeText->setText("-", sendNotification);
     //
-    int difference = 5;
+    int difference = 8;
     complex<double> differenceComplex(2.0, 0.0);
     int word_size = 0;
     //
@@ -365,6 +383,11 @@ void MainComponent::startDecode()
         {
             string result = decodeLSB(width, pixelsNew, vect, true, vectSzhat);
             decodeText->setText(result, sendNotification);
+        }
+        else if (menuC->selectedTr == 4)
+        {
+           string result = decodeDCTKoch(height, width, pixelsNew, vect, true, vectSzhat, difference, key);
+           decodeText->setText(result, sendNotification);
         }
     }
     else
@@ -415,6 +438,18 @@ void MainComponent::startDecode()
             string result = decodeLSB(width, pixelsNew, vect, true, vectSzhat);
             decodeText->setText(result, sendNotification);
         }
+        else if (menuC->selectedTr == 4)
+        {
+           vector<int> key1 = CreateKey("key.txt", size, (int)vect.size(), true);
+           //
+           encodeDCTKoch(width, pixelsNew, vect, secr_size, difference, key1);
+           WriteToFile(newFile, pixelsNew, height, width);
+           //
+           string result = decodeDCTKoch(height, width, pixelsNew, vect, true, vectSzhat, difference, key1);
+           decodeText->setText(result, sendNotification);
+           //
+
+        }
         fclose(newFile);
     }
     //
@@ -425,6 +460,7 @@ void MainComponent::startDecode()
     if (menuC->selectedTr == 1) inf += "DCT\n";
     if (menuC->selectedTr == 2) inf += "DFT\n";
     if (menuC->selectedTr == 3) inf += "LSB\n";
+    if (menuC->selectedTr == 4) inf += "DCT Koch\n";
     inf += "PSNR = ";
     inf += String(to_string(blueP));
     inf += "\n";
@@ -457,12 +493,12 @@ void MainComponent::startDecode()
     //
     decodeInfo->setText(inf, sendNotification);
     diff->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("diff.png")));
-    diff->repaint();
+    //diff->repaint();
     doDecode(L"../../Images/Results/new.bmp", "new.png");
     newIm->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("new.png")));
-    newIm->repaint();
-    repaint();
-    resized();
+    //newIm->repaint();
+    //repaint();
+    //resized();
     //String origTmp = "..\\..\\Images\\orig.bmp";
     //String tmp = File(menuC->imageName).getRelativePathFrom(File::getCurrentWorkingDirectory());
     //if (tmp != origTmp)
@@ -484,11 +520,16 @@ void MainComponent::startDecode()
     delete[] pixels;
     delete[] pixelsNew;
     //
-    resized();
-    repaint();
+    //resized();
+    //repaint();
 }
 //
 Font MainComponent::getTextButtonFont(TextButton&, int buttonHeight)
 {
    return { jmin(25.0f, (float)buttonHeight * 0.8f) };
+}
+
+void MainComponent::timerCallback()
+{
+   loadingGif->repaint();
 }

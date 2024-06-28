@@ -27,15 +27,15 @@ struct RGB {
 	BYTE rgbReserved;
 };
 //
-BYTE sat(float x);
+BYTE sat(double x);
 //
 RGB MakeColor(BYTE r, BYTE g, BYTE b);
 //
-float coef(int i);
+double coef(int i);
 //
-void DCT(RGB** pixels, float** result, int x, int y);
+void DCT(RGB** pixels, double** result, int x, int y);
 //
-void IDCT(RGB** pixels, float** result, int x, int y);
+void IDCT(RGB** pixels, double** result, int x, int y);
 //
 void DFT(RGB** pixels, complex<double>** result, int x, int y);
 //
@@ -47,13 +47,17 @@ double AverageIntensity(RGB** orig, int height, int width);
 //
 double CorrCoef(RGB** orig, RGB** re, int height, int width);
 //
-vector<float**> encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key);
+void encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key);
 //
 string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat, vector<int> key);
 //
-vector<complex<double>**> encodeDFT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key);
+void encodeDFT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key);
 //
 string decodeDFT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key);
+//
+void encodeDCTKoch(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key);
+//
+string decodeDCTKoch(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat, int difference, vector<int> key);
 //
 void encodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size);
 //

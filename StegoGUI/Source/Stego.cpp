@@ -1,6 +1,6 @@
 #include "../Include/Stego.h"
 
-BYTE sat(float x)
+BYTE sat(double x)
 {
 	if (x < 0) return 0;
 	if (x > 255) return 255;
@@ -15,20 +15,20 @@ RGB MakeColor(BYTE r, BYTE g, BYTE b) {
 	return color;
 }
 //
-float coef(int i) {
-	if (i == 0) return (float)sqrt(1.0 / 8.0);
-	else return (float)sqrt(2.0 / 8.0);
+double coef(int i) {
+	if (i == 0) return (double)sqrt(1.0 / 8.0);
+	else return (double)sqrt(2.0 / 8.0);
 }
 //
-void DCT(RGB** pixels, float** result, int x, int y) {
+void DCT(RGB** pixels, double** result, int x, int y) {
 	for (int u = 0; u < 8; u++) {
 		for (int v = 0; v < 8; v++) {
-			float cu = coef(u);
-			float cv = coef(v);
-			float sum = 0;
+			double cu = coef(u);
+			double cv = coef(v);
+			double sum = 0;
 			for (int k = 0; k < 8; k++) {
 				for (int l = 0; l < 8; l++) {
-					sum += (float)(pixels[x + k][y + l].blue * cos((2 * k + 1) * u * PI / 16) * cos((2 * l + 1) * v * PI / 16));
+					sum += (double)(pixels[x + k][y + l].blue * cos((2 * k + 1) * u * PI / 16) * cos((2 * l + 1) * v * PI / 16));
 				}
 			}
 			result[u][v] = cu * cv * sum;
@@ -36,13 +36,13 @@ void DCT(RGB** pixels, float** result, int x, int y) {
 	}
 }
 //
-void IDCT(RGB** pixels, float** result, int x, int y) {
+void IDCT(RGB** pixels, double** result, int x, int y) {
 	for (int k = 0; k < 8; k++) {
 		for (int l = 0; l < 8; l++) {
-			float sum = 0;
+			double sum = 0;
 			for (int u = 0; u < 8; u++) {
 				for (int v = 0; v < 8; v++) {
-					sum += (float)(coef(u) * coef(v) * result[u][v] * cos((2 * k + 1) * u * PI / 16) * cos((2 * l + 1) * v * PI / 16));
+					sum += (double)(coef(u) * coef(v) * result[u][v] * cos((2 * k + 1) * u * PI / 16) * cos((2 * l + 1) * v * PI / 16));
 				}
 			}
 			pixels[x + k][y + l].blue = sat(sum);
@@ -79,7 +79,7 @@ void IDFT(RGB** pixels, complex<double>** result, int x, int y) {
 					sum += pixel * e;
 				}
 			}
-			pixels[x + k][y + l].blue = sat((float)sum.real());
+			pixels[x + k][y + l].blue = sat((double)sum.real());
 		}
 	}
 }
@@ -159,14 +159,14 @@ double CorrCoef(RGB** orig, RGB** re, int height, int width)
 	return chisl / znam;
 }
 //
-vector<float**> encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key) {
-	vector<float**> matrixes;
+void encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key) {
+	vector<double**> matrixes;
 	cout << "Before DCT" << endl;
 	int count = 0;
 	while (count < vect.size() * 8) {
-		float** res = new float* [8];
+		double** res = new double* [8];
 		for (int z = 0; z < 8; z++) {
-			res[z] = new float[8];
+			res[z] = new double[8];
 		}
 		DCT(pixelsNew, res, 8 * (key[count] / (width / 8)), 8 * (key[count] % (width / 8)));
 		matrixes.push_back(res);
@@ -201,6 +201,23 @@ vector<float**> encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bi
 		indCount++;
 
 	}
+	/*ofstream keyFile("matrixes.txt");
+	if (!(keyFile.is_open())) {
+		cout << "Error while opening file." << endl;
+	}
+	for (int i = 0; i < matrixes.size(); i++)
+	{
+		keyFile << "=============================================================\n";
+		for (int j = 0; j < 8; j++)
+		{
+			for (int z = 0; z < 8; z++)
+			{
+				keyFile << matrixes[i][j][z] << " ";
+			}
+			keyFile << "\n";
+		}
+	}
+	keyFile.close();*/
 	for (int i = 0; i < matrixes.size(); i++)
 	{
 		for (int j = 0; j < 8; j++)
@@ -210,7 +227,7 @@ vector<float**> encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bi
 		delete[] matrixes[i];
 	}
 	cout << "After IDCT" << endl;
-	return matrixes;
+	return;
 
 }
 //
@@ -225,9 +242,9 @@ string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 		if (pixCount == (bits * 8 + 16)) break;
 		if (pixCount == vect.size() * 8) break;
 		for (int y = 0; y < width; y += 8) {
-			float** res = new float* [8];
+			double** res = new double* [8];
 			for (int z = 0; z < 8; z++) {
-				res[z] = new float[8];
+				res[z] = new double[8];
 			}
 			DCT(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
 			double cf1 = res[4][3];
@@ -266,7 +283,7 @@ string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 	return result;
 }
 //
-vector<complex<double>**> encodeDFT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key) {
+void encodeDFT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key) {
 	vector<complex<double>**> matrixes;
 	cout << "Before DFT" << endl;
 	int count = 0;
@@ -317,7 +334,7 @@ vector<complex<double>**> encodeDFT(int width, RGB** pixelsNew, vector<bitset<8>
 		delete[] matrixes[i];
 	}
 	cout << "After IDFT" << endl;
-	return matrixes;
+	return;
 
 
 }
@@ -370,6 +387,179 @@ string decodeDFT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 		}
 	}
 	cout << "After decoding DFT" << endl;
+	return result;
+}
+void encodeDCTKoch(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key)
+{
+	vector<double**> matrixes;
+	cout << "Before DCT" << endl;
+	int count = 0;
+	while (count < vect.size() * 8) {
+		double** res = new double* [8];
+		for (int z = 0; z < 8; z++) {
+			res[z] = new double[8];
+		}
+		DCT(pixelsNew, res, 8 * (key[count] / (width / 8)), 8 * (key[count] % (width / 8)));
+		matrixes.push_back(res);
+		count++;
+
+	}
+	cout << "After DCT" << endl;
+	int pixCount = 0;
+	while ((pixCount / 8) < vect.size()) {
+		double abs = fabs(matrixes[pixCount][4][3] - matrixes[pixCount][3][4]);
+		double tmp = matrixes[pixCount][4][3];
+		double tmp2 = matrixes[pixCount][3][4];
+		if (1) {
+			int bit = 0;
+			if (pixCount < 16) bit = secr_size[pixCount];
+			else bit = vect[pixCount / 8][pixCount % 8];
+			if (bit == 1) {
+				if (abs <= difference)
+				{
+					int chhh = 0;
+				}
+				else
+				{
+					int sign = 0;
+					if (fabs(tmp) > fabs(tmp2))
+						sign = (matrixes[pixCount][4][3] < 0) ? -1 : +1;
+					else
+						sign = (matrixes[pixCount][3][4] < 0) ? -1 : +1;
+					matrixes[pixCount][4][3] = (fabs(matrixes[pixCount][4][3]) >= fabs(matrixes[pixCount][3][4]))
+						? matrixes[pixCount][4][3] + ((abs - difference) / 2 + 0.5) * (-sign)
+						: matrixes[pixCount][4][3] + ((abs - difference) / 2 + 0.5) * sign;
+					//
+					//sign = (matrixes[pixCount][3][4] < 0) ? -1 : +1;
+					matrixes[pixCount][3][4] = (fabs(matrixes[pixCount][3][4]) > fabs(tmp))
+						? matrixes[pixCount][3][4] + ((abs - difference) / 2 + 0.5) * (-sign)
+						: matrixes[pixCount][3][4] + ((abs - difference) / 2 + 0.5) * sign;
+					double abs1 = fabs(matrixes[pixCount][4][3] - matrixes[pixCount][3][4]);
+					sign = 0;
+					if (abs1 > difference)
+					{
+						sign = 0;
+					}
+					if (abs1 > 6.8)
+					{
+						sign = 0;
+					}
+				}
+			}
+			else {
+				if (abs > difference)
+				{
+					int chh = 0;
+				}
+				else
+				{
+					int sign = 0;
+					if(fabs(tmp) > fabs(tmp2))
+						sign = (matrixes[pixCount][4][3] < 0) ? -1 : +1;
+					else
+						sign = (matrixes[pixCount][3][4] < 0) ? -1 : +1;
+					matrixes[pixCount][4][3] = (fabs(matrixes[pixCount][4][3]) >= fabs(matrixes[pixCount][3][4]))
+						? matrixes[pixCount][4][3] + (difference / 2 + 1) * sign
+						: matrixes[pixCount][4][3] + (difference / 2 + 1) * (-sign);
+					//
+					//sign = (matrixes[pixCount][3][4] < 0) ? -1 : +1;
+					matrixes[pixCount][3][4] = (fabs(matrixes[pixCount][3][4]) > fabs(tmp))
+						? matrixes[pixCount][3][4] + (difference / 2 + 1) * sign
+						: matrixes[pixCount][3][4] + (difference / 2 + 1) * (-sign);
+					double abs1 = fabs(matrixes[pixCount][4][3] - matrixes[pixCount][3][4]);
+					sign = 0;
+					if (abs1 <= difference)
+					{
+						sign = 0;
+					}
+					if (abs1 < 9.5)
+					{
+						sign = 0;
+					}
+				}
+			}
+		}
+		pixCount++;
+	}
+	int indCount = 0;
+	while (indCount < vect.size() * 8) {
+		IDCT(pixelsNew, matrixes[indCount], 8 * (key[indCount] / (width / 8)), 8 * (key[indCount] % (width / 8)));
+		indCount++;
+
+	}
+	for (int i = 0; i < matrixes.size(); i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			delete[] matrixes[i][j];
+		}
+		delete[] matrixes[i];
+	}
+	cout << "After IDCT" << endl;
+	return;
+}
+string decodeDCTKoch(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat, int difference, vector<int> key)
+{
+	bitset<8> read;
+	bitset<16> readSize;
+
+	int pixCount = 0;
+	int bits = 1000;
+	string result = "";
+	for (int x = 0; x < height; x += 8) {
+		if (pixCount == (bits * 8 + 16)) break;
+		if (pixCount == vect.size() * 8) break;
+		for (int y = 0; y < width; y += 8) {
+			double** res = new double* [8];
+			for (int z = 0; z < 8; z++) {
+				res[z] = new double[8];
+			}
+			//DCT(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			DCT(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			double cf1 = res[4][3];
+			double cf2 = res[3][4];
+			for (int z = 0; z < 8; z++) {
+				delete[] res[z];
+			}
+			delete[] res;
+			double abs = fabs(cf1 - cf2);
+			if (pixCount < 16) {
+				if (abs > difference) 
+					readSize[pixCount] = 0;
+				else 
+					readSize[pixCount] = 1;
+				pixCount++;
+				if (pixCount == 16) {
+					bits = readSize.to_ulong();
+					cout << "bits = " << bits << endl;
+				}
+			}
+			else {
+				if (abs > difference) 
+					read[pixCount % 8] = 0;
+				else 
+					read[pixCount % 8] = 1;
+				if (read[pixCount % 8] != vect[(pixCount / 8)][pixCount % 8])
+				{
+					int sign = 0;
+				}
+				pixCount++;
+				if ((pixCount % 8) == 0) {
+					result += read.to_ulong();
+					if (flag) {
+						vectSzhat.push_back(read);
+						if (vect[(pixCount / 8) - 1] != vectSzhat[(pixCount / 8) - 1])
+						{
+							int sign = 0;
+						}
+					}
+				}
+				if (pixCount == (bits * 8 + 16)) break;
+				if (pixCount == vect.size() * 8) break;
+			}
+		}
+	}
+	cout << "After decoding DCT" << endl;
 	return result;
 }
 //
@@ -689,9 +879,9 @@ void CreateDiffFile(const wchar_t* _filename1, const wchar_t* _filename2, const 
 			{
 				int diff = (int)fabs(pixels1[i][j].blue - pixels2[i][j].blue);
 				//
-				pixelsNew[i][j].red = sat((float)(0 + 100 * ( (diff - 2))));
-				pixelsNew[i][j].green = sat((float)(255 - 200 * (diff - 1)));
-				pixelsNew[i][j].blue = sat((float)(255 * (diff > 1) - 100 * (diff - 2)));
+				pixelsNew[i][j].red = sat((double)(0 + 100 * ( (diff - 2))));
+				pixelsNew[i][j].green = sat((double)(255 - 200 * (diff - 1)));
+				pixelsNew[i][j].blue = sat((double)(255 * (diff > 1) - 100 * (diff - 2)));
 			}
 			else
 			{

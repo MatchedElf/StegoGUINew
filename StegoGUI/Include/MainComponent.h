@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include "Stego.h"
 #include "DecodeBMP.h"
+#include "BlackComponent.h"
 #include "MenuComponent.h"
 #include "LoadWindow.h"
 #include <cstdlib>
@@ -13,7 +14,7 @@ using namespace juce;
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent : public Component, public Button::Listener, public ComponentListener, public LookAndFeel_V4/*, public MouseListener*//*, public ComboBox::Listener*/
+class MainComponent : public Component, public Button::Listener, public ComponentListener, public LookAndFeel_V4, public Timer
 {
 public:
     //==============================================================================
@@ -28,6 +29,7 @@ public:
     void paintOrig(bool error);
     void startDecode();
     Font getTextButtonFont(TextButton&, int buttonHeight) override;
+    void timerCallback() override;
     //
 private:
     ImageComponent* openLogo;
@@ -57,12 +59,14 @@ private:
     //
     Component* chooseChecker;
     //
-    bool hided = false;
+    bool hidden = false;
     //
     bool startScreen = true;
     //
-    Label* black;
+    BlackComponent* black;
     //
     MenuComponent* menuC;
+    //
+    LoadWindow* loadingGif;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

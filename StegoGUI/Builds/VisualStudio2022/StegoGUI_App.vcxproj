@@ -141,6 +141,7 @@
     <Lib/>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\BlackComponent.cpp"/>
     <ClCompile Include="..\..\Source\LoadWindow.cpp"/>
     <ClCompile Include="..\..\Source\DecodeBMP.cpp"/>
     <ClCompile Include="..\..\Source\lodepng.cpp"/>
@@ -1478,6 +1479,7 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_gui_extra.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Include\BlackComponent.h"/>
     <ClInclude Include="..\..\Include\DecodeBMP.h"/>
     <ClInclude Include="..\..\Include\LoadWindow.h"/>
     <ClInclude Include="..\..\Include\lodepng.h"/>
