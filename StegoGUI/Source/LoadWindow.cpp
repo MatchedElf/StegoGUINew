@@ -21,16 +21,22 @@ LoadWindow::LoadWindow(const String& title, const String& message, MessageBoxIco
    }*/
    setOpaque(false);
    //setSize(600, 600);
-   startTimer(100);
-   /*clock = new ImageComponent();
+   //startTimer(100);
+   setSize(500, 500);
+   clock = new ImageComponent();
    addAndMakeVisible(clock);
-   clock->setImage(GIFImageFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("loading.gif")));
-   clock->setBounds((int)(getWidth() * 0.35), (int)(getHeight() * 0.25), (int)(getWidth() * 0.3), (int)(getHeight() * 0.3));*/
+   clock->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("clock0.png")));
+   clock->setBounds(0, 0, 500, 500);
+   anim = new ComponentAnimator();
+   juce::Rectangle<int> finalBounds(1000, 1000, 200, 200);
+   //anim->animateComponent(clock, finalBounds, 1.0f, 5000, true, 1.0f, 1.0f);
+   Desktop::getInstance().getAnimator().animateComponent(clock, finalBounds, 1.0f, 15000, true, 1.0f, 1.0f);
 }
 //
 LoadWindow::~LoadWindow()
 {
-   //deleteAndZero(clock);
+   deleteAndZero(clock);
+   deleteAndZero(anim);
 }
 //
 void LoadWindow::timerCallback()
@@ -40,7 +46,6 @@ void LoadWindow::timerCallback()
 //
 void LoadWindow::paint(juce::Graphics& g)
 {
-   //Path p;
    //juce::Rectangle<float> rec((float)getWidth(), (float)getHeight());
    String file = "loading0r.gif";
    Image clockIm = ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile(file));
@@ -54,11 +59,5 @@ void LoadWindow::paint(juce::Graphics& g)
    //rotate = (rotate + 0.5) % 1000;
    rotate += 0.1;
    AffineTransform t = AffineTransform::rotation(rotate);
-
-   //Path p;
-   //p.addRectangle(r);
-   //g.strokePath(p, PathStrokeType(1), t);
-   //g.addTransform(t);
-   //g.drawImage(clockIm, rec, true);
-   g.drawImageTransformed(clockIm, t);
+   //g.drawImageTransformed(clockIm, t);
 }

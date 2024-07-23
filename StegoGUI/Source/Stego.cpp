@@ -814,7 +814,7 @@ void WriteToFile(FILE* newFile, RGB** pixels, int height, int width)
 	}
 }
 //
-vector<bitset<8>> ReadWord(const wchar_t* _filename, int& word_size)
+vector<bitset<8>> ReadWord(const wchar_t* _filename, string& message)
 {
 	ifstream wordFile(_filename);
 	if (!(wordFile.is_open())) {
@@ -829,7 +829,7 @@ vector<bitset<8>> ReadWord(const wchar_t* _filename, int& word_size)
 		secr += "\n";
 	}
 	//
-	word_size = (int)secr.size();
+	message = secr;
 	vector<bitset<8>> vect;
 	bitset<16> secr_size(secr.size());
 	bitset<8> empty;

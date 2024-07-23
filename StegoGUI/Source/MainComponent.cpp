@@ -2,7 +2,8 @@
 
 //==============================================================================
 MainComponent::MainComponent()
-    : Component("MainComponent")
+    : Component("MainComponent"),
+      ThreadWithProgressWindow("Load", true, false)
 {
     //
     ///*system("echo test > pwdTest.txt");
@@ -135,6 +136,12 @@ MainComponent::MainComponent()
        TRANS(std::wstring(L"Процесс идет...").c_str()),
        MessageBoxIconType::NoIcon);
     loadingGif->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.3), (int)(getWidth() * 0.4), (int)(getHeight() * 0.4));
+    //
+    progress = new ProgressBar(progressStatus, ProgressBar::Style::linear);
+    //addAndMakeVisible(progress);
+    //progress->setVisible(false);
+    progress->setPercentageDisplay(true);
+    setProgress(100);
 }
 
 MainComponent::~MainComponent()
@@ -162,6 +169,7 @@ MainComponent::~MainComponent()
     deleteAndZero(chooseChecker);
     deleteAndZero(black);
     deleteAndZero(loadingGif);
+    deleteAndZero(progress);
 }
 
 //==============================================================================
@@ -210,6 +218,7 @@ void MainComponent::resized()
          closeErr->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.55), (int)(getWidth() * 0.2), (int)(getHeight() * 0.2));
       }
       black->setBounds(0, 0, getWidth(), getHeight());
+      progress->setBounds((int)(getWidth() * 0.25), (int)(getHeight() * 0.45), (int)(getWidth() * 0.5), (int)(getHeight() * 0.1));
    }
 }
 
@@ -221,21 +230,42 @@ void MainComponent::buttonClicked(Button* butt)
        {
           if ((menuC->imageName != "-1") && (menuC->secrName != "-1"))
           {
-             LoadWindow* processWnd = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
-                                                       TRANS(std::wstring(L"Процесс идет...").c_str()),
-                                                       MessageBoxIconType::NoIcon);
-             //processWnd->setColour(processWnd->backgroundColourId, juce::Colour::fromRGBA(255, 255, 255, 255));
-             processWnd->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.3), (int)(getWidth() * 0.4), (int)(getHeight() * 0.4));
-             processWnd->enterModalState(true, nullptr, true);
-
-             MessageManager::callAsync([this, processWnd]()
+             //LoadWindow* processWnd = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
+             //                                          TRANS(std::wstring(L"Процесс идет...").c_str()),
+             //                                          MessageBoxIconType::NoIcon);
+             //processWnd->setBounds(0, 0, (int)(getWidth()), (int)(getHeight()));
+             //processWnd->enterModalState(true, nullptr, true);
+             //MessageManager::callAsync([this, processWnd]()
+             //   {
+             //      startDecode();
+             //      if (nullptr != processWnd)
+             //      {
+             //         //processWnd->exitModalState();
+             //      }
+             //   });
+             /*MessageManager::callAsync([this]()
+                {
+                   LoadWindow* processWnd = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
+                      TRANS(std::wstring(L"Процесс идет...").c_str()),
+                      MessageBoxIconType::NoIcon);
+                   processWnd->setBounds(0, 0, (int)(getWidth()), (int)(getHeight()));
+                   processWnd->enterModalState(true, nullptr, true);
+                });
+             MessageManager::callAsync([this]()
                 {
                    startDecode();
-                   if (nullptr != processWnd)
-                   {
-                      processWnd->exitModalState();
-                   }
-                });
+                });*/
+             //progress->setVisible(true);
+             //resized();
+             progressStatus = 20;
+             //startDecode();
+             //startThread();
+             //launchThread();
+             /*MessageManager::callAsync([this]()
+                {
+                   startDecode();
+                });*/ 
+             startDecode();
              //loadingGif->enterModalState(true, nullptr, true);
              //startTimer(500);
              //MessageManager::callAsync([this]()
@@ -334,19 +364,35 @@ void MainComponent::paintOrig(bool _error)
    decodeInfo->setText("", sendNotification);
    decodeText->setText("", sendNotification);
 }
+void MainComponent::paintDiffText(string _orig, string _new)
+{
+   for (int i = 0; i < _new.size(); i++)
+   {
+      if (_orig[i] != _new[i])
+         decodeText->setColour(TextEditor::textColourId, Colours::red);
+      string tmp = "";
+      tmp += _new[i];
+      decodeText->insertTextAtCaret(tmp);
+      decodeText->setColour(TextEditor::textColourId, Colours::white);
+   }
+}
 //
 void MainComponent::startDecode()
 {
+    progressStatus = 5;
+    setProgress(progressStatus);
     srand((unsigned int)time(NULL));
-    origInfo->setText("In progress", sendNotification);
-    decodeInfo->setText("In progress", sendNotification);
-    decodeText->setText("-", sendNotification);
+    origInfo->setText("In progress", dontSendNotification);
+    decodeInfo->setText("In progress", dontSendNotification);
+    decodeText->setText("-", dontSendNotification);
+    //repaint();
     //
     int difference = 8;
     complex<double> differenceComplex(2.0, 0.0);
-    int word_size = 0;
+    string message;
     //
-    vector<bitset<8>> vect = ReadWord(menuC->messageFile.getFullPathName().toWideCharPointer(), word_size);
+    vector<bitset<8>> vect = ReadWord(menuC->messageFile.getFullPathName().toWideCharPointer(), message);
+    int word_size = message.length();
     vector<bitset<8>> vectSzhat;
     bitset<16> secr_size(word_size);
     bitset<8> empty;
@@ -362,8 +408,9 @@ void MainComponent::startDecode()
     RGB** pixels = ReadFile(menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
     RGB** pixelsNew;
     //
-    origInfo->setText(info, sendNotification);
+    origInfo->setText(info, dontSendNotification);
     //
+    string result;
     if (menuC->isAttack)
     {
         pixelsNew = ReadFile(L"../../Images/Results/new.bmp", height, width, size, info);
@@ -371,23 +418,23 @@ void MainComponent::startDecode()
         //
         if (menuC->selectedTr == 1)
         {
-            string result = decodeDCT(height, width, pixels, pixelsNew, vect, true, vectSzhat, key);
-            decodeText->setText(result, sendNotification);
+            result = decodeDCT(height, width, pixels, pixelsNew, vect, true, vectSzhat, key);
+            decodeText->setText(result, dontSendNotification);
         }
         else if (menuC->selectedTr == 2)
         {
-            string result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key);
-            decodeText->setText(result, sendNotification);
+            result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key);
+            decodeText->setText(result, dontSendNotification);
         }
         else if (menuC->selectedTr == 3)
         {
-            string result = decodeLSB(width, pixelsNew, vect, true, vectSzhat);
-            decodeText->setText(result, sendNotification);
+            result = decodeLSB(width, pixelsNew, vect, true, vectSzhat);
+            decodeText->setText(result, dontSendNotification);
         }
         else if (menuC->selectedTr == 4)
         {
-           string result = decodeDCTKoch(height, width, pixelsNew, vect, true, vectSzhat, difference, key);
-           decodeText->setText(result, sendNotification);
+           result = decodeDCTKoch(height, width, pixelsNew, vect, true, vectSzhat, difference, key);
+           decodeText->setText(result, dontSendNotification);
         }
     }
     else
@@ -396,11 +443,13 @@ void MainComponent::startDecode()
         //
         pixelsNew = ReadFile(menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
         //
+        progressStatus = 10;
+        setProgress(progressStatus);
         if (menuC->selectedTr != 3)
         {
            if ( (vect.size() * 8) >= (size / 64))
            {
-              decodeInfo->setText(String((std::wstring(L"Ошибка! Слишком большое сообщение.")).c_str()), sendNotification);
+              decodeInfo->setText(String((std::wstring(L"Ошибка! Слишком большое сообщение.")).c_str()), dontSendNotification);
               return;
            }
         }
@@ -411,8 +460,9 @@ void MainComponent::startDecode()
             encodeDCT(width, pixelsNew, vect, secr_size, difference, key1);
             WriteToFile(newFile, pixelsNew, height, width);
             //
-            string result = decodeDCT(height, width, pixels, pixelsNew, vect, true, vectSzhat, key1);
-            decodeText->setText(result, sendNotification);
+            result = decodeDCT(height, width, pixels, pixelsNew, vect, true, vectSzhat, key1);
+            //decodeText->setText(result, dontSendNotification);
+            //paintDiffText(message, result);
             //
 
         }
@@ -424,8 +474,8 @@ void MainComponent::startDecode()
             encodeDFT(width, pixelsNew, vect, secr_size, differenceComplex, key1);
             WriteToFile(newFile, pixelsNew, height, width);
             //
-            string result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key1);
-            decodeText->setText(result, sendNotification);
+            result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key1);
+            //decodeText->setText(result, dontSendNotification);
         }
         //
         else if (menuC->selectedTr == 3)
@@ -435,8 +485,8 @@ void MainComponent::startDecode()
             encodeLSB(width, pixelsNew, vect, secr_size);
             WriteToFile(newFile, pixelsNew, height, width);
             //
-            string result = decodeLSB(width, pixelsNew, vect, true, vectSzhat);
-            decodeText->setText(result, sendNotification);
+            result = decodeLSB(width, pixelsNew, vect, true, vectSzhat);
+            //decodeText->setText(result, dontSendNotification);
         }
         else if (menuC->selectedTr == 4)
         {
@@ -445,14 +495,18 @@ void MainComponent::startDecode()
            encodeDCTKoch(width, pixelsNew, vect, secr_size, difference, key1);
            WriteToFile(newFile, pixelsNew, height, width);
            //
-           string result = decodeDCTKoch(height, width, pixelsNew, vect, true, vectSzhat, difference, key1);
-           decodeText->setText(result, sendNotification);
+           result = decodeDCTKoch(height, width, pixelsNew, vect, true, vectSzhat, difference, key1);
+           //decodeText->setText(result, dontSendNotification);
            //
 
         }
         fclose(newFile);
     }
     //
+    paintDiffText(message, result);
+    progressStatus = 30;
+    setProgress(progressStatus);
+    //repaint();
     long double redP, greenP, blueP;
     PSNR(pixels, pixelsNew, redP, greenP, blueP, height, width);
     String inf = "";
@@ -488,14 +542,16 @@ void MainComponent::startDecode()
     inf += String(to_string(corr));
     inf += "\n";
     //
+    progressStatus = 50;
     CreateDiffFile(menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new.bmp", "diff.bmp");
     doDecode(L"diff.bmp", "diff.png");
     //
-    decodeInfo->setText(inf, sendNotification);
+    decodeInfo->setText(inf, dontSendNotification);
     diff->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("diff.png")));
     //diff->repaint();
     doDecode(L"../../Images/Results/new.bmp", "new.png");
     newIm->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("new.png")));
+    progressStatus = 75;
     //newIm->repaint();
     //repaint();
     //resized();
@@ -520,6 +576,9 @@ void MainComponent::startDecode()
     delete[] pixels;
     delete[] pixelsNew;
     //
+    progressStatus = 100;
+    setProgress(progressStatus);
+    //stopThread(1000);
     //resized();
     //repaint();
 }
@@ -532,4 +591,18 @@ Font MainComponent::getTextButtonFont(TextButton&, int buttonHeight)
 void MainComponent::timerCallback()
 {
    loadingGif->repaint();
+}
+
+void MainComponent::threadComplete(bool userPressedCancel)
+{
+}
+
+void MainComponent::run()
+{
+   const MessageManagerLock mmLock;
+   startDecode();
+   while (!threadShouldExit())
+   {
+
+   }
 }

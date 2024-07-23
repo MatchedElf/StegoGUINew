@@ -14,7 +14,7 @@ using namespace juce;
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent : public Component, public Button::Listener, public ComponentListener, public LookAndFeel_V4, public Timer
+class MainComponent : public Component, public Button::Listener, public ComponentListener, public LookAndFeel_V4, public Timer, public ThreadWithProgressWindow
 {
 public:
     //==============================================================================
@@ -27,9 +27,12 @@ public:
     void buttonClicked(Button* butt) override;
     void componentNameChanged(Component& component) override;
     void paintOrig(bool error);
+    void paintDiffText(string _orig, string _new);
     void startDecode();
     Font getTextButtonFont(TextButton&, int buttonHeight) override;
     void timerCallback() override;
+    void threadComplete(bool userPressedCancel) override;
+    void run() override;
     //
 private:
     ImageComponent* openLogo;
@@ -68,5 +71,8 @@ private:
     MenuComponent* menuC;
     //
     LoadWindow* loadingGif;
+    ProgressBar* progress;
+    //
+    double progressStatus = 0.0;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

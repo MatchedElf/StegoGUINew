@@ -73,7 +73,7 @@ vector<int> ReadKey(const char* _filename, vector<bitset<8>> vect);
 //
 void WriteToFile(FILE* newFile, RGB** pixels, int height, int width);
 //
-vector<bitset<8>> ReadWord(const wchar_t* _filename, int& word_size);
+vector<bitset<8>> ReadWord(const wchar_t* _filename, string& message);
 //
 double DolyaBitov(vector<bitset<8>> _orig, vector<bitset<8>> _new);
 //
