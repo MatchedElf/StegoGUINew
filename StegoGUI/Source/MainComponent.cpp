@@ -2,8 +2,7 @@
 
 //==============================================================================
 MainComponent::MainComponent()
-    : Component("MainComponent"),
-      ThreadWithProgressWindow("Load", true, false)
+    : Component("MainComponent")
 {
     //
     ///*system("echo test > pwdTest.txt");
@@ -13,6 +12,7 @@ MainComponent::MainComponent()
     //system("pause");
     //std::cout << "Test" << std::endl;
     setLookAndFeel(this);
+    //setlocale(LC_ALL, "Russian");
     Font font;
     font.setHeight(25);
     //
@@ -42,15 +42,29 @@ MainComponent::MainComponent()
     newTitle->setText(String((std::wstring(L"Заполненный контейнер")).c_str()), dontSendNotification);
     addAndMakeVisible(newTitle);
     //
-    Image startLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("play.png"));
+    Image startLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("play1.png"));
     startBut = new ImageButton();
     startBut->addListener(this);
-    startBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 1.0f, Colours::transparentWhite);
+    startBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 0.1f, Colours::transparentWhite);
+    //
+    Image infoLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("info.png"));
+    infoBut = new ImageButton();
+    infoBut->addListener(this);
+    infoBut->setImages(false, true, true, infoLogo, 1.0f, Colours::transparentWhite, infoLogo, 0.3f, Colours::transparentWhite, infoLogo, 0.1f, Colours::transparentWhite);
+    //
+    mainBut = new ImageButton();
+    mainBut->addListener(this);
+    mainBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 0.1f, Colours::transparentWhite);
     //
     Image menuLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("menu.png"));
     hideBut = new ImageButton();
     hideBut->addListener(this);
-    hideBut->setImages(false, true, true, menuLogo, 1.0f, Colours::transparentWhite, menuLogo, 0.3f, Colours::transparentWhite, menuLogo, 1.0f, Colours::transparentWhite);
+    hideBut->setImages(false, true, true, menuLogo, 1.0f, Colours::transparentWhite, menuLogo, 0.3f, Colours::transparentWhite, menuLogo, 0.1f, Colours::transparentWhite);
+    //
+    Image homeLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("home.png"));
+    homeBut = new ImageButton();
+    homeBut->addListener(this);
+    homeBut->setImages(false, true, true, homeLogo, 1.0f, Colours::white, homeLogo, 0.3f, Colour::fromRGB(128, 128, 128), homeLogo, 0.3f, Colour::fromRGB(96, 96, 96));
     //
     orig = new ImageComponent();
     orig->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
@@ -108,10 +122,15 @@ MainComponent::MainComponent()
     chooseChecker = new Component("1");
     chooseChecker->addComponentListener(this);
     menuC = new MenuComponent(chooseChecker);
+    helpC = new HelpComponent();
     //
     addAndMakeVisible(menuC);
     addAndMakeVisible(startBut);
+    addAndMakeVisible(infoBut);
+    addAndMakeVisible(mainBut);
     addAndMakeVisible(hideBut);
+    addAndMakeVisible(homeBut);
+    //addAndMakeVisible(helpC);
     //
     error = new ImageComponent();
     error->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("error.png")));
@@ -130,18 +149,32 @@ MainComponent::MainComponent()
     addAndMakeVisible(closeErr);
     black->setVisible(false);
     closeErr->setVisible(false);
+    helpC->setVisible(false);
     setSize(600, 400);
     //
-    loadingGif = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
+    /*loadingGif = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
        TRANS(std::wstring(L"Процесс идет...").c_str()),
        MessageBoxIconType::NoIcon);
-    loadingGif->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.3), (int)(getWidth() * 0.4), (int)(getHeight() * 0.4));
+    loadingGif->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.3), (int)(getWidth() * 0.4), (int)(getHeight() * 0.4));*/
     //
-    progress = new ProgressBar(progressStatus, ProgressBar::Style::linear);
+    //progress = new ProgressBar(progressStatus, ProgressBar::Style::linear);
     //addAndMakeVisible(progress);
     //progress->setVisible(false);
-    progress->setPercentageDisplay(true);
-    setProgress(100);
+    //progress->setPercentageDisplay(true);
+    //setProgress(100);
+    //
+    compsList = new Component * [4];
+    //
+    compsList[0] = hideBut;
+    compsList[1] = homeBut;
+    compsList[2] = infoBut;
+    compsList[3] = startBut;
+    //
+    FSizer = new StretchableLayoutManager();
+    FSizer->setItemLayout(0, 1, 100000, -1);
+    FSizer->setItemLayout(1, 1, 100000, -1);
+    FSizer->setItemLayout(2, 1, 100000, -1);
+    FSizer->setItemLayout(3, 1, 100000, -1);
 }
 
 MainComponent::~MainComponent()
@@ -156,7 +189,10 @@ MainComponent::~MainComponent()
     deleteAndZero(diff);
     deleteAndZero(newIm);
     deleteAndZero(startBut);
+    deleteAndZero(infoBut);
+    deleteAndZero(mainBut);
     deleteAndZero(hideBut);
+    deleteAndZero(homeBut);
     deleteAndZero(origLabel);
     deleteAndZero(decodeLabel);
     deleteAndZero(textLabel);
@@ -164,12 +200,15 @@ MainComponent::~MainComponent()
     deleteAndZero(decodeInfo);
     deleteAndZero(decodeText);
     deleteAndZero(menuC);
+    deleteAndZero(helpC);
     deleteAndZero(error);
     deleteAndZero(closeErr);
     deleteAndZero(chooseChecker);
     deleteAndZero(black);
-    deleteAndZero(loadingGif);
-    deleteAndZero(progress);
+    //deleteAndZero(loadingGif);
+    //deleteAndZero(progress);
+    deleteAndZero(FSizer);
+    delete[] compsList;
 }
 
 //==============================================================================
@@ -178,6 +217,7 @@ void MainComponent::paint(juce::Graphics& g)
     g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
     g.setFont(juce::Font(16.0f));
     g.setColour(juce::Colours::white);
+    //g.fillAll(juce::Colour::fromRGB(128, 0, 0));
 }
 
 void MainComponent::resized()
@@ -186,7 +226,7 @@ void MainComponent::resized()
    {
       openTitle->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.22), (int)(getWidth() * 0.4), (int)(getHeight() * 0.08));
       openLogo->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.3), (int)(getWidth() * 0.4), (int)(getHeight() * 0.4));
-      startBut->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.75), (int)(getWidth() * 0.1), (int)(getHeight() * 0.1));
+      mainBut->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.75), (int)(getWidth() * 0.1), (int)(getHeight() * 0.1));
    }
    else
    {
@@ -202,8 +242,9 @@ void MainComponent::resized()
       //
       menuC->setBounds(0, 0, (int)(getWidth() * 0.1) - 10, getHeight());
       //
-      hideBut->setBounds(0, 0, (int)(getWidth() * 0.05) - 10, (int)(getHeight() * 0.05) - 5);
-      startBut->setBounds((int)(getWidth() * 0.05), 0, (int)(getWidth() * 0.05) - 10, (int)(getHeight() * 0.05) - 5);
+      /*hideBut->setBounds(0, 0, (int)(getWidth() * 0.05) - 10, (int)(getHeight() * 0.05) - 5);
+      startBut->setBounds((int)(getWidth() * 0.05), 0, (int)(getWidth() * 0.05) - 10, (int)(getHeight() * 0.05) - 5);*/
+      FSizer->layOutComponents(compsList, 4, 0, 0, (int)(getWidth() * 0.1) - 10, (int)(getHeight() * 0.05) - 5, false, true);
       //
       if (hidden)
       {
@@ -218,7 +259,8 @@ void MainComponent::resized()
          closeErr->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.55), (int)(getWidth() * 0.2), (int)(getHeight() * 0.2));
       }
       black->setBounds(0, 0, getWidth(), getHeight());
-      progress->setBounds((int)(getWidth() * 0.25), (int)(getHeight() * 0.45), (int)(getWidth() * 0.5), (int)(getHeight() * 0.1));
+      helpC->setBounds(0, 0, getWidth(), getHeight());
+      //progress->setBounds((int)(getWidth() * 0.25), (int)(getHeight() * 0.45), (int)(getWidth() * 0.5), (int)(getHeight() * 0.1));
    }
 }
 
@@ -226,84 +268,68 @@ void MainComponent::buttonClicked(Button* butt)
 {
     if (butt == startBut)
     {
-       if (!startScreen)
+       if ((menuC->imageName != "-1") && (menuC->secrName != "-1"))
        {
-          if ((menuC->imageName != "-1") && (menuC->secrName != "-1"))
-          {
-             //LoadWindow* processWnd = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
-             //                                          TRANS(std::wstring(L"Процесс идет...").c_str()),
-             //                                          MessageBoxIconType::NoIcon);
-             //processWnd->setBounds(0, 0, (int)(getWidth()), (int)(getHeight()));
-             //processWnd->enterModalState(true, nullptr, true);
-             //MessageManager::callAsync([this, processWnd]()
-             //   {
-             //      startDecode();
-             //      if (nullptr != processWnd)
-             //      {
-             //         //processWnd->exitModalState();
-             //      }
-             //   });
-             /*MessageManager::callAsync([this]()
+          LoadWindow* processWnd = new LoadWindow(TRANS(std::wstring(L"Load").c_str()),
+                                                       TRANS(std::wstring(L"Load...").c_str()),
+                                                       MessageBoxIconType::NoIcon);
+             processWnd->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.3), (int)(getWidth() * 0.1), (int)(getHeight() * 0.4));
+             processWnd->enterModalState(true, nullptr, true);
+             MessageManager::callAsync([this, processWnd]()
                 {
-                   LoadWindow* processWnd = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
-                      TRANS(std::wstring(L"Процесс идет...").c_str()),
-                      MessageBoxIconType::NoIcon);
-                   processWnd->setBounds(0, 0, (int)(getWidth()), (int)(getHeight()));
-                   processWnd->enterModalState(true, nullptr, true);
+                   startDecode();
+                   if (nullptr != processWnd)
+                   {
+                      processWnd->exitModalState();
+                   }
                 });
-             MessageManager::callAsync([this]()
-                {
-                   startDecode();
-                });*/
-             //progress->setVisible(true);
-             //resized();
-             progressStatus = 20;
-             //startDecode();
-             //startThread();
-             //launchThread();
-             /*MessageManager::callAsync([this]()
-                {
-                   startDecode();
-                });*/ 
-             startDecode();
-             //loadingGif->enterModalState(true, nullptr, true);
-             //startTimer(500);
-             //MessageManager::callAsync([this]()
-             //   {
-             //      if (nullptr != loadingGif)
-             //      {
-             //         //processWnd->exitModalState();
-             //      }
-             //   });
-             //   startDecode();
-
-
-          }
-          else
-          {
-             error->setVisible(true);
-             black->setVisible(true);
-             repaint();
-             closeErr->setVisible(true);
-             closeErr->enterModalState(true, nullptr, false);             
-             resized();
-          }
        }
-
        else
        {
-          startScreen = false;
-          openLogo->setVisible(false);
-          openTitle->setVisible(false);
-          startBut->setEnabled(false);
+          error->setVisible(true);
+          black->setVisible(true);
+          repaint();
+          closeErr->setVisible(true);
+          closeErr->enterModalState(true, nullptr, false);
           resized();
        }
+    }
+    else if (butt == mainBut)
+    {
+       startScreen = false;
+       Array<Component*> tmp = getChildren();
+       for (int i = 0; i < tmp.size(); i++)
+       {
+          tmp[i]->setVisible(true);
+       }
+       error->setVisible(false);
+       closeErr->setVisible(false);
+       black->setVisible(false);
+       openLogo->setVisible(false);
+       openTitle->setVisible(false);
+       mainBut->setVisible(false);
+       //startBut->setEnabled(true);
+       resized();
     }
     else if (butt == hideBut)
     {
        menuC->setName("HI");
        hidden = !hidden;
        menuC->setVisible(!(menuC->isVisible()));
+       resized();
+    }
+    else if (butt == homeBut)
+    {
+       startScreen = true;
+       Array<Component*> tmp = getChildren();
+       for (int i = 0; i < tmp.size(); i++)
+       {
+          tmp[i]->setVisible(false);
+       }
+       openLogo->setVisible(true);
+       openTitle->setVisible(true);
+       mainBut->setVisible(true);
+       hidden = false;
        resized();
     }
     else if (butt == closeErr)
@@ -313,6 +339,17 @@ void MainComponent::buttonClicked(Button* butt)
        black->setVisible(false);
        repaint();
        closeErr->exitModalState();
+       resized();
+    }
+    else if (butt == infoBut)
+    {
+       //addChildComponent(helpC);
+       //helpC->setVisible(true);
+       //helpC->setVisible(true);
+       //helpC->enterModalState(true, nullptr, false);
+       HelpWindow* tmp = new HelpWindow("Help window");
+       tmp->enterModalState(true, nullptr, true);
+       //tmp->centreWithSize(getWidth(), getHeight());
        resized();
     }
 }
@@ -366,33 +403,66 @@ void MainComponent::paintOrig(bool _error)
 }
 void MainComponent::paintDiffText(string _orig, string _new)
 {
-   for (int i = 0; i < _new.size(); i++)
+   decodeText->setText("");
+#if 1
+   //for (int i = 0; i < _new.size(); i++)
+   for (int i = 0; i < 1; i++)
    {
       if (_orig[i] != _new[i])
          decodeText->setColour(TextEditor::textColourId, Colours::red);
-      string tmp = "";
-      tmp += _new[i];
-      decodeText->insertTextAtCaret(tmp);
+      //String tmp = String((std::wstring(_new[i])).c_str());
+      //wchar_t* tmpArr = new wchar_t[1];
+      //tmpArr[1] = _new[i];
+      wchar_t tmpChar = _new[i];
+      wstring tmp = L"хуй";
+      
+      decodeText->insertTextAtCaret(tmp.c_str());
       decodeText->setColour(TextEditor::textColourId, Colours::white);
    }
+   /////////////////////////////////////
+#else
+   int start = 0;
+   int count = 0;
+   for (int i = 0; i < _new.size(); i++)
+   {
+      count++;
+      if (_orig[i] != _new[i])
+      {
+         decodeText->insertTextAtCaret(_new.substr(start, count - 1));
+         decodeText->setColour(TextEditor::textColourId, Colours::red);
+         decodeText->insertTextAtCaret(_new.substr(i, 2));
+         //decodeText->deleteBackwards(false);
+         //decodeText->deleteForwards(true);
+         start = i + 1;
+         count = 0;
+         decodeText->setColour(TextEditor::textColourId, Colours::white);
+      }
+   }
+   if(start == 0)
+      decodeText->setText(_new);
+#endif
+   // ///////////////////////////
+   //decodeText->setText(_new);
+   resized();
+   //decodeText->setText(_new);
+   /*insert(newText, 0, currentFont, findColour(textColourId), nullptr, caretPosition);
+   insert(newText, insertIndex, currentFont, findColour(textColourId), getUndoManager(), newCaretPos);*/
+
 }
 //
 void MainComponent::startDecode()
 {
     progressStatus = 5;
-    setProgress(progressStatus);
+    //setProgress(progressStatus);
     srand((unsigned int)time(NULL));
     origInfo->setText("In progress", dontSendNotification);
     decodeInfo->setText("In progress", dontSendNotification);
-    decodeText->setText("-", dontSendNotification);
-    //repaint();
-    //
     int difference = 8;
     complex<double> differenceComplex(2.0, 0.0);
-    string message;
+    string message1;
     //
-    vector<bitset<8>> vect = ReadWord(menuC->messageFile.getFullPathName().toWideCharPointer(), message);
-    int word_size = message.length();
+    vector<bitset<8>> vect = ReadWord(menuC->messageFile.getFullPathName().toWideCharPointer(), message1);
+    int word_size = (int)message1.length();
     vector<bitset<8>> vectSzhat;
     bitset<16> secr_size(word_size);
     bitset<8> empty;
@@ -411,101 +481,76 @@ void MainComponent::startDecode()
     origInfo->setText(info, dontSendNotification);
     //
     string result;
+    //
+    FILE* newFile;
+    vector<int> key;
     if (menuC->isAttack)
     {
-        pixelsNew = ReadFile(L"../../Images/Results/new.bmp", height, width, size, info);
-        vector<int> key = ReadKey("key.txt", vect);
-        //
-        if (menuC->selectedTr == 1)
-        {
-            result = decodeDCT(height, width, pixels, pixelsNew, vect, true, vectSzhat, key);
-            decodeText->setText(result, dontSendNotification);
-        }
-        else if (menuC->selectedTr == 2)
-        {
-            result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key);
-            decodeText->setText(result, dontSendNotification);
-        }
-        else if (menuC->selectedTr == 3)
-        {
-            result = decodeLSB(width, pixelsNew, vect, true, vectSzhat);
-            decodeText->setText(result, dontSendNotification);
-        }
-        else if (menuC->selectedTr == 4)
-        {
-           result = decodeDCTKoch(height, width, pixelsNew, vect, true, vectSzhat, difference, key);
-           decodeText->setText(result, dontSendNotification);
-        }
+       pixelsNew = ReadFile(L"../../Images/Results/new.bmp", height, width, size, info);
+       key = ReadKey("key.txt", vect);
     }
     else
     {
-        FILE* newFile = Create_File("../../Images/Results/new.bmp", menuC->imageFile.getFullPathName().toWideCharPointer());
-        //
-        pixelsNew = ReadFile(menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
-        //
-        progressStatus = 10;
-        setProgress(progressStatus);
-        if (menuC->selectedTr != 3)
-        {
-           if ( (vect.size() * 8) >= (size / 64))
-           {
-              decodeInfo->setText(String((std::wstring(L"Ошибка! Слишком большое сообщение.")).c_str()), dontSendNotification);
-              return;
-           }
-        }
-        if (menuC->selectedTr == 1)
-        {
-            vector<int> key1 = CreateKey("key.txt", size, (int)vect.size(), true);
-            //
-            encodeDCT(width, pixelsNew, vect, secr_size, difference, key1);
-            WriteToFile(newFile, pixelsNew, height, width);
-            //
-            result = decodeDCT(height, width, pixels, pixelsNew, vect, true, vectSzhat, key1);
-            //decodeText->setText(result, dontSendNotification);
-            //paintDiffText(message, result);
-            //
-
-        }
-        //
-        else if (menuC->selectedTr == 2)
-        {
-            vector<int> key1 = CreateKey("key.txt", size, (int)vect.size(), true);
-            //
-            encodeDFT(width, pixelsNew, vect, secr_size, differenceComplex, key1);
-            WriteToFile(newFile, pixelsNew, height, width);
-            //
-            result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key1);
-            //decodeText->setText(result, dontSendNotification);
-        }
-        //
-        else if (menuC->selectedTr == 3)
-        {
-            vector<int> key = CreateKey("key.txt", size, (int)vect.size(), false);
-            //
-            encodeLSB(width, pixelsNew, vect, secr_size);
-            WriteToFile(newFile, pixelsNew, height, width);
-            //
-            result = decodeLSB(width, pixelsNew, vect, true, vectSzhat);
-            //decodeText->setText(result, dontSendNotification);
-        }
-        else if (menuC->selectedTr == 4)
-        {
-           vector<int> key1 = CreateKey("key.txt", size, (int)vect.size(), true);
-           //
-           encodeDCTKoch(width, pixelsNew, vect, secr_size, difference, key1);
-           WriteToFile(newFile, pixelsNew, height, width);
-           //
-           result = decodeDCTKoch(height, width, pixelsNew, vect, true, vectSzhat, difference, key1);
-           //decodeText->setText(result, dontSendNotification);
-           //
-
-        }
-        fclose(newFile);
+       newFile = Create_File("../../Images/Results/new.bmp", menuC->imageFile.getFullPathName().toWideCharPointer());
+       pixelsNew = ReadFile(menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
+    }
+    if ((menuC->selectedTr != 3) && !(menuC->isAttack))
+    {
+       if ((vect.size() * 8) >= (size / 64))
+       {
+          decodeInfo->setText(String((std::wstring(L"Ошибка! Слишком большое сообщение.")).c_str()), dontSendNotification);
+          return;
+       }
+    }
+    if (menuC->selectedTr == 1)
+    {
+       if (!menuC->isAttack)
+       {
+          key = CreateKey("key.txt", size, (int)vect.size(), true);
+          encodeDCT(width, pixelsNew, vect, secr_size, difference, key);
+          WriteToFile(newFile, pixelsNew, height, width);
+       }
+       result = decodeDCT(height, width, pixels, pixelsNew, vect, true, vectSzhat, key);
+    }
+    else if (menuC->selectedTr == 2)
+    {
+       if (!menuC->isAttack)
+       {
+          key = CreateKey("key.txt", size, (int)vect.size(), true);
+          encodeDFT(width, pixelsNew, vect, secr_size, differenceComplex, key);
+          WriteToFile(newFile, pixelsNew, height, width);
+       }
+       result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key);
+    }
+    else if (menuC->selectedTr == 3)
+    {
+       if (!menuC->isAttack)
+       {
+          key = CreateKey("key.txt", size, (int)vect.size(), false);
+          encodeLSB(width, pixelsNew, vect, secr_size);
+          WriteToFile(newFile, pixelsNew, height, width);
+       }
+       result = decodeLSB(width, pixelsNew, vect, true, vectSzhat);
+    }
+    else if (menuC->selectedTr == 4)
+    {
+       if (!menuC->isAttack)
+       {
+          key = CreateKey("key.txt", size, (int)vect.size(), true);
+          encodeDCTKoch(width, pixelsNew, vect, secr_size, difference, key);
+          WriteToFile(newFile, pixelsNew, height, width);
+       }
+       result = decodeDCTKoch(height, width, pixelsNew, vect, true, vectSzhat, difference, key);
+    }
+    if (!menuC->isAttack)
+    {
+       fclose(newFile);
+       
     }
     //
-    paintDiffText(message, result);
+    paintDiffText(message1, result);
     progressStatus = 30;
-    setProgress(progressStatus);
+    //setProgress(progressStatus);
     //repaint();
     long double redP, greenP, blueP;
     PSNR(pixels, pixelsNew, redP, greenP, blueP, height, width);
@@ -552,21 +597,7 @@ void MainComponent::startDecode()
     doDecode(L"../../Images/Results/new.bmp", "new.png");
     newIm->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("new.png")));
     progressStatus = 75;
-    //newIm->repaint();
-    //repaint();
-    //resized();
-    //String origTmp = "..\\..\\Images\\orig.bmp";
-    //String tmp = File(menuC->imageName).getRelativePathFrom(File::getCurrentWorkingDirectory());
-    //if (tmp != origTmp)
-    //{
-    //   //FILE* origCopyFile = Create_File("../../Images/orig.bmp", menuC->imageName.toRawUTF8());
-    //   FILE* origCopyFile = Create_File("../../Images/orig.bmp", "../../Images/Results/origCopy.bmp");
-    //   if (origCopyFile != NULL)
-    //   {
-    //     WriteToFile(origCopyFile, pixels, height, width);
-    //     fclose(origCopyFile);
-    //   }
-    //}
+    //
     for (int i = 0; i < height + 2; i++)
     {
         delete[] pixels[i];
@@ -577,10 +608,7 @@ void MainComponent::startDecode()
     delete[] pixelsNew;
     //
     progressStatus = 100;
-    setProgress(progressStatus);
-    //stopThread(1000);
-    //resized();
-    //repaint();
+    //setProgress(progressStatus);
 }
 //
 Font MainComponent::getTextButtonFont(TextButton&, int buttonHeight)
@@ -588,21 +616,21 @@ Font MainComponent::getTextButtonFont(TextButton&, int buttonHeight)
    return { jmin(25.0f, (float)buttonHeight * 0.8f) };
 }
 
-void MainComponent::timerCallback()
-{
-   loadingGif->repaint();
-}
-
-void MainComponent::threadComplete(bool userPressedCancel)
-{
-}
-
-void MainComponent::run()
-{
-   const MessageManagerLock mmLock;
-   startDecode();
-   while (!threadShouldExit())
-   {
-
-   }
-}
+//void MainComponent::timerCallback()
+//{
+//   loadingGif->repaint();
+//}
+//
+//void MainComponent::threadComplete(bool userPressedCancel)
+//{
+//}
+//
+//void MainComponent::run()
+//{
+//   const MessageManagerLock mmLock;
+//   startDecode();
+//   while (!threadShouldExit())
+//   {
+//
+//   }
+//}

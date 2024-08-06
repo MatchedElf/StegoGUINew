@@ -15,7 +15,7 @@ public:
 private:
    String status = "0";
    ImageComponent* clock;
-   ComponentAnimator* anim;
+   //ComponentAnimator* anim;
    std::vector<Image> vect;
    int counter = 0;
    float rotate = 0.0;

@@ -31,7 +31,7 @@ public:
    String secrName = "-1";
    File imageFile;
    File messageFile;
-   TextButton* imageCh;
+   ImageButton* imageCh;
 private:
    std::unique_ptr<FileChooser> myChooser;
    //
@@ -44,11 +44,12 @@ private:
    Label* algTitle;
    Label* attackTitle;
    //
-   TextButton* secrCh;
+   ImageButton* secrCh;
    ComboBox* algCh;
    ToggleButton* attack;
    //
    Component* costyl;
    //
+   TooltipWindow toolT;
    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MenuComponent)
 };

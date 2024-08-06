@@ -7,6 +7,7 @@
       <FILE id="zdgBqf" name="BlackComponent.h" compile="0" resource="0"
             file="Include/BlackComponent.h"/>
       <FILE id="AcXrsg" name="DecodeBMP.h" compile="0" resource="0" file="Include/DecodeBMP.h"/>
+      <FILE id="OiNeTB" name="HelpComponent.h" compile="0" resource="0" file="Include/HelpComponent.h"/>
       <FILE id="QGg3vk" name="LoadWindow.h" compile="0" resource="0" file="Include/LoadWindow.h"/>
       <FILE id="DFJvKc" name="lodepng.h" compile="0" resource="0" file="Include/lodepng.h"/>
       <FILE id="GDsmJj" name="MainComponent.h" compile="0" resource="0" file="Include/MainComponent.h"/>
@@ -14,6 +15,8 @@
       <FILE id="HmPHc3" name="Stego.h" compile="0" resource="0" file="Include/Stego.h"/>
     </GROUP>
     <GROUP id="{81993D6A-C3A4-F312-6BF9-6CACC5203333}" name="Source">
+      <FILE id="IDtUfM" name="HelpComponent.cpp" compile="1" resource="0"
+            file="Source/HelpComponent.cpp"/>
       <FILE id="ng8t3J" name="BlackComponent.cpp" compile="1" resource="0"
             file="Source/BlackComponent.cpp"/>
       <FILE id="ntpzxz" name="LoadWindow.cpp" compile="1" resource="0" file="Source/LoadWindow.cpp"/>

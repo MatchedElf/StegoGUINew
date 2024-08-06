@@ -417,7 +417,7 @@ void encodeDCTKoch(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16
 			if (bit == 1) {
 				if (abs <= difference)
 				{
-					int chhh = 0;
+					//int chhh = 0;
 				}
 				else
 				{
@@ -449,7 +449,7 @@ void encodeDCTKoch(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16
 			else {
 				if (abs > difference)
 				{
-					int chh = 0;
+					//int chh = 0;
 				}
 				else
 				{
@@ -541,7 +541,7 @@ string decodeDCTKoch(int height, int width, RGB** pixelsNew, vector<bitset<8>> v
 					read[pixCount % 8] = 1;
 				if (read[pixCount % 8] != vect[(pixCount / 8)][pixCount % 8])
 				{
-					int sign = 0;
+					//int sign = 0;
 				}
 				pixCount++;
 				if ((pixCount % 8) == 0) {
@@ -550,7 +550,7 @@ string decodeDCTKoch(int height, int width, RGB** pixelsNew, vector<bitset<8>> v
 						vectSzhat.push_back(read);
 						if (vect[(pixCount / 8) - 1] != vectSzhat[(pixCount / 8) - 1])
 						{
-							int sign = 0;
+							//int sign = 0;
 						}
 					}
 				}
@@ -869,7 +869,7 @@ void CreateDiffFile(const wchar_t* _filename1, const wchar_t* _filename2, const 
 	juce::String info;
 	//
 	RGB** pixels1 = ReadFile(_filename1, height, width, size, info);
-	RGB** pixels2 = ReadFile(_filename2, height, width, size, info);  
+	RGB** pixels2 = ReadFile(_filename2, height, width, size, info); 
 	//
 	RGB** pixelsNew = new RGB * [height + 2];
 	for (int i = 0; i < height + 2; i++) pixelsNew[i] = new RGB[width + 1];
