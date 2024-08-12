@@ -313,9 +313,12 @@ void MainComponent::buttonClicked(Button* butt)
     }
     else if (butt == hideBut)
     {
-       menuC->setName("HI");
+       /*menuC->setName("HI");
        hidden = !hidden;
        menuC->setVisible(!(menuC->isVisible()));
+       resized();*/
+       EditWindow* tmp = new EditWindow("Edit \"" + menuC->imageFile.getFileName() + "\"", L"../../Images/Results/new.bmp");
+       tmp->enterModalState(true, nullptr, true);
        resized();
     }
     else if (butt == homeBut)
@@ -343,14 +346,10 @@ void MainComponent::buttonClicked(Button* butt)
     }
     else if (butt == infoBut)
     {
-       //addChildComponent(helpC);
-       //helpC->setVisible(true);
-       //helpC->setVisible(true);
-       //helpC->enterModalState(true, nullptr, false);
        HelpWindow* tmp = new HelpWindow("Help window");
        tmp->enterModalState(true, nullptr, true);
-       //tmp->centreWithSize(getWidth(), getHeight());
        resized();
+       
     }
 }
 //
@@ -404,7 +403,8 @@ void MainComponent::paintOrig(bool _error)
 void MainComponent::paintDiffText(string _orig, string _new)
 {
    decodeText->setText("");
-#if 1
+   //_new = _new.substr(0, 40);
+#if 0
    //for (int i = 0; i < _new.size(); i++)
    for (int i = 0; i < 1; i++)
    {
@@ -423,14 +423,25 @@ void MainComponent::paintDiffText(string _orig, string _new)
 #else
    int start = 0;
    int count = 0;
-   for (int i = 0; i < _new.size(); i++)
+   for (int i = 0; i < _orig.size(); i++)
    {
       count++;
-      if (_orig[i] != _new[i])
+      if (i >= _new.size())
       {
          decodeText->insertTextAtCaret(_new.substr(start, count - 1));
          decodeText->setColour(TextEditor::textColourId, Colours::red);
-         decodeText->insertTextAtCaret(_new.substr(i, 2));
+         for (int j = 0; j < _orig.size() - _new.size(); j++)
+         {
+            decodeText->insertTextAtCaret("X");
+         }
+         decodeText->setColour(TextEditor::textColourId, Colours::white);
+         return;
+      }
+      else if (_orig[i] != _new[i])
+      {
+         decodeText->insertTextAtCaret(_new.substr(start, count - 1));
+         decodeText->setColour(TextEditor::textColourId, Colours::red);
+         decodeText->insertTextAtCaret(_new.substr(i, 1));
          //decodeText->deleteBackwards(false);
          //decodeText->deleteForwards(true);
          start = i + 1;
@@ -438,8 +449,8 @@ void MainComponent::paintDiffText(string _orig, string _new)
          decodeText->setColour(TextEditor::textColourId, Colours::white);
       }
    }
-   if(start == 0)
-      decodeText->setText(_new);
+   if(count != 0)
+      decodeText->insertTextAtCaret(_new.substr(start, count));
 #endif
    // ///////////////////////////
    //decodeText->setText(_new);
@@ -510,7 +521,7 @@ void MainComponent::startDecode()
           encodeDCT(width, pixelsNew, vect, secr_size, difference, key);
           WriteToFile(newFile, pixelsNew, height, width);
        }
-       result = decodeDCT(height, width, pixels, pixelsNew, vect, true, vectSzhat, key);
+       result = decodeDCT(height, width, pixels, pixelsNew, vect, vectSzhat, key);
     }
     else if (menuC->selectedTr == 2)
     {
@@ -530,7 +541,7 @@ void MainComponent::startDecode()
           encodeLSB(width, pixelsNew, vect, secr_size);
           WriteToFile(newFile, pixelsNew, height, width);
        }
-       result = decodeLSB(width, pixelsNew, vect, true, vectSzhat);
+       result = decodeLSB(width, pixelsNew, vect, vectSzhat);
     }
     else if (menuC->selectedTr == 4)
     {
@@ -540,7 +551,7 @@ void MainComponent::startDecode()
           encodeDCTKoch(width, pixelsNew, vect, secr_size, difference, key);
           WriteToFile(newFile, pixelsNew, height, width);
        }
-       result = decodeDCTKoch(height, width, pixelsNew, vect, true, vectSzhat, difference, key);
+       result = decodeDCTKoch(height, width, pixelsNew, vect, vectSzhat, difference, key);
     }
     if (!menuC->isAttack)
     {
@@ -608,6 +619,8 @@ void MainComponent::startDecode()
     delete[] pixelsNew;
     //
     progressStatus = 100;
+    String check = decodeText->getText();
+    return;
     //setProgress(progressStatus);
 }
 //

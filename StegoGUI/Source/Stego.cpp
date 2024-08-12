@@ -231,22 +231,26 @@ void encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> se
 
 }
 //
-string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat, vector<int> key) {
+string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key) {
 	bitset<8> read;
 	bitset<16> readSize;
-
+	//
+	bool stop = false;
 	int pixCount = 0;
 	int bits = 1000;
 	string result = "";
 	for (int x = 0; x < height; x += 8) {
-		if (pixCount == (bits * 8 + 16)) break;
+		//if (pixCount == (bits * 8 + 16)) break;
 		if (pixCount == vect.size() * 8) break;
 		for (int y = 0; y < width; y += 8) {
 			double** res = new double* [8];
 			for (int z = 0; z < 8; z++) {
 				res[z] = new double[8];
 			}
-			DCT(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			if (width > 8 * (key[pixCount] / (width / 8)))
+				DCT(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			else
+				return "Error! " + result;
 			double cf1 = res[4][3];
 			DCT(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
 			double cf2 = res[4][3];
@@ -269,12 +273,12 @@ string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 				else read[pixCount % 8] = 0;
 				pixCount++;
 				if ((pixCount % 8) == 0) {
-					result += read.to_ulong();
-					if (flag) {
-						vectSzhat.push_back(read);
-					}
+					if(!stop)
+						result += read.to_ulong();
+					vectSzhat.push_back(read);
 				}
-				if (pixCount == (bits * 8 + 16)) break;
+				if (pixCount == (bits * 8 + 16)) 
+					stop = true;
 				if (pixCount == vect.size() * 8) break;
 			}
 		}
@@ -342,19 +346,23 @@ void encodeDFT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> se
 string decodeDFT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key) {
 	bitset<8> read;
 	bitset<16> readSize;
-
+	//
+	bool stop = false;
 	int pixCount = 0;
 	int bits = 1000;
 	string result = "";
 	for (int x = 0; x < height; x += 8) {
-		if (pixCount == (bits * 8 + 16)) break;
+		//if (pixCount == (bits * 8 + 16)) break;
 		if (pixCount == vect.size() * 8) break;
 		for (int y = 0; y < width; y += 8) {
 			complex<double>** res = new complex<double>*[8];
 			for (int z = 0; z < 8; z++) {
 				res[z] = new complex<double>[8];
 			}
-			DFT(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			if (width > 8 * (key[pixCount] / (width / 8)))
+				DFT(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			else
+				return "Error! " + result;
 			complex<double> cf1 = res[4][3];
 			DFT(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
 			complex<double> cf2 = res[4][3];
@@ -377,11 +385,13 @@ string decodeDFT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 				else read[pixCount % 8] = 0;
 				pixCount++;
 				if ((pixCount % 8) == 0) {
-					result += read.to_ulong();
+					if(!stop)
+						result += read.to_ulong();
 					vectSzhat.push_back(read);
 					//cout << result << endl;
 				}
-				if (pixCount == (bits * 8 + 16)) break;
+				if (pixCount == (bits * 8 + 16)) 
+					stop = true;
 				if (pixCount == vect.size() * 8) break;
 			}
 		}
@@ -498,16 +508,17 @@ void encodeDCTKoch(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16
 	cout << "After IDCT" << endl;
 	return;
 }
-string decodeDCTKoch(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat, int difference, vector<int> key)
+string decodeDCTKoch(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, int difference, vector<int> key)
 {
 	bitset<8> read;
 	bitset<16> readSize;
-
+	//
+	bool stop = false;
 	int pixCount = 0;
 	int bits = 1000;
 	string result = "";
 	for (int x = 0; x < height; x += 8) {
-		if (pixCount == (bits * 8 + 16)) break;
+		//if (pixCount == (bits * 8 + 16)) break;
 		if (pixCount == vect.size() * 8) break;
 		for (int y = 0; y < width; y += 8) {
 			double** res = new double* [8];
@@ -515,7 +526,10 @@ string decodeDCTKoch(int height, int width, RGB** pixelsNew, vector<bitset<8>> v
 				res[z] = new double[8];
 			}
 			//DCT(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
-			DCT(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			if (width > 8 * (key[pixCount] / (width / 8)))
+				DCT(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			else
+				return "Error! " + result;
 			double cf1 = res[4][3];
 			double cf2 = res[3][4];
 			for (int z = 0; z < 8; z++) {
@@ -545,16 +559,16 @@ string decodeDCTKoch(int height, int width, RGB** pixelsNew, vector<bitset<8>> v
 				}
 				pixCount++;
 				if ((pixCount % 8) == 0) {
-					result += read.to_ulong();
-					if (flag) {
-						vectSzhat.push_back(read);
-						if (vect[(pixCount / 8) - 1] != vectSzhat[(pixCount / 8) - 1])
-						{
-							//int sign = 0;
-						}
+					if(!stop)
+						result += read.to_ulong();
+					vectSzhat.push_back(read);
+					if (vect[(pixCount / 8) - 1] != vectSzhat[(pixCount / 8) - 1])
+					{
+						//int sign = 0;
 					}
 				}
-				if (pixCount == (bits * 8 + 16)) break;
+				if (pixCount == (bits * 8 + 16)) 
+					stop = true;
 				if (pixCount == vect.size() * 8) break;
 			}
 		}
@@ -602,13 +616,14 @@ void encodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> se
 	cout << "After LSB" << endl;
 }
 //
-string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat) {
+string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat) {
 	BYTE channelByte;
 	ifstream keyRead1("key.txt");
 	if (!(keyRead1.is_open())) {
 		cout << "Error while opening file." << endl;
 	}
 	//
+	bool stop = false;
 	bitset<8> read;
 	bitset<16> readSize;
 	//
@@ -631,12 +646,12 @@ string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean fla
 			read[pixCount % 8] = channelByte & 1;
 			pixCount++;
 			if ((pixCount % 8) == 0) {
-				result += read.to_ulong();
-				if (flag) {
-					vectSzhat.push_back(read);
-				}
+				if(!stop)
+					result += read.to_ulong();
+				vectSzhat.push_back(read);
 			}
-			if (pixCount == (bits * 8 + 16)) break;
+			if (pixCount == (bits * 8 + 16)) 
+				stop = true;
 		}
 	}
 	return result;

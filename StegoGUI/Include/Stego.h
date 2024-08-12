@@ -1,6 +1,5 @@
 #ifndef STEGO_H
 #define STEGO_H
-#endif // !STEGO_H
 
 #include <iostream>
 #include <stdlib.h>
@@ -15,6 +14,7 @@
 #include <complex>
 #include <random>
 #include <JuceHeader.h>
+//#include "RGB.h"
 
 #define PI 3.1415926
 
@@ -49,7 +49,7 @@ double CorrCoef(RGB** orig, RGB** re, int height, int width);
 //
 void encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key);
 //
-string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat, vector<int> key);
+string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key);
 //
 void encodeDFT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key);
 //
@@ -57,11 +57,11 @@ string decodeDFT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 //
 void encodeDCTKoch(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key);
 //
-string decodeDCTKoch(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat, int difference, vector<int> key);
+string decodeDCTKoch(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, int difference, vector<int> key);
 //
 void encodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size);
 //
-string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, boolean flag, vector<bitset<8>>& vectSzhat);
+string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat);
 //
 RGB** ReadFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1);
 //
@@ -78,3 +78,4 @@ vector<bitset<8>> ReadWord(const wchar_t* _filename, string& message);
 double DolyaBitov(vector<bitset<8>> _orig, vector<bitset<8>> _new);
 //
 void CreateDiffFile(const wchar_t* _filename1, const wchar_t* _filename2, const char* _newfile);
+#endif // !STEGO_H

@@ -55,6 +55,7 @@ void LoadWindow::paint(juce::Graphics& g)
    //counter++;
    g.drawImage(clockIm, rec);
    status = (status == "0") ? "1" : "0";
+   return;
    //
    //Rectangle<float> r = Rectangle<float>(10, 10, 100, 100);
    //rotate = (rotate + 0.5) % 1000;

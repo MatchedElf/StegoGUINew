@@ -6,6 +6,7 @@
 #include "BlackComponent.h"
 #include "MenuComponent.h"
 #include "HelpComponent.h"
+#include "EditComponent.h"
 #include "LoadWindow.h"
 #include <cstdlib>
 //
@@ -76,7 +77,7 @@ private:
     HelpComponent* helpC;
     //
     //LoadWindow* loadingGif;
-    ProgressBar* progress;
+    //ProgressBar* progress;
     //
     Component** compsList;
     StretchableLayoutManager* FSizer;
