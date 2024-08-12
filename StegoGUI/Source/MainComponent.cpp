@@ -414,7 +414,7 @@ void MainComponent::paintDiffText(string _orig, string _new)
       //wchar_t* tmpArr = new wchar_t[1];
       //tmpArr[1] = _new[i];
       wchar_t tmpChar = _new[i];
-      wstring tmp = L"υσι";
+      wstring tmp = L"XXX";
       
       decodeText->insertTextAtCaret(tmp.c_str());
       decodeText->setColour(TextEditor::textColourId, Colours::white);
