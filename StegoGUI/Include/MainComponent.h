@@ -70,6 +70,7 @@ private:
     bool hidden = false;
     //
     bool startScreen = true;
+    bool edited = false;
     //
     BlackComponent* black;
     //

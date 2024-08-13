@@ -317,7 +317,9 @@ void MainComponent::buttonClicked(Button* butt)
        hidden = !hidden;
        menuC->setVisible(!(menuC->isVisible()));
        resized();*/
-       EditWindow* tmp = new EditWindow("Edit \"" + menuC->imageFile.getFileName() + "\"", L"../../Images/Results/new.bmp");
+       //EditWindow* tmp = new EditWindow("Edit \"" + menuC->imageFile.getFileName() + "\"", L"../../Images/Results/new.bmp");
+       edited = true;
+       EditWindow* tmp = new EditWindow("Edit \"new.bmp\"", L"../../Images/Results/new.bmp");
        tmp->enterModalState(true, nullptr, true);
        resized();
     }
@@ -497,11 +499,18 @@ void MainComponent::startDecode()
     vector<int> key;
     if (menuC->isAttack)
     {
-       pixelsNew = ReadFile(L"../../Images/Results/new.bmp", height, width, size, info);
+       if (edited) {
+          pixelsNew = ReadFile(L"../../Images/Results/new1.bmp", height, width, size, info);
+       }
+       else
+       {
+         pixelsNew = ReadFile(L"../../Images/Results/new.bmp", height, width, size, info);
+       }
        key = ReadKey("key.txt", vect);
     }
     else
     {
+       edited = false;
        newFile = Create_File("../../Images/Results/new.bmp", menuC->imageFile.getFullPathName().toWideCharPointer());
        pixelsNew = ReadFile(menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
     }
@@ -599,13 +608,19 @@ void MainComponent::startDecode()
     inf += "\n";
     //
     progressStatus = 50;
-    CreateDiffFile(menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new.bmp", "diff.bmp");
+    if(edited)
+       CreateDiffFile(menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new1.bmp", "diff.bmp");
+    else
+       CreateDiffFile(menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new.bmp", "diff.bmp");
     doDecode(L"diff.bmp", "diff.png");
     //
     decodeInfo->setText(inf, dontSendNotification);
     diff->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("diff.png")));
     //diff->repaint();
-    doDecode(L"../../Images/Results/new.bmp", "new.png");
+    if(edited)
+       doDecode(L"../../Images/Results/new1.bmp", "new.png");
+    else
+       doDecode(L"../../Images/Results/new.bmp", "new.png");
     newIm->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("new.png")));
     progressStatus = 75;
     //
