@@ -18,20 +18,11 @@ public:
    void mouseDrag(const MouseEvent& event) override;
 private:
    //
-   struct paintData {
-      Point<int> pointPos;
-      int thick;
-      Colour colour;
-      paintData(Point<int> _pos, int _thick, Colour _colour) {
-         pointPos = _pos;
-         thick = _thick;
-         colour = _colour;
-      }
-      bool operator==(paintData t1) {
-         if ((pointPos == t1.pointPos) && (thick == t1.thick) && (colour == t1.colour)) return true;
-         else return false;
-      }
-
+   class newPoint : public Point<int>
+   {
+   public:
+      bool operator<(newPoint t1) const;
+      newPoint(int x, int y);
    };
    class EditMenuComponent : public Component, public LookAndFeel_V4
    {
@@ -61,7 +52,9 @@ private:
    RGB** pixels;
    RGB** pixelsNew;
    FILE* newFile;
-   vector<paintData> paintPoints;
+   //vector<paintData> paintPoints;
+   map<newPoint, Colour> paintMap;
+   vector<map<newPoint, Colour>> paintHistory;
    int thickness = 10;
    EditMenuComponent* menu;
    ImageButton* hideBut;

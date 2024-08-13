@@ -34,6 +34,14 @@ EditComponent::EditComponent(const wchar_t* _filename) : Component()
 
 EditComponent::~EditComponent()
 {
+   for (map<newPoint, Colour>::iterator it = paintMap.begin(); it != paintMap.end(); it++)
+   {
+      newPoint pos = it->first;
+      Colour curColour = it->second;
+      pixelsNew[height - pos.getY()][pos.getX()] = MakeColor(curColour.getRed(),
+         curColour.getGreen(),
+         curColour.getBlue());
+   }
    WriteToFile(newFile, pixelsNew, height, width);
    fclose(newFile);
    deleteAndZero(menu);
@@ -44,20 +52,19 @@ void EditComponent::paint(juce::Graphics& g)
 {
    juce::Rectangle<float> rec((float)getWidth(), (float)getHeight());
    g.drawImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("new.png")), rec);
-   for (int i = 0; i < paintPoints.size(); i++)
+   //
+   for (map<newPoint, Colour>::iterator it = paintMap.begin(); it != paintMap.end(); it++)
    {
-      g.setColour(paintPoints[i].colour);
-      g.fillRect(paintPoints[i].pointPos.getX(), paintPoints[i].pointPos.getY(), paintPoints[i].thick, paintPoints[i].thick);
+      g.setColour(it->second);
+      g.fillRect(it->first.getX(), it->first.getY(), 1, 1);
    }
-   
-   //g.fillAll();
 }
 
 void EditComponent::resized()
 {
-   hideBut->setBounds(0, 0, getWidth() * 0.1, getHeight() * 0.1);
+   hideBut->setBounds(0, 0, (int)(getWidth() * 0.1), (int)(getHeight() * 0.1));
    if (!hided)
-      menu->setBounds(getWidth() * 0.15, 0, getWidth() * 0.75, getHeight() * 0.1);
+      menu->setBounds((int)(getWidth() * 0.15), 0, (int)(getWidth() * 0.75), (int)(getHeight() * 0.1));
 }
 
 void EditComponent::buttonClicked(Button* butt)
@@ -68,11 +75,11 @@ void EditComponent::buttonClicked(Button* butt)
       menu->setVisible(!menu->isVisible());
       resized();
    }
-   else if (butt == menu->undoBut)
+   /*else if (butt == menu->undoBut)
    {
       paintPoints.erase(paintPoints.end() - 1);
       repaint();
-   }
+   }*/
 }
 
 void EditComponent::mouseDown(const MouseEvent& ev)
@@ -82,20 +89,20 @@ void EditComponent::mouseDown(const MouseEvent& ev)
       if (!menu->eraseBut->getToggleState())
       {
 
-         if(find(paintPoints.begin(), paintPoints.end(), paintData(ev.getPosition(), menu->thickSlider->getValue(), menu->colourSelect->getCurrentColour())) == paintPoints.end())
-            paintPoints.push_back(paintData(ev.getPosition(), menu->thickSlider->getValue(), menu->colourSelect->getCurrentColour()));
          for (int i = 0; i < menu->thickSlider->getValue(); i++)
          {
             for (int j = 0; j < menu->thickSlider->getValue(); j++)
             {
-               if (((height - paintPoints.back().pointPos.getY() + i) < height) &&
-                  ((height - paintPoints.back().pointPos.getY() + i) > 0) &&
-                  ((paintPoints.back().pointPos.getX() + j) < width) &&
-                  ((paintPoints.back().pointPos.getX() + j) > 0))
+               newPoint pos(ev.getPosition().getX() + j, ev.getPosition().getY() + i);
+               Colour curColour = menu->colourSelect->getCurrentColour();
+               //
+               //
+               if (((height - pos.getY() + i) < height) &&
+                  ((height - pos.getY() + i) > 0) &&
+                  ((pos.getX() + j) < width) &&
+                  ((pos.getX() + j) > 0))
                {
-                  pixelsNew[height - paintPoints.back().pointPos.getY() + i][paintPoints.back().pointPos.getX() + j] = MakeColor(paintPoints.back().colour.getRed(),
-                     paintPoints.back().colour.getGreen(),
-                     paintPoints.back().colour.getBlue());
+                  paintMap.insert(pair<newPoint, Colour>(pos, curColour));
                }
             }
 
@@ -104,29 +111,19 @@ void EditComponent::mouseDown(const MouseEvent& ev)
       }
       else
       {
-         for (int t = 0; t < paintPoints.size(); t++)
-         {
-            for (int i = 0; i < menu->thickSlider->getValue(); i++)
-            {
-               for (int j = 0; j < menu->thickSlider->getValue(); j++)
-               {
-                  if ((paintPoints[t].pointPos.getX() == ev.getPosition().getX()) && (paintPoints[t].pointPos.getY() == ev.getPosition().getY()))
-                  {
-                     paintPoints.erase(paintPoints.begin() + t);
-                  }
-               }
-            }
-         }
          for (int i = 0; i < menu->thickSlider->getValue(); i++)
          {
             for (int j = 0; j < menu->thickSlider->getValue(); j++)
             {
-               if (((height - paintPoints.back().pointPos.getY() + i) < height) &&
-                  ((height - paintPoints.back().pointPos.getY() + i) > 0) &&
-                  ((paintPoints.back().pointPos.getX() + j) < width) &&
-                  ((paintPoints.back().pointPos.getX() + j) > 0))
+               newPoint pos(ev.getPosition().getX() + j, ev.getPosition().getY() + i);
+               paintMap.erase(pos);
+               //
+               if (((height - pos.getY() + i) < height) &&
+                  ((height - pos.getY() + i) > 0) &&
+                  ((pos.getX() + j) < width) &&
+                  ((pos.getX() + j) > 0))
                {
-                  pixelsNew[height - paintPoints.back().pointPos.getY() + i][paintPoints.back().pointPos.getX() + j] = pixels[height - paintPoints.back().pointPos.getY() + i][paintPoints.back().pointPos.getX() + j];
+                  //
                }
             }
 
@@ -143,20 +140,21 @@ void EditComponent::mouseDrag(const MouseEvent& ev)
    {
       if (!menu->eraseBut->getToggleState())
       {
-         if (find(paintPoints.begin(), paintPoints.end(), paintData(ev.getPosition(), menu->thickSlider->getValue(), menu->colourSelect->getCurrentColour())) == paintPoints.end())
-            paintPoints.push_back(paintData(ev.getPosition(), menu->thickSlider->getValue(), menu->colourSelect->getCurrentColour()));
+
          for (int i = 0; i < menu->thickSlider->getValue(); i++)
          {
             for (int j = 0; j < menu->thickSlider->getValue(); j++)
             {
-               if (((height - paintPoints.back().pointPos.getY() + i) < height) &&
-                  ((height - paintPoints.back().pointPos.getY() + i) > 0) &&
-                  ((paintPoints.back().pointPos.getX() + j) < width) &&
-                  ((paintPoints.back().pointPos.getX() + j) > 0))
+               newPoint pos(ev.getPosition().getX() + j, ev.getPosition().getY() + i);
+               Colour curColour = menu->colourSelect->getCurrentColour();
+               //
+               //
+               if (((height - pos.getY() + i) < height) &&
+                  ((height - pos.getY() + i) > 0) &&
+                  ((pos.getX() + j) < width) &&
+                  ((pos.getX() + j) > 0))
                {
-                  pixelsNew[height - paintPoints.back().pointPos.getY() + i][paintPoints.back().pointPos.getX() + j] = MakeColor(paintPoints.back().colour.getRed(),
-                     paintPoints.back().colour.getGreen(),
-                     paintPoints.back().colour.getBlue());
+                  paintMap.insert(pair<newPoint, Colour>(pos, curColour));
                }
             }
 
@@ -165,23 +163,19 @@ void EditComponent::mouseDrag(const MouseEvent& ev)
       }
       else
       {
-         for (int t = 0; t < paintPoints.size(); t++)
-         {
-            if ((paintPoints[t].pointPos.getX() == ev.getPosition().getX()) && (paintPoints[t].pointPos.getY() == ev.getPosition().getY()))
-            {
-               paintPoints.erase(paintPoints.begin() + t);
-            }
-         }
          for (int i = 0; i < menu->thickSlider->getValue(); i++)
          {
             for (int j = 0; j < menu->thickSlider->getValue(); j++)
             {
-               if (((height - paintPoints.back().pointPos.getY() + i) < height) &&
-                  ((height - paintPoints.back().pointPos.getY() + i) > 0) &&
-                  ((paintPoints.back().pointPos.getX() + j) < width) &&
-                  ((paintPoints.back().pointPos.getX() + j) > 0))
+               newPoint pos(ev.getPosition().getX() + j, ev.getPosition().getY() + i);
+               paintMap.erase(pos);
+               //
+               if (((height - pos.getY() + i) < height) &&
+                  ((height - pos.getY() + i) > 0) &&
+                  ((pos.getX() + j) < width) &&
+                  ((pos.getX() + j) > 0))
                {
-                  pixelsNew[height - paintPoints.back().pointPos.getY() + i][paintPoints.back().pointPos.getX() + j] = pixels[height - paintPoints.back().pointPos.getY() + i][paintPoints.back().pointPos.getX() + j];
+                  //
                }
             }
 
@@ -258,9 +252,9 @@ void EditComponent::EditMenuComponent::resized()
    FSizer->layOutComponents(compsList, 4, 0, 0, getWidth(), getHeight(), false, true);
 }
 
-void EditComponent::EditMenuComponent::drawTickBox(Graphics& g, Component& but, float x, float y, float w, float h, bool ticked, bool isEnabled, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
+void EditComponent::EditMenuComponent::drawTickBox(Graphics& g, Component& but, float , float , float , float , bool ticked, bool , bool , bool )
 {
-   juce::Rectangle<float> rec((int)(but.getWidth() * 0.2), (int)(but.getHeight() * 0.2), (int)(but.getWidth() * 0.6), (int)(but.getHeight() * 0.6));
+   juce::Rectangle<float> rec(but.getWidth() * 0.2f, but.getHeight() * 0.2f, but.getWidth() * 0.6f, but.getHeight() * 0.6f);
    Image eraseIm = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("Eraser.png"));
    g.setColour(Colours::red);
    if(ticked)
@@ -269,3 +263,19 @@ void EditComponent::EditMenuComponent::drawTickBox(Graphics& g, Component& but, 
       g.drawImage(eraseIm, rec);
 }
 
+bool EditComponent::newPoint::operator<(newPoint t1) const
+{
+   int _x = getX();
+   int _x1 = t1.getX();
+   int _y = getY();
+   int _y1 = t1.getY();
+   if (_x < _x1) return true;
+   else if ((_x == _x1) && (_y < _y1)) return true;
+   else return false;
+}
+
+EditComponent::newPoint::newPoint(int x, int y)
+{
+   setX(x);
+   setY(y);
+}
