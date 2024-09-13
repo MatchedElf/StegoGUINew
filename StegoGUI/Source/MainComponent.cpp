@@ -52,6 +52,11 @@ MainComponent::MainComponent()
     infoBut->addListener(this);
     infoBut->setImages(false, true, true, infoLogo, 1.0f, Colours::transparentWhite, infoLogo, 0.3f, Colours::transparentWhite, infoLogo, 0.1f, Colours::transparentWhite);
     //
+    Image editLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("edit.png"));
+    editBut = new ImageButton();
+    editBut->addListener(this);
+    editBut->setImages(false, true, true, editLogo, 1.0f, Colours::transparentWhite, editLogo, 0.3f, Colours::transparentWhite, editLogo, 0.1f, Colours::transparentWhite);
+    //
     mainBut = new ImageButton();
     mainBut->addListener(this);
     mainBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 0.1f, Colours::transparentWhite);
@@ -127,6 +132,7 @@ MainComponent::MainComponent()
     addAndMakeVisible(menuC);
     addAndMakeVisible(startBut);
     addAndMakeVisible(infoBut);
+    addAndMakeVisible(editBut);
     addAndMakeVisible(mainBut);
     addAndMakeVisible(hideBut);
     addAndMakeVisible(homeBut);
@@ -163,18 +169,20 @@ MainComponent::MainComponent()
     //progress->setPercentageDisplay(true);
     //setProgress(100);
     //
-    compsList = new Component * [4];
+    compsList = new Component * [5];
     //
     compsList[0] = hideBut;
     compsList[1] = homeBut;
-    compsList[2] = infoBut;
-    compsList[3] = startBut;
+    compsList[2] = editBut;
+    compsList[3] = infoBut;
+    compsList[4] = startBut;
     //
     FSizer = new StretchableLayoutManager();
     FSizer->setItemLayout(0, 1, 100000, -1);
     FSizer->setItemLayout(1, 1, 100000, -1);
     FSizer->setItemLayout(2, 1, 100000, -1);
     FSizer->setItemLayout(3, 1, 100000, -1);
+    FSizer->setItemLayout(4, 1, 100000, -1);
 }
 
 MainComponent::~MainComponent()
@@ -190,6 +198,7 @@ MainComponent::~MainComponent()
     deleteAndZero(newIm);
     deleteAndZero(startBut);
     deleteAndZero(infoBut);
+    deleteAndZero(editBut);
     deleteAndZero(mainBut);
     deleteAndZero(hideBut);
     deleteAndZero(homeBut);
@@ -240,11 +249,11 @@ void MainComponent::resized()
       //
       grid.items = { GridItem(origTitle), GridItem(diffTitle), GridItem(newTitle), GridItem(orig), GridItem(diff), GridItem(newIm), GridItem(origLabel), GridItem(decodeLabel), GridItem(textLabel), GridItem(origInfo), GridItem(decodeInfo), GridItem(decodeText) };
       //
-      menuC->setBounds(0, 0, (int)(getWidth() * 0.1) - 10, getHeight());
+      menuC->setBounds(0, 0, (int)(getWidth() * 0.15) - 10, getHeight());
       //
       /*hideBut->setBounds(0, 0, (int)(getWidth() * 0.05) - 10, (int)(getHeight() * 0.05) - 5);
       startBut->setBounds((int)(getWidth() * 0.05), 0, (int)(getWidth() * 0.05) - 10, (int)(getHeight() * 0.05) - 5);*/
-      FSizer->layOutComponents(compsList, 4, 0, 0, (int)(getWidth() * 0.1) - 10, (int)(getHeight() * 0.05) - 5, false, true);
+      FSizer->layOutComponents(compsList, 5, 0, 0, (int)(getWidth() * 0.15) - 10, (int)(getHeight() * 0.05) - 5, false, true);
       //
       if (hidden)
       {
@@ -254,7 +263,7 @@ void MainComponent::resized()
       }
       else
       {
-         grid.performLayout(juce::Rectangle<int>((int)(getWidth() * 0.1), 0, (int)(getWidth() * 0.9), (int)(getHeight() * 0.99)));
+         grid.performLayout(juce::Rectangle<int>((int)(getWidth() * 0.15), 0, (int)(getWidth() * 0.85), (int)(getHeight() * 0.99)));
          error->setBounds((int)(getWidth() * 0.4), (int)(getHeight() * 0.25), (int)(getWidth() * 0.3), (int)(getHeight() * 0.3));
          closeErr->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.55), (int)(getWidth() * 0.2), (int)(getHeight() * 0.2));
       }
@@ -313,14 +322,9 @@ void MainComponent::buttonClicked(Button* butt)
     }
     else if (butt == hideBut)
     {
-       /*menuC->setName("HI");
+       menuC->setName("HI");
        hidden = !hidden;
        menuC->setVisible(!(menuC->isVisible()));
-       resized();*/
-       //EditWindow* tmp = new EditWindow("Edit \"" + menuC->imageFile.getFileName() + "\"", L"../../Images/Results/new.bmp");
-       edited = true;
-       EditWindow* tmp = new EditWindow("Edit \"new.bmp\"", L"../../Images/Results/new.bmp");
-       tmp->enterModalState(true, nullptr, true);
        resized();
     }
     else if (butt == homeBut)
@@ -352,6 +356,14 @@ void MainComponent::buttonClicked(Button* butt)
        tmp->enterModalState(true, nullptr, true);
        resized();
        
+    }
+    else if (butt == editBut)
+    {
+       edited = true;
+       EditWindow* tmp = new EditWindow("Edit \"new.bmp\"", L"../../Images/Results/new.bmp");
+       tmp->enterModalState(true, nullptr, true);
+       resized();
+
     }
 }
 //

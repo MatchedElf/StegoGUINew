@@ -16,6 +16,7 @@ public:
    void buttonClicked(Button* butt) override;
    void mouseDown(const MouseEvent& event) override;
    void mouseDrag(const MouseEvent& event) override;
+   void mouseMove(const MouseEvent& event) override;
 private:
    //
    class newPoint : public Point<int>
@@ -47,6 +48,9 @@ private:
       //EditComponent& parent;
    };
    //
+   void drawPoint(Point<int>);
+   void erasePoint(Point<int>);
+   Point<int> lastPointCheck = Point<int>(0, 0);
    bool hided = true;
    int height, width;
    RGB** pixels;

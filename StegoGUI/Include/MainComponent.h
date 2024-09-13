@@ -56,6 +56,7 @@ private:
     ImageButton* mainBut;
     ImageButton* hideBut;
     ImageButton* homeBut;
+    ImageButton* editBut;
     //
     Label* origLabel;
     Label* decodeLabel;
