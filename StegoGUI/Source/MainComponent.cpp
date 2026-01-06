@@ -526,7 +526,7 @@ void MainComponent::startDecode()
        newFile = Create_File("../../Images/Results/new.bmp", menuC->imageFile.getFullPathName().toWideCharPointer());
        pixelsNew = ReadFile(menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
     }
-    if ((menuC->selectedTr != 3) && !(menuC->isAttack))
+    if ((menuC->selectedTr != Stego::LSB) && !(menuC->isAttack))
     {
        if ((vect.size() * 8) >= (size / 64))
        {
@@ -534,7 +534,7 @@ void MainComponent::startDecode()
           return;
        }
     }
-    if (menuC->selectedTr == 1)
+    if (menuC->selectedTr == Stego::DCT)
     {
        if (!menuC->isAttack)
        {
@@ -544,7 +544,7 @@ void MainComponent::startDecode()
        }
        result = decodeDCT(height, width, pixels, pixelsNew, vect, vectSzhat, key);
     }
-    else if (menuC->selectedTr == 2)
+    else if (menuC->selectedTr == Stego::DFT)
     {
        if (!menuC->isAttack)
        {
@@ -554,7 +554,7 @@ void MainComponent::startDecode()
        }
        result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key);
     }
-    else if (menuC->selectedTr == 3)
+    else if (menuC->selectedTr == Stego::LSB)
     {
        if (!menuC->isAttack)
        {
@@ -564,7 +564,7 @@ void MainComponent::startDecode()
        }
        result = decodeLSB(width, pixelsNew, vect, vectSzhat);
     }
-    else if (menuC->selectedTr == 4)
+    else if (menuC->selectedTr == Stego::DCT_KOCH)
     {
        if (!menuC->isAttack)
        {
@@ -573,6 +573,16 @@ void MainComponent::startDecode()
           WriteToFile(newFile, pixelsNew, height, width);
        }
        result = decodeDCTKoch(height, width, pixelsNew, vect, vectSzhat, difference, key);
+    }
+    else if (menuC->selectedTr == Stego::HAAR)
+    {
+        if (!menuC->isAttack)
+        {
+            key = CreateKey("key.txt", size, (int)vect.size(), true);
+            encodeHaar(width, pixelsNew, vect, secr_size, difference, key);
+            WriteToFile(newFile, pixelsNew, height, width);
+        }
+        result = decodeHaar(height, width, pixels, pixelsNew, vect, vectSzhat, key);
     }
     if (!menuC->isAttack)
     {
@@ -588,10 +598,11 @@ void MainComponent::startDecode()
     PSNR(pixels, pixelsNew, redP, greenP, blueP, height, width);
     String inf = "";
     inf += String((std::wstring(L"Алгоритм: ")).c_str());
-    if (menuC->selectedTr == 1) inf += "DCT\n";
-    if (menuC->selectedTr == 2) inf += "DFT\n";
-    if (menuC->selectedTr == 3) inf += "LSB\n";
-    if (menuC->selectedTr == 4) inf += "DCT Koch\n";
+    if (menuC->selectedTr == Stego::DCT) inf += "DCT\n";
+    if (menuC->selectedTr == Stego::DFT) inf += "DFT\n";
+    if (menuC->selectedTr == Stego::LSB) inf += "LSB\n";
+    if (menuC->selectedTr == Stego::DCT_KOCH) inf += "DCT Koch\n";
+    if (menuC->selectedTr == Stego::HAAR) inf += "Haar\n";
     inf += "PSNR = ";
     inf += String(to_string(blueP));
     inf += "\n";
@@ -602,7 +613,7 @@ void MainComponent::startDecode()
     inf += "\n";
     //
     inf += String((std::wstring(L"Коэффициент сокрытия = ")).c_str());
-    if(menuC->selectedTr == 3) 
+    if(menuC->selectedTr == Stego::LSB)
        coef = 1;
     else
       coef = (height * width) / 64.0 / (height * width);

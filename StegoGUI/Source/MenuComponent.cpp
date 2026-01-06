@@ -67,6 +67,7 @@ MenuComponent::MenuComponent(Component* _costyl)
    algCh->addItem("DFT", 2);
    algCh->addItem("LSB", 3);
    algCh->addItem("DCT Koch", 4);
+   algCh->addItem("Haar", 5);
    algCh->setSelectedId(1);
    addAndMakeVisible(algCh);
    algCh->addListener(this);

@@ -1,0 +1,9 @@
+modules/*
+StegoGUI/Builds/VisualStudio2022/.vs/*
+StegoGUI/Builds/VisualStudio2022/x64/*
+StegoGUI/Builds/VisualStudio2022/diff.*
+StegoGUI/Builds/VisualStudio2022/key.txt
+StegoGUI/Builds/VisualStudio2022/new.*
+StegoGUI/Builds/VisualStudio2022/orig.*
+StegoGUI/Images/Results/*
+*.user

@@ -63,6 +63,14 @@ void encodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> se
 //
 string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat);
 //
+void HaarWavelet(RGB** pixels, double** result, int x, int y);
+//
+void IHaarWavelet(RGB** pixels, double** result, int x, int y);
+//
+void encodeHaar(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, double difference, vector<int> key);
+//
+string decodeHaar(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key);
+//
 RGB** ReadFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1);
 //
 FILE* Create_File(const char* _filename, const wchar_t* _origFile);

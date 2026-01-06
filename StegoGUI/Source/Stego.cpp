@@ -656,6 +656,249 @@ string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, vector<bits
 	}
 	return result;
 }
+// Добавьте эти функции в stego.cpp
+
+// Прямое вейвлет-преобразование Хаара для блока 8x8
+void HaarWavelet(RGB** pixels, double** result, int x, int y) {
+	// Временный массив для хранения промежуточных результатов
+	double temp[8][8];
+
+	// Копируем значения синего канала
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			temp[i][j] = (double)pixels[x + i][y + j].blue;
+		}
+	}
+
+	// Применяем преобразование Хаара по строкам
+	for (int i = 0; i < 8; i++) {
+		int step = 8;
+		while (step > 1) {
+			int halfStep = step / 2;
+			for (int j = 0; j < halfStep; j++) {
+				double a = temp[i][j * 2];
+				double b = temp[i][j * 2 + 1];
+				temp[i][j] = (a + b) / sqrt(2.0);  // Низкочастотная составляющая
+				temp[i][j + halfStep] = (a - b) / sqrt(2.0);  // Высокочастотная составляющая
+			}
+			step = halfStep;
+		}
+	}
+
+	// Применяем преобразование Хаара по столбцам
+	for (int j = 0; j < 8; j++) {
+		double col[8];
+		for (int i = 0; i < 8; i++) {
+			col[i] = temp[i][j];
+		}
+
+		int step = 8;
+		while (step > 1) {
+			int halfStep = step / 2;
+			for (int i = 0; i < halfStep; i++) {
+				double a = col[i * 2];
+				double b = col[i * 2 + 1];
+				col[i] = (a + b) / sqrt(2.0);
+				col[i + halfStep] = (a - b) / sqrt(2.0);
+			}
+			step = halfStep;
+		}
+
+		for (int i = 0; i < 8; i++) {
+			result[i][j] = col[i];
+		}
+	}
+}
+
+// Обратное вейвлет-преобразование Хаара для блока 8x8
+void IHaarWavelet(RGB** pixels, double** result, int x, int y) {
+	double temp[8][8];
+
+	// Копируем коэффициенты
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			temp[i][j] = result[i][j];
+		}
+	}
+
+	// Обратное преобразование по столбцам
+	for (int j = 0; j < 8; j++) {
+		double col[8];
+		for (int i = 0; i < 8; i++) {
+			col[i] = temp[i][j];
+		}
+
+		int step = 1;
+		while (step < 8) {
+			int halfStep = step;
+			step = step * 2;
+			for (int i = 0; i < halfStep; i++) {
+				double a = col[i];
+				double b = col[i + halfStep];
+				col[i * 2] = (a + b) / sqrt(2.0);
+				col[i * 2 + 1] = (a - b) / sqrt(2.0);
+			}
+		}
+
+		for (int i = 0; i < 8; i++) {
+			temp[i][j] = col[i];
+		}
+	}
+
+	// Обратное преобразование по строкам
+	for (int i = 0; i < 8; i++) {
+		int step = 1;
+		while (step < 8) {
+			int halfStep = step;
+			step = step * 2;
+			double row[8];
+			for (int j = 0; j < 8; j++) {
+				row[j] = temp[i][j];
+			}
+
+			for (int j = 0; j < halfStep; j++) {
+				double a = row[j];
+				double b = row[j + halfStep];
+				temp[i][j * 2] = (a + b) / sqrt(2.0);
+				temp[i][j * 2 + 1] = (a - b) / sqrt(2.0);
+			}
+		}
+	}
+
+	// Записываем результат обратно в пиксели
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			pixels[x + i][y + j].blue = sat(temp[i][j]);
+		}
+	}
+}
+
+// Внедрение с использованием вейвлет-преобразования Хаара
+void encodeHaar(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, double difference, vector<int> key) {
+	vector<double**> matrixes;
+	cout << "Before Haar Wavelet" << endl;
+
+	int count = 0;
+	while (count < vect.size() * 8) {
+		double** res = new double* [8];
+		for (int z = 0; z < 8; z++) {
+			res[z] = new double[8];
+		}
+		HaarWavelet(pixelsNew, res, 8 * (key[count] / (width / 8)), 8 * (key[count] % (width / 8)));
+		matrixes.push_back(res);
+		count++;
+	}
+
+	cout << "After Haar Wavelet" << endl;
+
+	int pixCount = 0;
+	while ((pixCount / 8) < vect.size()) {
+		if (pixCount < 16) {
+			if (secr_size[pixCount] == 1) {
+				matrixes[pixCount][4][3] += difference;
+			}
+			else {
+				matrixes[pixCount][4][3] -= difference;
+			}
+		}
+		else {
+			if ((vect[pixCount / 8][pixCount % 8] == 1)) {
+				matrixes[pixCount][4][3] += difference;
+			}
+			else {
+				matrixes[pixCount][4][3] -= difference;
+			}
+		}
+		pixCount++;
+	}
+
+	int indCount = 0;
+	while (indCount < vect.size() * 8) {
+		IHaarWavelet(pixelsNew, matrixes[indCount], 8 * (key[indCount] / (width / 8)), 8 * (key[indCount] % (width / 8)));
+		indCount++;
+	}
+
+	// Освобождаем память
+	for (int i = 0; i < matrixes.size(); i++) {
+		for (int j = 0; j < 8; j++) {
+			delete[] matrixes[i][j];
+		}
+		delete[] matrixes[i];
+	}
+
+	cout << "After Inverse Haar Wavelet" << endl;
+	return;
+}
+
+// Извлечение с использованием вейвлет-преобразования Хаара
+string decodeHaar(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key) {
+	bitset<8> read;
+	bitset<16> readSize;
+
+	bool stop = false;
+	int pixCount = 0;
+	int bits = 1000;
+	string result = "";
+
+	for (int x = 0; x < height; x += 8) {
+		if (pixCount == vect.size() * 8) break;
+
+		for (int y = 0; y < width; y += 8) {
+			double** res = new double* [8];
+			for (int z = 0; z < 8; z++) {
+				res[z] = new double[8];
+			}
+
+			if (width > 8 * (key[pixCount] / (width / 8))) {
+				HaarWavelet(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			}
+			else {
+				return "Error! " + result;
+			}
+
+			double cf1 = res[4][3];
+
+			HaarWavelet(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
+			double cf2 = res[4][3];
+
+			// Освобождаем память для текущей матрицы
+			for (int z = 0; z < 8; z++) {
+				delete[] res[z];
+			}
+			delete[] res;
+
+			if (pixCount < 16) {
+				if (cf1 < cf2) readSize[pixCount] = 1;
+				else readSize[pixCount] = 0;
+				pixCount++;
+
+				if (pixCount == 16) {
+					bits = readSize.to_ulong();
+					cout << "bits = " << bits << endl;
+				}
+			}
+			else {
+				if (cf1 < cf2) read[pixCount % 8] = 1;
+				else read[pixCount % 8] = 0;
+				pixCount++;
+
+				if ((pixCount % 8) == 0) {
+					if (!stop)
+						result += read.to_ulong();
+					vectSzhat.push_back(read);
+				}
+
+				if (pixCount == (bits * 8 + 16))
+					stop = true;
+
+				if (pixCount == vect.size() * 8) break;
+			}
+		}
+	}
+
+	cout << "After decoding Haar Wavelet" << endl;
+	return result;
+}
 //
 RGB** ReadFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1)
 {

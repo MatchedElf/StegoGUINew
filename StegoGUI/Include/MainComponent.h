@@ -9,6 +9,18 @@
 #include "EditComponent.h"
 #include "LoadWindow.h"
 #include <cstdlib>
+
+namespace Stego
+{
+    enum AlgNum
+    {
+        DCT = 1,
+        DFT = 2,
+        LSB = 3,
+        DCT_KOCH = 4,
+        HAAR = 5
+    };
+}
 //
 using namespace juce;
 //==============================================================================
