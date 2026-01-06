@@ -19,143 +19,143 @@ MainComponent::MainComponent()
     setOpaque(true);
     addMouseListener(this, true);
     //
-    openLogo = new ImageComponent();
-    openLogo->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("logo4.png")));
-    addAndMakeVisible(openLogo);
+    _openLogo = new ImageComponent();
+    _openLogo->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("logo4.png")));
+    addAndMakeVisible(_openLogo);
     //
-    openTitle = new ImageComponent();
-    openTitle->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("StegoGUI.png")));
-    addAndMakeVisible(openTitle);
+    _openTitle = new ImageComponent();
+    _openTitle->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("StegoGUI.png")));
+    addAndMakeVisible(_openTitle);
     //
-    origTitle = new Label();
-    origTitle->setFont(font);
-    origTitle->setText(String((std::wstring(L"Пустой контейнер")).c_str()), dontSendNotification);
-    addAndMakeVisible(origTitle);
+    _origTitle = new Label();
+    _origTitle->setFont(font);
+    _origTitle->setText(String((std::wstring(L"Пустой контейнер")).c_str()), dontSendNotification);
+    addAndMakeVisible(_origTitle);
     //
-    diffTitle = new Label();
-    diffTitle->setFont(font);
-    diffTitle->setText(String((std::wstring(L"Разностное изображение")).c_str()), dontSendNotification);
-    addAndMakeVisible(diffTitle);
+    _diffTitle = new Label();
+    _diffTitle->setFont(font);
+    _diffTitle->setText(String((std::wstring(L"Разностное изображение")).c_str()), dontSendNotification);
+    addAndMakeVisible(_diffTitle);
     //
-    newTitle = new Label();
-    newTitle->setFont(font);
-    newTitle->setText(String((std::wstring(L"Заполненный контейнер")).c_str()), dontSendNotification);
-    addAndMakeVisible(newTitle);
+    _newTitle = new Label();
+    _newTitle->setFont(font);
+    _newTitle->setText(String((std::wstring(L"Заполненный контейнер")).c_str()), dontSendNotification);
+    addAndMakeVisible(_newTitle);
     //
     Image startLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("play1.png"));
-    startBut = new ImageButton();
-    startBut->addListener(this);
-    startBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 0.1f, Colours::transparentWhite);
+    _startBut = new ImageButton();
+    _startBut->addListener(this);
+    _startBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 0.1f, Colours::transparentWhite);
     //
     Image infoLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("info.png"));
-    infoBut = new ImageButton();
-    infoBut->addListener(this);
-    infoBut->setImages(false, true, true, infoLogo, 1.0f, Colours::transparentWhite, infoLogo, 0.3f, Colours::transparentWhite, infoLogo, 0.1f, Colours::transparentWhite);
+    _infoBut = new ImageButton();
+    _infoBut->addListener(this);
+    _infoBut->setImages(false, true, true, infoLogo, 1.0f, Colours::transparentWhite, infoLogo, 0.3f, Colours::transparentWhite, infoLogo, 0.1f, Colours::transparentWhite);
     //
     Image editLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("edit.png"));
-    editBut = new ImageButton();
-    editBut->addListener(this);
-    editBut->setImages(false, true, true, editLogo, 1.0f, Colours::transparentWhite, editLogo, 0.3f, Colours::transparentWhite, editLogo, 0.1f, Colours::transparentWhite);
+    _editBut = new ImageButton();
+    _editBut->addListener(this);
+    _editBut->setImages(false, true, true, editLogo, 1.0f, Colours::transparentWhite, editLogo, 0.3f, Colours::transparentWhite, editLogo, 0.1f, Colours::transparentWhite);
     //
-    mainBut = new ImageButton();
-    mainBut->addListener(this);
-    mainBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 0.1f, Colours::transparentWhite);
+    _mainBut = new ImageButton();
+    _mainBut->addListener(this);
+    _mainBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 0.1f, Colours::transparentWhite);
     //
     Image menuLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("menu.png"));
-    hideBut = new ImageButton();
-    hideBut->addListener(this);
-    hideBut->setImages(false, true, true, menuLogo, 1.0f, Colours::transparentWhite, menuLogo, 0.3f, Colours::transparentWhite, menuLogo, 0.1f, Colours::transparentWhite);
+    _hideBut = new ImageButton();
+    _hideBut->addListener(this);
+    _hideBut->setImages(false, true, true, menuLogo, 1.0f, Colours::transparentWhite, menuLogo, 0.3f, Colours::transparentWhite, menuLogo, 0.1f, Colours::transparentWhite);
     //
     Image homeLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("home.png"));
-    homeBut = new ImageButton();
-    homeBut->addListener(this);
-    homeBut->setImages(false, true, true, homeLogo, 1.0f, Colours::white, homeLogo, 0.3f, Colour::fromRGB(128, 128, 128), homeLogo, 0.3f, Colour::fromRGB(96, 96, 96));
+    _homeBut = new ImageButton();
+    _homeBut->addListener(this);
+    _homeBut->setImages(false, true, true, homeLogo, 1.0f, Colours::white, homeLogo, 0.3f, Colour::fromRGB(128, 128, 128), homeLogo, 0.3f, Colour::fromRGB(96, 96, 96));
     //
-    orig = new ImageComponent();
-    orig->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
-    addAndMakeVisible(orig);
+    _orig = new ImageComponent();
+    _orig->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
+    addAndMakeVisible(_orig);
     //
-    diff = new ImageComponent();
-    diff->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
-    addAndMakeVisible(diff);
+    _diff = new ImageComponent();
+    _diff->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
+    addAndMakeVisible(_diff);
     //
-    newIm = new ImageComponent();
-    newIm->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
-    addAndMakeVisible(newIm);
+    _newIm = new ImageComponent();
+    _newIm->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
+    addAndMakeVisible(_newIm);
     ///
     font.setHeight(25);
     //
-    origLabel = new Label();
-    origLabel->setFont(font);
-    origLabel->setText(String((std::wstring(L"Информация об изображении")).c_str()), dontSendNotification);
-    addAndMakeVisible(origLabel);
+    _origLabel = new Label();
+    _origLabel->setFont(font);
+    _origLabel->setText(String((std::wstring(L"Информация об изображении")).c_str()), dontSendNotification);
+    addAndMakeVisible(_origLabel);
     // 
-    decodeLabel = new Label();
-    decodeLabel->setFont(font);
-    decodeLabel->setText(String((std::wstring(L"Информация об извлечении")).c_str()), dontSendNotification);
-    addAndMakeVisible(decodeLabel);
+    _decodeLabel = new Label();
+    _decodeLabel->setFont(font);
+    _decodeLabel->setText(String((std::wstring(L"Информация об извлечении")).c_str()), dontSendNotification);
+    addAndMakeVisible(_decodeLabel);
     //
-    textLabel = new Label();
-    textLabel->setFont(font);
-    textLabel->setText(String((std::wstring(L"Извлеченный текст")).c_str()), dontSendNotification);
-    addAndMakeVisible(textLabel);
+    _textLabel = new Label();
+    _textLabel->setFont(font);
+    _textLabel->setText(String((std::wstring(L"Извлеченный текст")).c_str()), dontSendNotification);
+    addAndMakeVisible(_textLabel);
     //
-    origInfo = new TextEditor();
-    origInfo->setCaretVisible(false);
-    origInfo->setMultiLine(true);
-    origInfo->setReadOnly(true);
-    origInfo->setScrollbarsShown(true);
-    origInfo->setFont(font);
-    addAndMakeVisible(origInfo);
+    _origInfo = new TextEditor();
+    _origInfo->setCaretVisible(false);
+    _origInfo->setMultiLine(true);
+    _origInfo->setReadOnly(true);
+    _origInfo->setScrollbarsShown(true);
+    _origInfo->setFont(font);
+    addAndMakeVisible(_origInfo);
     //
-    decodeInfo = new TextEditor();
-    decodeInfo->setCaretVisible(false);
-    decodeInfo->setMultiLine(true);
-    decodeInfo->setReadOnly(true);
-    decodeInfo->setScrollbarsShown(true);
-    decodeInfo->setFont(font);
-    addAndMakeVisible(decodeInfo);
+    _decodeInfo = new TextEditor();
+    _decodeInfo->setCaretVisible(false);
+    _decodeInfo->setMultiLine(true);
+    _decodeInfo->setReadOnly(true);
+    _decodeInfo->setScrollbarsShown(true);
+    _decodeInfo->setFont(font);
+    addAndMakeVisible(_decodeInfo);
     //
-    decodeText = new TextEditor();
-    decodeText->setCaretVisible(false);
-    decodeText->setMultiLine(true);
-    decodeText->setReadOnly(true);
-    decodeText->setScrollbarsShown(true);
-    decodeText->setFont(font);
-    addAndMakeVisible(decodeText);
+    _decodeText = new TextEditor();
+    _decodeText->setCaretVisible(false);
+    _decodeText->setMultiLine(true);
+    _decodeText->setReadOnly(true);
+    _decodeText->setScrollbarsShown(true);
+    _decodeText->setFont(font);
+    addAndMakeVisible(_decodeText);
     //
-    chooseChecker = new Component("1");
-    chooseChecker->addComponentListener(this);
-    menuC = new MenuComponent(chooseChecker);
-    helpC = new HelpComponent();
+    _chooseChecker = new Component("1");
+    _chooseChecker->addComponentListener(this);
+    _menuC = new MenuComponent(_chooseChecker);
+    _helpC = new HelpComponent();
     //
-    addAndMakeVisible(menuC);
-    addAndMakeVisible(startBut);
-    addAndMakeVisible(infoBut);
-    addAndMakeVisible(editBut);
-    addAndMakeVisible(mainBut);
-    addAndMakeVisible(hideBut);
-    addAndMakeVisible(homeBut);
+    addAndMakeVisible(_menuC);
+    addAndMakeVisible(_startBut);
+    addAndMakeVisible(_infoBut);
+    addAndMakeVisible(_editBut);
+    addAndMakeVisible(_mainBut);
+    addAndMakeVisible(_hideBut);
+    addAndMakeVisible(_homeBut);
     //addAndMakeVisible(helpC);
     //
-    error = new ImageComponent();
-    error->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("error.png")));
+    _error = new ImageComponent();
+    _error->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("error.png")));
     //
-    closeErr = new TextButton(String((std::wstring(L"Файлы не выбраны!!!\nНажать сюда для закрытия")).c_str()));
-    closeErr->addListener(this);
+    _closeErr = new TextButton(String((std::wstring(L"Файлы не выбраны!!!\nНажать сюда для закрытия")).c_str()));
+    _closeErr->addListener(this);
     //
-    chooseChecker->addComponentListener(this);
+    _chooseChecker->addComponentListener(this);
     //
-    black = new BlackComponent();
-    addAndMakeVisible(black);
+    _black = new BlackComponent();
+    addAndMakeVisible(_black);
     //black->setColour(Label::backgroundColourId, juce::Colour::fromRGBA(0, 0, 0, 180));
     //
-    addAndMakeVisible(error);
-    error->setVisible(false);
-    addAndMakeVisible(closeErr);
-    black->setVisible(false);
-    closeErr->setVisible(false);
-    helpC->setVisible(false);
+    addAndMakeVisible(_error);
+    _error->setVisible(false);
+    addAndMakeVisible(_closeErr);
+    _black->setVisible(false);
+    _closeErr->setVisible(false);
+    _helpC->setVisible(false);
     setSize(600, 400);
     //
     /*loadingGif = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
@@ -169,55 +169,55 @@ MainComponent::MainComponent()
     //progress->setPercentageDisplay(true);
     //setProgress(100);
     //
-    compsList = new Component * [5];
+    _compsList = new Component * [5];
     //
-    compsList[0] = hideBut;
-    compsList[1] = homeBut;
-    compsList[2] = editBut;
-    compsList[3] = infoBut;
-    compsList[4] = startBut;
+    _compsList[0] = _hideBut;
+    _compsList[1] = _homeBut;
+    _compsList[2] = _editBut;
+    _compsList[3] = _infoBut;
+    _compsList[4] = _startBut;
     //
-    FSizer = new StretchableLayoutManager();
-    FSizer->setItemLayout(0, 1, 100000, -1);
-    FSizer->setItemLayout(1, 1, 100000, -1);
-    FSizer->setItemLayout(2, 1, 100000, -1);
-    FSizer->setItemLayout(3, 1, 100000, -1);
-    FSizer->setItemLayout(4, 1, 100000, -1);
+    _FSizer = new StretchableLayoutManager();
+    _FSizer->setItemLayout(0, 1, 100000, -1);
+    _FSizer->setItemLayout(1, 1, 100000, -1);
+    _FSizer->setItemLayout(2, 1, 100000, -1);
+    _FSizer->setItemLayout(3, 1, 100000, -1);
+    _FSizer->setItemLayout(4, 1, 100000, -1);
 }
 
 MainComponent::~MainComponent()
 {
     setLookAndFeel(nullptr);
-    deleteAndZero(openLogo);
-    deleteAndZero(openTitle);
-    deleteAndZero(origTitle);
-    deleteAndZero(diffTitle);
-    deleteAndZero(newTitle);
-    deleteAndZero(orig);
-    deleteAndZero(diff);
-    deleteAndZero(newIm);
-    deleteAndZero(startBut);
-    deleteAndZero(infoBut);
-    deleteAndZero(editBut);
-    deleteAndZero(mainBut);
-    deleteAndZero(hideBut);
-    deleteAndZero(homeBut);
-    deleteAndZero(origLabel);
-    deleteAndZero(decodeLabel);
-    deleteAndZero(textLabel);
-    deleteAndZero(origInfo);
-    deleteAndZero(decodeInfo);
-    deleteAndZero(decodeText);
-    deleteAndZero(menuC);
-    deleteAndZero(helpC);
-    deleteAndZero(error);
-    deleteAndZero(closeErr);
-    deleteAndZero(chooseChecker);
-    deleteAndZero(black);
+    deleteAndZero(_openLogo);
+    deleteAndZero(_openTitle);
+    deleteAndZero(_origTitle);
+    deleteAndZero(_diffTitle);
+    deleteAndZero(_newTitle);
+    deleteAndZero(_orig);
+    deleteAndZero(_diff);
+    deleteAndZero(_newIm);
+    deleteAndZero(_startBut);
+    deleteAndZero(_infoBut);
+    deleteAndZero(_editBut);
+    deleteAndZero(_mainBut);
+    deleteAndZero(_hideBut);
+    deleteAndZero(_homeBut);
+    deleteAndZero(_origLabel);
+    deleteAndZero(_decodeLabel);
+    deleteAndZero(_textLabel);
+    deleteAndZero(_origInfo);
+    deleteAndZero(_decodeInfo);
+    deleteAndZero(_decodeText);
+    deleteAndZero(_menuC);
+    deleteAndZero(_helpC);
+    deleteAndZero(_error);
+    deleteAndZero(_closeErr);
+    deleteAndZero(_chooseChecker);
+    deleteAndZero(_black);
     //deleteAndZero(loadingGif);
     //deleteAndZero(progress);
-    deleteAndZero(FSizer);
-    delete[] compsList;
+    deleteAndZero(_FSizer);
+    delete[] _compsList;
 }
 
 //==============================================================================
@@ -231,11 +231,11 @@ void MainComponent::paint(juce::Graphics& g)
 
 void MainComponent::resized()
 {
-   if (startScreen)
+   if (_startScreen)
    {
-      openTitle->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.22), (int)(getWidth() * 0.4), (int)(getHeight() * 0.08));
-      openLogo->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.3), (int)(getWidth() * 0.4), (int)(getHeight() * 0.4));
-      mainBut->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.75), (int)(getWidth() * 0.1), (int)(getHeight() * 0.1));
+      _openTitle->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.22), (int)(getWidth() * 0.4), (int)(getHeight() * 0.08));
+      _openLogo->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.3), (int)(getWidth() * 0.4), (int)(getHeight() * 0.4));
+      _mainBut->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.75), (int)(getWidth() * 0.1), (int)(getHeight() * 0.1));
    }
    else
    {
@@ -247,37 +247,37 @@ void MainComponent::resized()
       grid.templateRows = { Track(Fr(1)), Track(Fr(12)), Track(Fr(1)), Track(Fr(4)) };
       grid.templateColumns = { Track(Fr(1)), Track(Fr(1)), Track(Fr(1)) };
       //
-      grid.items = { GridItem(origTitle), GridItem(diffTitle), GridItem(newTitle), GridItem(orig), GridItem(diff), GridItem(newIm), GridItem(origLabel), GridItem(decodeLabel), GridItem(textLabel), GridItem(origInfo), GridItem(decodeInfo), GridItem(decodeText) };
+      grid.items = { GridItem(_origTitle), GridItem(_diffTitle), GridItem(_newTitle), GridItem(_orig), GridItem(_diff), GridItem(_newIm), GridItem(_origLabel), GridItem(_decodeLabel), GridItem(_textLabel), GridItem(_origInfo), GridItem(_decodeInfo), GridItem(_decodeText) };
       //
-      menuC->setBounds(0, 0, (int)(getWidth() * 0.15) - 10, getHeight());
+      _menuC->setBounds(0, 0, (int)(getWidth() * 0.15) - 10, getHeight());
       //
       /*hideBut->setBounds(0, 0, (int)(getWidth() * 0.05) - 10, (int)(getHeight() * 0.05) - 5);
       startBut->setBounds((int)(getWidth() * 0.05), 0, (int)(getWidth() * 0.05) - 10, (int)(getHeight() * 0.05) - 5);*/
-      FSizer->layOutComponents(compsList, 5, 0, 0, (int)(getWidth() * 0.15) - 10, (int)(getHeight() * 0.05) - 5, false, true);
+      _FSizer->layOutComponents(_compsList, 5, 0, 0, (int)(getWidth() * 0.15) - 10, (int)(getHeight() * 0.05) - 5, false, true);
       //
-      if (hidden)
+      if (_hidden)
       {
          grid.performLayout(juce::Rectangle<int>(0, (int)(getHeight() * 0.05), getWidth(), (int)(getHeight() * 0.94)));
-         error->setBounds((int)(getWidth() * 0.35), (int)(getHeight() * 0.25), (int)(getWidth() * 0.3), (int)(getHeight() * 0.3));
-         closeErr->setBounds((int)(getWidth() * 0.4), (int)(getHeight() * 0.55), (int)(getWidth() * 0.2), (int)(getHeight() * 0.2));
+         _error->setBounds((int)(getWidth() * 0.35), (int)(getHeight() * 0.25), (int)(getWidth() * 0.3), (int)(getHeight() * 0.3));
+         _closeErr->setBounds((int)(getWidth() * 0.4), (int)(getHeight() * 0.55), (int)(getWidth() * 0.2), (int)(getHeight() * 0.2));
       }
       else
       {
          grid.performLayout(juce::Rectangle<int>((int)(getWidth() * 0.15), 0, (int)(getWidth() * 0.85), (int)(getHeight() * 0.99)));
-         error->setBounds((int)(getWidth() * 0.4), (int)(getHeight() * 0.25), (int)(getWidth() * 0.3), (int)(getHeight() * 0.3));
-         closeErr->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.55), (int)(getWidth() * 0.2), (int)(getHeight() * 0.2));
+         _error->setBounds((int)(getWidth() * 0.4), (int)(getHeight() * 0.25), (int)(getWidth() * 0.3), (int)(getHeight() * 0.3));
+         _closeErr->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.55), (int)(getWidth() * 0.2), (int)(getHeight() * 0.2));
       }
-      black->setBounds(0, 0, getWidth(), getHeight());
-      helpC->setBounds(0, 0, getWidth(), getHeight());
+      _black->setBounds(0, 0, getWidth(), getHeight());
+      _helpC->setBounds(0, 0, getWidth(), getHeight());
       //progress->setBounds((int)(getWidth() * 0.25), (int)(getHeight() * 0.45), (int)(getWidth() * 0.5), (int)(getHeight() * 0.1));
    }
 }
 
 void MainComponent::buttonClicked(Button* butt)
 {
-    if (butt == startBut)
+    if (butt == _startBut)
     {
-       if ((menuC->imageName != "-1") && (menuC->secrName != "-1"))
+       if ((_menuC->imageName != "-1") && (_menuC->secrName != "-1"))
        {
           LoadWindow* processWnd = new LoadWindow(TRANS(std::wstring(L"Load").c_str()),
                                                        TRANS(std::wstring(L"Load...").c_str()),
@@ -295,71 +295,71 @@ void MainComponent::buttonClicked(Button* butt)
        }
        else
        {
-          error->setVisible(true);
-          black->setVisible(true);
+          _error->setVisible(true);
+          _black->setVisible(true);
           repaint();
-          closeErr->setVisible(true);
-          closeErr->enterModalState(true, nullptr, false);
+          _closeErr->setVisible(true);
+          _closeErr->enterModalState(true, nullptr, false);
           resized();
        }
     }
-    else if (butt == mainBut)
+    else if (butt == _mainBut)
     {
-       startScreen = false;
+       _startScreen = false;
        Array<Component*> tmp = getChildren();
        for (int i = 0; i < tmp.size(); i++)
        {
           tmp[i]->setVisible(true);
        }
-       error->setVisible(false);
-       closeErr->setVisible(false);
-       black->setVisible(false);
-       openLogo->setVisible(false);
-       openTitle->setVisible(false);
-       mainBut->setVisible(false);
+       _error->setVisible(false);
+       _closeErr->setVisible(false);
+       _black->setVisible(false);
+       _openLogo->setVisible(false);
+       _openTitle->setVisible(false);
+       _mainBut->setVisible(false);
        //startBut->setEnabled(true);
        resized();
     }
-    else if (butt == hideBut)
+    else if (butt == _hideBut)
     {
-       menuC->setName("HI");
-       hidden = !hidden;
-       menuC->setVisible(!(menuC->isVisible()));
+       _menuC->setName("HI");
+       _hidden = !_hidden;
+       _menuC->setVisible(!(_menuC->isVisible()));
        resized();
     }
-    else if (butt == homeBut)
+    else if (butt == _homeBut)
     {
-       startScreen = true;
+       _startScreen = true;
        Array<Component*> tmp = getChildren();
        for (int i = 0; i < tmp.size(); i++)
        {
           tmp[i]->setVisible(false);
        }
-       openLogo->setVisible(true);
-       openTitle->setVisible(true);
-       mainBut->setVisible(true);
-       hidden = false;
+       _openLogo->setVisible(true);
+       _openTitle->setVisible(true);
+       _mainBut->setVisible(true);
+       _hidden = false;
        resized();
     }
-    else if (butt == closeErr)
+    else if (butt == _closeErr)
     {
-       error->setVisible(false);
-       closeErr->setVisible(false);
-       black->setVisible(false);
+       _error->setVisible(false);
+       _closeErr->setVisible(false);
+       _black->setVisible(false);
        repaint();
-       closeErr->exitModalState();
+       _closeErr->exitModalState();
        resized();
     }
-    else if (butt == infoBut)
+    else if (butt == _infoBut)
     {
        HelpWindow* tmp = new HelpWindow("Help window");
        tmp->enterModalState(true, nullptr, true);
        resized();
        
     }
-    else if (butt == editBut)
+    else if (butt == _editBut)
     {
-       edited = true;
+       _edited = true;
        EditWindow* tmp = new EditWindow("Edit \"new.bmp\"", L"../../Images/Results/new.bmp");
        tmp->enterModalState(true, nullptr, true);
        resized();
@@ -376,13 +376,13 @@ void MainComponent::componentNameChanged(Component& component)
    }
    else
    {
-      paintOrig((menuC->imageName == "-1"));
+      paintOrig((_menuC->imageName == "-1"));
    }
 }
 //
-void MainComponent::paintOrig(bool _error)
+void MainComponent::paintOrig(bool error)
 {
-   if (!_error)
+   if (!error)
    {
       //
       int height;
@@ -390,33 +390,33 @@ void MainComponent::paintOrig(bool _error)
       int size;
       String info;
       //
-      ReadFile(menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
-      origInfo->setText(info, sendNotification);
+      ReadFile(_menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
+      _origInfo->setText(info, sendNotification);
       if ((size < 100) || (height < 32) || (height > 5000) || (width < 32) || (width > 5000))
       {
-         orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("error.png")), sendNotification);
-         startBut->setEnabled(false);
+         _orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("error.png")), sendNotification);
+         _startBut->setEnabled(false);
       }
       else
       {
-         doDecode(menuC->imageFile.getFullPathName().toWideCharPointer(), "orig.png");
-         orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
-         startBut->setEnabled(true);
+         doDecode(_menuC->imageFile.getFullPathName().toWideCharPointer(), "orig.png");
+         _orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("orig.png")), sendNotification);
+         _startBut->setEnabled(true);
       }
    }
    else
    {
-      orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("empty.png")), sendNotification);
-      origInfo->setText("", sendNotification);
+      _orig->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("empty.png")), sendNotification);
+      _origInfo->setText("", sendNotification);
    }
-   diff->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
-   newIm->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
-   decodeInfo->setText("", sendNotification);
-   decodeText->setText("", sendNotification);
+   _diff->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
+   _newIm->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
+   _decodeInfo->setText("", sendNotification);
+   _decodeText->setText("", sendNotification);
 }
-void MainComponent::paintDiffText(string _orig, string _new)
+void MainComponent::paintDiffText(string orig, string _new)
 {
-   decodeText->setText("");
+   _decodeText->setText("");
    //_new = _new.substr(0, 40);
 #if 0
    //for (int i = 0; i < _new.size(); i++)
@@ -437,34 +437,34 @@ void MainComponent::paintDiffText(string _orig, string _new)
 #else
    int start = 0;
    int count = 0;
-   for (int i = 0; i < _orig.size(); i++)
+   for (int i = 0; i < orig.size(); i++)
    {
       count++;
       if (i >= _new.size())
       {
-         decodeText->insertTextAtCaret(_new.substr(start, count - 1));
-         decodeText->setColour(TextEditor::textColourId, Colours::red);
-         for (int j = 0; j < _orig.size() - _new.size(); j++)
+         _decodeText->insertTextAtCaret(_new.substr(start, count - 1));
+         _decodeText->setColour(TextEditor::textColourId, Colours::red);
+         for (int j = 0; j < orig.size() - _new.size(); j++)
          {
-            decodeText->insertTextAtCaret("X");
+            _decodeText->insertTextAtCaret("X");
          }
-         decodeText->setColour(TextEditor::textColourId, Colours::white);
+         _decodeText->setColour(TextEditor::textColourId, Colours::white);
          return;
       }
-      else if (_orig[i] != _new[i])
+      else if (orig[i] != _new[i])
       {
-         decodeText->insertTextAtCaret(_new.substr(start, count - 1));
-         decodeText->setColour(TextEditor::textColourId, Colours::red);
-         decodeText->insertTextAtCaret(_new.substr(i, 1));
+         _decodeText->insertTextAtCaret(_new.substr(start, count - 1));
+         _decodeText->setColour(TextEditor::textColourId, Colours::red);
+         _decodeText->insertTextAtCaret(_new.substr(i, 1));
          //decodeText->deleteBackwards(false);
          //decodeText->deleteForwards(true);
          start = i + 1;
          count = 0;
-         decodeText->setColour(TextEditor::textColourId, Colours::white);
+         _decodeText->setColour(TextEditor::textColourId, Colours::white);
       }
    }
    if(count != 0)
-      decodeText->insertTextAtCaret(_new.substr(start, count));
+      _decodeText->insertTextAtCaret(_new.substr(start, count));
 #endif
    // ///////////////////////////
    //decodeText->setText(_new);
@@ -477,16 +477,16 @@ void MainComponent::paintDiffText(string _orig, string _new)
 //
 void MainComponent::startDecode()
 {
-    progressStatus = 5;
+    _progressStatus = 5;
     //setProgress(progressStatus);
     srand((unsigned int)time(NULL));
-    origInfo->setText("In progress", dontSendNotification);
-    decodeInfo->setText("In progress", dontSendNotification);
+    _origInfo->setText("In progress", dontSendNotification);
+    _decodeInfo->setText("In progress", dontSendNotification);
     int difference = 8;
     complex<double> differenceComplex(2.0, 0.0);
     string message1;
     //
-    vector<bitset<8>> vect = ReadWord(menuC->messageFile.getFullPathName().toWideCharPointer(), message1);
+    vector<bitset<8>> vect = ReadWord(_menuC->messageFile.getFullPathName().toWideCharPointer(), message1);
     int word_size = (int)message1.length();
     vector<bitset<8>> vectSzhat;
     bitset<16> secr_size(word_size);
@@ -500,18 +500,18 @@ void MainComponent::startDecode()
     //
     String info;
     //
-    RGB** pixels = ReadFile(menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
+    RGB** pixels = ReadFile(_menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
     RGB** pixelsNew;
     //
-    origInfo->setText(info, dontSendNotification);
+    _origInfo->setText(info, dontSendNotification);
     //
     string result;
     //
     FILE* newFile;
     vector<int> key;
-    if (menuC->isAttack)
+    if (_menuC->isAttack)
     {
-       if (edited) {
+       if (_edited) {
           pixelsNew = ReadFile(L"../../Images/Results/new1.bmp", height, width, size, info);
        }
        else
@@ -522,21 +522,21 @@ void MainComponent::startDecode()
     }
     else
     {
-       edited = false;
-       newFile = Create_File("../../Images/Results/new.bmp", menuC->imageFile.getFullPathName().toWideCharPointer());
-       pixelsNew = ReadFile(menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
+       _edited = false;
+       newFile = Create_File("../../Images/Results/new.bmp", _menuC->imageFile.getFullPathName().toWideCharPointer());
+       pixelsNew = ReadFile(_menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
     }
-    if ((menuC->selectedTr != Stego::LSB) && !(menuC->isAttack))
+    if ((_menuC->selectedTr != Stego::LSB) && !(_menuC->isAttack))
     {
        if ((vect.size() * 8) >= (size / 64))
        {
-          decodeInfo->setText(String((std::wstring(L"Ошибка! Слишком большое сообщение.")).c_str()), dontSendNotification);
+          _decodeInfo->setText(String((std::wstring(L"Ошибка! Слишком большое сообщение.")).c_str()), dontSendNotification);
           return;
        }
     }
-    if (menuC->selectedTr == Stego::DCT)
+    if (_menuC->selectedTr == Stego::DCT)
     {
-       if (!menuC->isAttack)
+       if (!_menuC->isAttack)
        {
           key = CreateKey("key.txt", size, (int)vect.size(), true);
           encodeDCT(width, pixelsNew, vect, secr_size, difference, key);
@@ -544,9 +544,9 @@ void MainComponent::startDecode()
        }
        result = decodeDCT(height, width, pixels, pixelsNew, vect, vectSzhat, key);
     }
-    else if (menuC->selectedTr == Stego::DFT)
+    else if (_menuC->selectedTr == Stego::DFT)
     {
-       if (!menuC->isAttack)
+       if (!_menuC->isAttack)
        {
           key = CreateKey("key.txt", size, (int)vect.size(), true);
           encodeDFT(width, pixelsNew, vect, secr_size, differenceComplex, key);
@@ -554,9 +554,9 @@ void MainComponent::startDecode()
        }
        result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key);
     }
-    else if (menuC->selectedTr == Stego::LSB)
+    else if (_menuC->selectedTr == Stego::LSB)
     {
-       if (!menuC->isAttack)
+       if (!_menuC->isAttack)
        {
           key = CreateKey("key.txt", size, (int)vect.size(), false);
           encodeLSB(width, pixelsNew, vect, secr_size);
@@ -564,9 +564,9 @@ void MainComponent::startDecode()
        }
        result = decodeLSB(width, pixelsNew, vect, vectSzhat);
     }
-    else if (menuC->selectedTr == Stego::DCT_KOCH)
+    else if (_menuC->selectedTr == Stego::DCT_KOCH)
     {
-       if (!menuC->isAttack)
+       if (!_menuC->isAttack)
        {
           key = CreateKey("key.txt", size, (int)vect.size(), true);
           encodeDCTKoch(width, pixelsNew, vect, secr_size, difference, key);
@@ -574,9 +574,9 @@ void MainComponent::startDecode()
        }
        result = decodeDCTKoch(height, width, pixelsNew, vect, vectSzhat, difference, key);
     }
-    else if (menuC->selectedTr == Stego::HAAR)
+    else if (_menuC->selectedTr == Stego::HAAR)
     {
-        if (!menuC->isAttack)
+        if (!_menuC->isAttack)
         {
             key = CreateKey("key.txt", size, (int)vect.size(), true);
             encodeHaar(width, pixelsNew, vect, secr_size, difference, key);
@@ -584,25 +584,25 @@ void MainComponent::startDecode()
         }
         result = decodeHaar(height, width, pixels, pixelsNew, vect, vectSzhat, key);
     }
-    if (!menuC->isAttack)
+    if (!_menuC->isAttack)
     {
        fclose(newFile);
        
     }
     //
     paintDiffText(message1, result);
-    progressStatus = 30;
+    _progressStatus = 30;
     //setProgress(progressStatus);
     //repaint();
     long double redP, greenP, blueP;
     PSNR(pixels, pixelsNew, redP, greenP, blueP, height, width);
     String inf = "";
     inf += String((std::wstring(L"Алгоритм: ")).c_str());
-    if (menuC->selectedTr == Stego::DCT) inf += "DCT\n";
-    if (menuC->selectedTr == Stego::DFT) inf += "DFT\n";
-    if (menuC->selectedTr == Stego::LSB) inf += "LSB\n";
-    if (menuC->selectedTr == Stego::DCT_KOCH) inf += "DCT Koch\n";
-    if (menuC->selectedTr == Stego::HAAR) inf += "Haar\n";
+    if (_menuC->selectedTr == Stego::DCT) inf += "DCT\n";
+    if (_menuC->selectedTr == Stego::DFT) inf += "DFT\n";
+    if (_menuC->selectedTr == Stego::LSB) inf += "LSB\n";
+    if (_menuC->selectedTr == Stego::DCT_KOCH) inf += "DCT Koch\n";
+    if (_menuC->selectedTr == Stego::HAAR) inf += "Haar\n";
     inf += "PSNR = ";
     inf += String(to_string(blueP));
     inf += "\n";
@@ -613,7 +613,7 @@ void MainComponent::startDecode()
     inf += "\n";
     //
     inf += String((std::wstring(L"Коэффициент сокрытия = ")).c_str());
-    if(menuC->selectedTr == Stego::LSB)
+    if(_menuC->selectedTr == Stego::LSB)
        coef = 1;
     else
       coef = (height * width) / 64.0 / (height * width);
@@ -630,22 +630,22 @@ void MainComponent::startDecode()
     inf += String(to_string(corr));
     inf += "\n";
     //
-    progressStatus = 50;
-    if(edited)
-       CreateDiffFile(menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new1.bmp", "diff.bmp");
+    _progressStatus = 50;
+    if(_edited)
+       CreateDiffFile(_menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new1.bmp", "diff.bmp");
     else
-       CreateDiffFile(menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new.bmp", "diff.bmp");
+       CreateDiffFile(_menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new.bmp", "diff.bmp");
     doDecode(L"diff.bmp", "diff.png");
     //
-    decodeInfo->setText(inf, dontSendNotification);
-    diff->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("diff.png")));
+    _decodeInfo->setText(inf, dontSendNotification);
+    _diff->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("diff.png")));
     //diff->repaint();
-    if(edited)
+    if(_edited)
        doDecode(L"../../Images/Results/new1.bmp", "new.png");
     else
        doDecode(L"../../Images/Results/new.bmp", "new.png");
-    newIm->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("new.png")));
-    progressStatus = 75;
+    _newIm->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("new.png")));
+    _progressStatus = 75;
     //
     for (int i = 0; i < height + 2; i++)
     {
@@ -656,8 +656,8 @@ void MainComponent::startDecode()
     delete[] pixels;
     delete[] pixelsNew;
     //
-    progressStatus = 100;
-    String check = decodeText->getText();
+    _progressStatus = 100;
+    String check = _decodeText->getText();
     return;
     //setProgress(progressStatus);
 }

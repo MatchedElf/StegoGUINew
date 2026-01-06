@@ -49,53 +49,53 @@ public:
     //void run() override;
     //
 private:
-    ImageComponent* openLogo;
-    ImageComponent* openTitle;
+    ImageComponent* _openLogo;
+    ImageComponent* _openTitle;
     //
-    Label* origTitle;
-    Label* diffTitle;
-    Label* newTitle;
+    Label* _origTitle;
+    Label* _diffTitle;
+    Label* _newTitle;
     //
-    ImageComponent* orig;
-    ImageComponent* diff;
-    ImageComponent* newIm;
+    ImageComponent* _orig;
+    ImageComponent* _diff;
+    ImageComponent* _newIm;
     //
-    ImageComponent* error;
-    TextButton* closeErr;
+    ImageComponent* _error;
+    TextButton* _closeErr;
     //
-    ImageButton* startBut;
-    ImageButton* infoBut;
-    ImageButton* mainBut;
-    ImageButton* hideBut;
-    ImageButton* homeBut;
-    ImageButton* editBut;
+    ImageButton* _startBut;
+    ImageButton* _infoBut;
+    ImageButton* _mainBut;
+    ImageButton* _hideBut;
+    ImageButton* _homeBut;
+    ImageButton* _editBut;
     //
-    Label* origLabel;
-    Label* decodeLabel;
-    Label* textLabel;
+    Label* _origLabel;
+    Label* _decodeLabel;
+    Label* _textLabel;
     // 
-    TextEditor* origInfo;
-    TextEditor* decodeInfo;
-    TextEditor* decodeText;
+    TextEditor* _origInfo;
+    TextEditor* _decodeInfo;
+    TextEditor* _decodeText;
     //
-    Component* chooseChecker;
+    Component* _chooseChecker;
     //
-    bool hidden = false;
+    bool _hidden = false;
     //
-    bool startScreen = true;
-    bool edited = false;
+    bool _startScreen = true;
+    bool _edited = false;
     //
-    BlackComponent* black;
+    BlackComponent* _black;
     //
-    MenuComponent* menuC;
-    HelpComponent* helpC;
+    MenuComponent* _menuC;
+    HelpComponent* _helpC;
     //
     //LoadWindow* loadingGif;
     //ProgressBar* progress;
     //
-    Component** compsList;
-    StretchableLayoutManager* FSizer;
+    Component** _compsList;
+    StretchableLayoutManager* _FSizer;
     //
-    double progressStatus = 0.0;
+    double _progressStatus = 0.0;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };
