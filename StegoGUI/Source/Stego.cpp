@@ -2,6 +2,7 @@
 
 BYTE sat(double x)
 {
+	BYTE ret = (BYTE)x;
 	if (x < 0) return 0;
 	if (x > 255) return 255;
 	else return (BYTE)x;
@@ -163,6 +164,7 @@ void encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> se
 	vector<double**> matrixes;
 	cout << "Before DCT" << endl;
 	int count = 0;
+	//difference = 0;
 	while (count < vect.size() * 8) {
 		double** res = new double* [8];
 		for (int z = 0; z < 8; z++) {
@@ -291,6 +293,7 @@ void encodeDFT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> se
 	vector<complex<double>**> matrixes;
 	cout << "Before DFT" << endl;
 	int count = 0;
+	//difference = 0;
 	while (count < vect.size() * 8) {
 		complex<double>** res = new complex<double>*[8];
 		for (int z = 0; z < 8; z++) {
@@ -403,6 +406,7 @@ void encodeDCTKoch(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16
 {
 	vector<double**> matrixes;
 	cout << "Before DCT" << endl;
+	//difference = 0;
 	int count = 0;
 	while (count < vect.size() * 8) {
 		double** res = new double* [8];
@@ -705,6 +709,8 @@ void HaarWavelet(RGB** pixels, double** result, int x, int y) {
 		}
 
 		for (int i = 0; i < 8; i++) {
+			double orig = (double)pixels[x + i][y + j].blue;
+			double tmp = col[i];
 			result[i][j] = col[i];
 		}
 	}
@@ -768,7 +774,8 @@ void IHaarWavelet(RGB** pixels, double** result, int x, int y) {
 	// Записываем результат обратно в пиксели
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
-			pixels[x + i][y + j].blue = sat(temp[i][j]);
+			BYTE tmp = sat(temp[i][j]);
+			pixels[x + i][y + j].blue = sat(temp[i][j]);			
 		}
 	}
 }
@@ -776,6 +783,7 @@ void IHaarWavelet(RGB** pixels, double** result, int x, int y) {
 // Внедрение с использованием вейвлет-преобразования Хаара
 void encodeHaar(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, double difference, vector<int> key) {
 	vector<double**> matrixes;
+	difference = 0;
 	cout << "Before Haar Wavelet" << endl;
 
 	int count = 0;
@@ -795,18 +803,18 @@ void encodeHaar(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> s
 	while ((pixCount / 8) < vect.size()) {
 		if (pixCount < 16) {
 			if (secr_size[pixCount] == 1) {
-				matrixes[pixCount][4][3] += difference;
+				matrixes[pixCount][5][4] += difference;
 			}
 			else {
-				matrixes[pixCount][4][3] -= difference;
+				matrixes[pixCount][5][4] -= difference;
 			}
 		}
 		else {
 			if ((vect[pixCount / 8][pixCount % 8] == 1)) {
-				matrixes[pixCount][4][3] += difference;
+				matrixes[pixCount][5][4] += difference;
 			}
 			else {
-				matrixes[pixCount][4][3] -= difference;
+				matrixes[pixCount][5][4] -= difference;
 			}
 		}
 		pixCount++;
@@ -856,10 +864,10 @@ string decodeHaar(int height, int width, RGB** pixels, RGB** pixelsNew, vector<b
 				return "Error! " + result;
 			}
 
-			double cf1 = res[4][3];
+			double cf1 = res[5][4];
 
 			HaarWavelet(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
-			double cf2 = res[4][3];
+			double cf2 = res[5][4];
 
 			// Освобождаем память для текущей матрицы
 			for (int z = 0; z < 8; z++) {

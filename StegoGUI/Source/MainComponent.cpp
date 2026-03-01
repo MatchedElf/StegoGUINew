@@ -482,7 +482,7 @@ void MainComponent::startDecode()
     srand((unsigned int)time(NULL));
     _origInfo->setText("In progress", dontSendNotification);
     _decodeInfo->setText("In progress", dontSendNotification);
-    int difference = 8;
+    int difference = 4;
     complex<double> differenceComplex(2.0, 0.0);
     string message1;
     //
@@ -509,6 +509,7 @@ void MainComponent::startDecode()
     //
     FILE* newFile;
     vector<int> key;
+    key = ReadKey("key.txt", vect);
     if (_menuC->isAttack)
     {
        if (_edited) {
@@ -518,7 +519,7 @@ void MainComponent::startDecode()
        {
          pixelsNew = ReadFile(L"../../Images/Results/new.bmp", height, width, size, info);
        }
-       key = ReadKey("key.txt", vect);
+       
     }
     else
     {
@@ -538,7 +539,7 @@ void MainComponent::startDecode()
     {
        if (!_menuC->isAttack)
        {
-          key = CreateKey("key.txt", size, (int)vect.size(), true);
+          //key = CreateKey("key.txt", size, (int)vect.size(), true);
           encodeDCT(width, pixelsNew, vect, secr_size, difference, key);
           WriteToFile(newFile, pixelsNew, height, width);
        }
@@ -548,7 +549,7 @@ void MainComponent::startDecode()
     {
        if (!_menuC->isAttack)
        {
-          key = CreateKey("key.txt", size, (int)vect.size(), true);
+          //key = CreateKey("key.txt", size, (int)vect.size(), true);
           encodeDFT(width, pixelsNew, vect, secr_size, differenceComplex, key);
           WriteToFile(newFile, pixelsNew, height, width);
        }
@@ -558,7 +559,7 @@ void MainComponent::startDecode()
     {
        if (!_menuC->isAttack)
        {
-          key = CreateKey("key.txt", size, (int)vect.size(), false);
+          //key = CreateKey("key.txt", size, (int)vect.size(), false);
           encodeLSB(width, pixelsNew, vect, secr_size);
           WriteToFile(newFile, pixelsNew, height, width);
        }
@@ -568,7 +569,7 @@ void MainComponent::startDecode()
     {
        if (!_menuC->isAttack)
        {
-          key = CreateKey("key.txt", size, (int)vect.size(), true);
+          //key = CreateKey("key.txt", size, (int)vect.size(), true);
           encodeDCTKoch(width, pixelsNew, vect, secr_size, difference, key);
           WriteToFile(newFile, pixelsNew, height, width);
        }
@@ -578,7 +579,7 @@ void MainComponent::startDecode()
     {
         if (!_menuC->isAttack)
         {
-            key = CreateKey("key.txt", size, (int)vect.size(), true);
+            //key = CreateKey("key.txt", size, (int)vect.size(), true);
             encodeHaar(width, pixelsNew, vect, secr_size, difference, key);
             WriteToFile(newFile, pixelsNew, height, width);
         }
