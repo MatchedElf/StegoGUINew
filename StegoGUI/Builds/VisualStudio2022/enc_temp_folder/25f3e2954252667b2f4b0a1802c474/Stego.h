@@ -73,8 +73,6 @@ string decodeHaar(int height, int width, RGB** pixels, RGB** pixelsNew, vector<b
 //
 RGB** ReadFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1);
 //
-uint8_t** ReadFileMono(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1);
-//
 FILE* Create_File(const char* _filename, const wchar_t* _origFile);
 //
 vector<int> CreateKey(const char* _filename, int size, int vectSize, bool blocks);

@@ -989,67 +989,6 @@ RGB** ReadFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String
 	fclose(_file);
 	return pixels;
 }
-uint8_t** ReadFileMono(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1)
-{
-	BITMAPFILEHEADER bmfHeader;
-	BITMAPINFOHEADER bmiHeader;
-	FILE* _file = _wfopen(_filename, L"rb");
-	if (_file == NULL) {
-		fputs("File opening error.", stderr);
-		return NULL;
-	}
-	if (fread((LPSTR)&bmfHeader, 1, sizeof(bmfHeader), _file) != sizeof(bmfHeader)) {
-		fputs("File header corrupted?", stderr);
-		return NULL;
-	}
-	if (fread((LPSTR)&bmiHeader, 1, sizeof(bmiHeader), _file) != sizeof(bmiHeader)) {
-		fputs("File info header corrupted?", stderr);
-		return NULL;
-	}
-	juce::String retStr = "";
-	retStr += juce::String((std::wstring(L"Размер = ")).c_str());
-	retStr += juce::String(to_string(bmfHeader.bfSize));
-	retStr += juce::String((std::wstring(L" байт")).c_str());
-	retStr += "\n";
-	retStr += juce::String((std::wstring(L"Ширина = ")).c_str());
-	retStr += juce::String(to_string(bmiHeader.biWidth));
-	retStr += juce::String((std::wstring(L" пикселей")).c_str());
-	retStr += "\n";
-	retStr += juce::String((std::wstring(L"Высота = ")).c_str());
-	retStr += juce::String(to_string(bmiHeader.biHeight));
-	retStr += juce::String((std::wstring(L" пикселей")).c_str());
-	retStr += "\n";
-	retStr += "bibit = ";
-	retStr += juce::String(to_string(bmiHeader.biBitCount));
-	retStr += "\n";
-	retStr += "biclr = ";
-	retStr += juce::String(to_string(bmiHeader.biClrUsed));
-	retStr += "\n";
-	h = bmiHeader.biHeight;
-	w = bmiHeader.biWidth;
-	size = bmiHeader.biWidth * bmiHeader.biHeight;
-	//
-	if ((size < 100) || (h < 32) || (h > 5000) || (w < 32) || (w > 5000))
-	{
-		retStr += "Bad file!!!\n";
-		fclose(_file);
-		retStr1 = retStr;
-		return NULL;
-	}
-	retStr1 = retStr;
-	uint8_t** pixels = new uint8_t * [h + 2];
-	for (int i = 0; i < h + 2; i++) pixels[i] = new uint8_t[w + 1];
-	//
-	int depth = (bmiHeader.biBitCount == 24) ? 3 : 4;
-	uint8_t color;
-	int indCount = 0;
-	while (fread(&color, 1, sizeof(color), _file) > 0) {
-		pixels[indCount / w][indCount % w] = color;
-		indCount++;
-	}
-	fclose(_file);
-	return pixels;
-}
 //
 FILE* Create_File(const char* _filename, const wchar_t* _origFile)
 {

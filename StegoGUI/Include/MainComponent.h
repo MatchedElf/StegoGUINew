@@ -36,13 +36,17 @@ public:
     ~MainComponent() override;
 
     //==============================================================================
+    
+    void initGui();
+    
+    void paintOrig(bool error);
+    void paintDiffText(string _orig, string _new);
+    void startDecode();
+
     void paint(juce::Graphics&) override;
     void resized() override;
     void buttonClicked(Button* butt) override;
     void componentNameChanged(Component& component) override;
-    void paintOrig(bool error);
-    void paintDiffText(string _orig, string _new);
-    void startDecode();
     Font getTextButtonFont(TextButton&, int buttonHeight) override;
     //void timerCallback() override;
     //void threadComplete(bool userPressedCancel) override;

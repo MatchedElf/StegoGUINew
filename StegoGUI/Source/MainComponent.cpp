@@ -13,176 +13,7 @@ MainComponent::MainComponent()
     //std::cout << "Test" << std::endl;
     setLookAndFeel(this);
     //setlocale(LC_ALL, "Russian");
-    Font font;
-    font.setHeight(25);
-    //
-    setOpaque(true);
-    addMouseListener(this, true);
-    //
-    _openLogo = new ImageComponent();
-    _openLogo->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("logo4.png")));
-    addAndMakeVisible(_openLogo);
-    //
-    _openTitle = new ImageComponent();
-    _openTitle->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("StegoGUI.png")));
-    addAndMakeVisible(_openTitle);
-    //
-    _origTitle = new Label();
-    _origTitle->setFont(font);
-    _origTitle->setText(String((std::wstring(L"Пустой контейнер")).c_str()), dontSendNotification);
-    addAndMakeVisible(_origTitle);
-    //
-    _diffTitle = new Label();
-    _diffTitle->setFont(font);
-    _diffTitle->setText(String((std::wstring(L"Разностное изображение")).c_str()), dontSendNotification);
-    addAndMakeVisible(_diffTitle);
-    //
-    _newTitle = new Label();
-    _newTitle->setFont(font);
-    _newTitle->setText(String((std::wstring(L"Заполненный контейнер")).c_str()), dontSendNotification);
-    addAndMakeVisible(_newTitle);
-    //
-    Image startLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("play1.png"));
-    _startBut = new ImageButton();
-    _startBut->addListener(this);
-    _startBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 0.1f, Colours::transparentWhite);
-    //
-    Image infoLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("info.png"));
-    _infoBut = new ImageButton();
-    _infoBut->addListener(this);
-    _infoBut->setImages(false, true, true, infoLogo, 1.0f, Colours::transparentWhite, infoLogo, 0.3f, Colours::transparentWhite, infoLogo, 0.1f, Colours::transparentWhite);
-    //
-    Image editLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("edit.png"));
-    _editBut = new ImageButton();
-    _editBut->addListener(this);
-    _editBut->setImages(false, true, true, editLogo, 1.0f, Colours::transparentWhite, editLogo, 0.3f, Colours::transparentWhite, editLogo, 0.1f, Colours::transparentWhite);
-    //
-    _mainBut = new ImageButton();
-    _mainBut->addListener(this);
-    _mainBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 0.1f, Colours::transparentWhite);
-    //
-    Image menuLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("menu.png"));
-    _hideBut = new ImageButton();
-    _hideBut->addListener(this);
-    _hideBut->setImages(false, true, true, menuLogo, 1.0f, Colours::transparentWhite, menuLogo, 0.3f, Colours::transparentWhite, menuLogo, 0.1f, Colours::transparentWhite);
-    //
-    Image homeLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("home.png"));
-    _homeBut = new ImageButton();
-    _homeBut->addListener(this);
-    _homeBut->setImages(false, true, true, homeLogo, 1.0f, Colours::white, homeLogo, 0.3f, Colour::fromRGB(128, 128, 128), homeLogo, 0.3f, Colour::fromRGB(96, 96, 96));
-    //
-    _orig = new ImageComponent();
-    _orig->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
-    addAndMakeVisible(_orig);
-    //
-    _diff = new ImageComponent();
-    _diff->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
-    addAndMakeVisible(_diff);
-    //
-    _newIm = new ImageComponent();
-    _newIm->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
-    addAndMakeVisible(_newIm);
-    ///
-    font.setHeight(25);
-    //
-    _origLabel = new Label();
-    _origLabel->setFont(font);
-    _origLabel->setText(String((std::wstring(L"Информация об изображении")).c_str()), dontSendNotification);
-    addAndMakeVisible(_origLabel);
-    // 
-    _decodeLabel = new Label();
-    _decodeLabel->setFont(font);
-    _decodeLabel->setText(String((std::wstring(L"Информация об извлечении")).c_str()), dontSendNotification);
-    addAndMakeVisible(_decodeLabel);
-    //
-    _textLabel = new Label();
-    _textLabel->setFont(font);
-    _textLabel->setText(String((std::wstring(L"Извлеченный текст")).c_str()), dontSendNotification);
-    addAndMakeVisible(_textLabel);
-    //
-    _origInfo = new TextEditor();
-    _origInfo->setCaretVisible(false);
-    _origInfo->setMultiLine(true);
-    _origInfo->setReadOnly(true);
-    _origInfo->setScrollbarsShown(true);
-    _origInfo->setFont(font);
-    addAndMakeVisible(_origInfo);
-    //
-    _decodeInfo = new TextEditor();
-    _decodeInfo->setCaretVisible(false);
-    _decodeInfo->setMultiLine(true);
-    _decodeInfo->setReadOnly(true);
-    _decodeInfo->setScrollbarsShown(true);
-    _decodeInfo->setFont(font);
-    addAndMakeVisible(_decodeInfo);
-    //
-    _decodeText = new TextEditor();
-    _decodeText->setCaretVisible(false);
-    _decodeText->setMultiLine(true);
-    _decodeText->setReadOnly(true);
-    _decodeText->setScrollbarsShown(true);
-    _decodeText->setFont(font);
-    addAndMakeVisible(_decodeText);
-    //
-    _chooseChecker = new Component("1");
-    _chooseChecker->addComponentListener(this);
-    _menuC = new MenuComponent(_chooseChecker);
-    _helpC = new HelpComponent();
-    //
-    addAndMakeVisible(_menuC);
-    addAndMakeVisible(_startBut);
-    addAndMakeVisible(_infoBut);
-    addAndMakeVisible(_editBut);
-    addAndMakeVisible(_mainBut);
-    addAndMakeVisible(_hideBut);
-    addAndMakeVisible(_homeBut);
-    //addAndMakeVisible(helpC);
-    //
-    _error = new ImageComponent();
-    _error->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("error.png")));
-    //
-    _closeErr = new TextButton(String((std::wstring(L"Файлы не выбраны!!!\nНажать сюда для закрытия")).c_str()));
-    _closeErr->addListener(this);
-    //
-    _chooseChecker->addComponentListener(this);
-    //
-    _black = new BlackComponent();
-    addAndMakeVisible(_black);
-    //black->setColour(Label::backgroundColourId, juce::Colour::fromRGBA(0, 0, 0, 180));
-    //
-    addAndMakeVisible(_error);
-    _error->setVisible(false);
-    addAndMakeVisible(_closeErr);
-    _black->setVisible(false);
-    _closeErr->setVisible(false);
-    _helpC->setVisible(false);
-    setSize(600, 400);
-    //
-    /*loadingGif = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
-       TRANS(std::wstring(L"Процесс идет...").c_str()),
-       MessageBoxIconType::NoIcon);
-    loadingGif->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.3), (int)(getWidth() * 0.4), (int)(getHeight() * 0.4));*/
-    //
-    //progress = new ProgressBar(progressStatus, ProgressBar::Style::linear);
-    //addAndMakeVisible(progress);
-    //progress->setVisible(false);
-    //progress->setPercentageDisplay(true);
-    //setProgress(100);
-    //
-    _compsList = new Component * [5];
-    //
-    _compsList[0] = _hideBut;
-    _compsList[1] = _homeBut;
-    _compsList[2] = _editBut;
-    _compsList[3] = _infoBut;
-    _compsList[4] = _startBut;
-    //
-    _FSizer = new StretchableLayoutManager();
-    _FSizer->setItemLayout(0, 1, 100000, -1);
-    _FSizer->setItemLayout(1, 1, 100000, -1);
-    _FSizer->setItemLayout(2, 1, 100000, -1);
-    _FSizer->setItemLayout(3, 1, 100000, -1);
-    _FSizer->setItemLayout(4, 1, 100000, -1);
+    initGui();
 }
 
 MainComponent::~MainComponent()
@@ -378,6 +209,179 @@ void MainComponent::componentNameChanged(Component& component)
    {
       paintOrig((_menuC->imageName == "-1"));
    }
+}
+void MainComponent::initGui()
+{
+    Font font;
+    font.setHeight(25);
+    //
+    setOpaque(true);
+    addMouseListener(this, true);
+    //
+    _openLogo = new ImageComponent();
+    _openLogo->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("logo4.png")));
+    addAndMakeVisible(_openLogo);
+    //
+    _openTitle = new ImageComponent();
+    _openTitle->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("StegoGUI.png")));
+    addAndMakeVisible(_openTitle);
+    //
+    _origTitle = new Label();
+    _origTitle->setFont(font);
+    _origTitle->setText(String((std::wstring(L"Пустой контейнер")).c_str()), dontSendNotification);
+    addAndMakeVisible(_origTitle);
+    //
+    _diffTitle = new Label();
+    _diffTitle->setFont(font);
+    _diffTitle->setText(String((std::wstring(L"Разностное изображение")).c_str()), dontSendNotification);
+    addAndMakeVisible(_diffTitle);
+    //
+    _newTitle = new Label();
+    _newTitle->setFont(font);
+    _newTitle->setText(String((std::wstring(L"Заполненный контейнер")).c_str()), dontSendNotification);
+    addAndMakeVisible(_newTitle);
+    //
+    Image startLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("play1.png"));
+    _startBut = new ImageButton();
+    _startBut->addListener(this);
+    _startBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 0.1f, Colours::transparentWhite);
+    //
+    Image infoLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("info.png"));
+    _infoBut = new ImageButton();
+    _infoBut->addListener(this);
+    _infoBut->setImages(false, true, true, infoLogo, 1.0f, Colours::transparentWhite, infoLogo, 0.3f, Colours::transparentWhite, infoLogo, 0.1f, Colours::transparentWhite);
+    //
+    Image editLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("edit.png"));
+    _editBut = new ImageButton();
+    _editBut->addListener(this);
+    _editBut->setImages(false, true, true, editLogo, 1.0f, Colours::transparentWhite, editLogo, 0.3f, Colours::transparentWhite, editLogo, 0.1f, Colours::transparentWhite);
+    //
+    _mainBut = new ImageButton();
+    _mainBut->addListener(this);
+    _mainBut->setImages(false, true, true, startLogo, 1.0f, Colours::transparentWhite, startLogo, 0.3f, Colours::transparentWhite, startLogo, 0.1f, Colours::transparentWhite);
+    //
+    Image menuLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("menu.png"));
+    _hideBut = new ImageButton();
+    _hideBut->addListener(this);
+    _hideBut->setImages(false, true, true, menuLogo, 1.0f, Colours::transparentWhite, menuLogo, 0.3f, Colours::transparentWhite, menuLogo, 0.1f, Colours::transparentWhite);
+    //
+    Image homeLogo = ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("home.png"));
+    _homeBut = new ImageButton();
+    _homeBut->addListener(this);
+    _homeBut->setImages(false, true, true, homeLogo, 1.0f, Colours::white, homeLogo, 0.3f, Colour::fromRGB(128, 128, 128), homeLogo, 0.3f, Colour::fromRGB(96, 96, 96));
+    //
+    _orig = new ImageComponent();
+    _orig->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
+    addAndMakeVisible(_orig);
+    //
+    _diff = new ImageComponent();
+    _diff->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
+    addAndMakeVisible(_diff);
+    //
+    _newIm = new ImageComponent();
+    _newIm->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("empty.png")));
+    addAndMakeVisible(_newIm);
+    ///
+    font.setHeight(25);
+    //
+    _origLabel = new Label();
+    _origLabel->setFont(font);
+    _origLabel->setText(String((std::wstring(L"Информация об изображении")).c_str()), dontSendNotification);
+    addAndMakeVisible(_origLabel);
+    // 
+    _decodeLabel = new Label();
+    _decodeLabel->setFont(font);
+    _decodeLabel->setText(String((std::wstring(L"Информация об извлечении")).c_str()), dontSendNotification);
+    addAndMakeVisible(_decodeLabel);
+    //
+    _textLabel = new Label();
+    _textLabel->setFont(font);
+    _textLabel->setText(String((std::wstring(L"Извлеченный текст")).c_str()), dontSendNotification);
+    addAndMakeVisible(_textLabel);
+    //
+    _origInfo = new TextEditor();
+    _origInfo->setCaretVisible(false);
+    _origInfo->setMultiLine(true);
+    _origInfo->setReadOnly(true);
+    _origInfo->setScrollbarsShown(true);
+    _origInfo->setFont(font);
+    addAndMakeVisible(_origInfo);
+    //
+    _decodeInfo = new TextEditor();
+    _decodeInfo->setCaretVisible(false);
+    _decodeInfo->setMultiLine(true);
+    _decodeInfo->setReadOnly(true);
+    _decodeInfo->setScrollbarsShown(true);
+    _decodeInfo->setFont(font);
+    addAndMakeVisible(_decodeInfo);
+    //
+    _decodeText = new TextEditor();
+    _decodeText->setCaretVisible(false);
+    _decodeText->setMultiLine(true);
+    _decodeText->setReadOnly(true);
+    _decodeText->setScrollbarsShown(true);
+    _decodeText->setFont(font);
+    addAndMakeVisible(_decodeText);
+    //
+    _chooseChecker = new Component("1");
+    _chooseChecker->addComponentListener(this);
+    _menuC = new MenuComponent(_chooseChecker);
+    _helpC = new HelpComponent();
+    //
+    addAndMakeVisible(_menuC);
+    addAndMakeVisible(_startBut);
+    addAndMakeVisible(_infoBut);
+    addAndMakeVisible(_editBut);
+    addAndMakeVisible(_mainBut);
+    addAndMakeVisible(_hideBut);
+    addAndMakeVisible(_homeBut);
+    //addAndMakeVisible(helpC);
+    //
+    _error = new ImageComponent();
+    _error->setImage(ImageCache::getFromFile(File::getCurrentWorkingDirectory().getChildFile("error.png")));
+    //
+    _closeErr = new TextButton(String((std::wstring(L"Файлы не выбраны!!!\nНажать сюда для закрытия")).c_str()));
+    _closeErr->addListener(this);
+    //
+    _chooseChecker->addComponentListener(this);
+    //
+    _black = new BlackComponent();
+    addAndMakeVisible(_black);
+    //black->setColour(Label::backgroundColourId, juce::Colour::fromRGBA(0, 0, 0, 180));
+    //
+    addAndMakeVisible(_error);
+    _error->setVisible(false);
+    addAndMakeVisible(_closeErr);
+    _black->setVisible(false);
+    _closeErr->setVisible(false);
+    _helpC->setVisible(false);
+    setSize(600, 400);
+    //
+    /*loadingGif = new LoadWindow(TRANS(std::wstring(L"Загрузка").c_str()),
+       TRANS(std::wstring(L"Процесс идет...").c_str()),
+       MessageBoxIconType::NoIcon);
+    loadingGif->setBounds((int)(getWidth() * 0.3), (int)(getHeight() * 0.3), (int)(getWidth() * 0.4), (int)(getHeight() * 0.4));*/
+    //
+    //progress = new ProgressBar(progressStatus, ProgressBar::Style::linear);
+    //addAndMakeVisible(progress);
+    //progress->setVisible(false);
+    //progress->setPercentageDisplay(true);
+    //setProgress(100);
+    //
+    _compsList = new Component * [5];
+    //
+    _compsList[0] = _hideBut;
+    _compsList[1] = _homeBut;
+    _compsList[2] = _editBut;
+    _compsList[3] = _infoBut;
+    _compsList[4] = _startBut;
+    //
+    _FSizer = new StretchableLayoutManager();
+    _FSizer->setItemLayout(0, 1, 100000, -1);
+    _FSizer->setItemLayout(1, 1, 100000, -1);
+    _FSizer->setItemLayout(2, 1, 100000, -1);
+    _FSizer->setItemLayout(3, 1, 100000, -1);
+    _FSizer->setItemLayout(4, 1, 100000, -1);
 }
 //
 void MainComponent::paintOrig(bool error)
