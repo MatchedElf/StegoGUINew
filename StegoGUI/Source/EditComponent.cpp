@@ -2,11 +2,11 @@
 
 EditComponent::EditComponent(const wchar_t* _filename) : Component()
 {
-   newFile = Create_File("../../Images/Results/new1.bmp", _filename);
+   newFile = createFileBmp("../../Images/Results/new1.bmp", _filename);
    int size;
    String tmp;
    //
-   pixels = ReadFile(_filename, height, width, size, tmp);
+   pixels = readFile(_filename, height, width, size, tmp);
    //
    pixelsNew = new RGB * [height + 1];
    for (int i = 0; i < height + 1; i++) pixelsNew[i] = new RGB[width + 1];
@@ -38,7 +38,7 @@ EditComponent::~EditComponent()
    {
       newPoint pos = it->first;
       Colour curColour = it->second;
-      pixelsNew[height - pos.getY()][pos.getX()] = MakeColor(curColour.getRed(),
+      pixelsNew[height - pos.getY()][pos.getX()] = makeColor(curColour.getRed(),
                                                              curColour.getGreen(),
                                                              curColour.getBlue());
    }

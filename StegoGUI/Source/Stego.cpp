@@ -8,7 +8,7 @@ BYTE sat(double x)
 	else return (BYTE)x;
 }
 //
-RGB MakeColor(BYTE r, BYTE g, BYTE b) {
+RGB makeColor(BYTE r, BYTE g, BYTE b) {
 	RGB color;
 	color.red = r;
 	color.green = g;
@@ -21,7 +21,7 @@ double coef(int i) {
 	else return (double)sqrt(2.0 / 8.0);
 }
 //
-void DCT(RGB** pixels, double** result, int x, int y) {
+void DCT(uint8_t** pixels, double** result, int x, int y) {
 	for (int u = 0; u < 8; u++) {
 		for (int v = 0; v < 8; v++) {
 			double cu = coef(u);
@@ -29,7 +29,7 @@ void DCT(RGB** pixels, double** result, int x, int y) {
 			double sum = 0;
 			for (int k = 0; k < 8; k++) {
 				for (int l = 0; l < 8; l++) {
-					sum += (double)(pixels[x + k][y + l].blue * cos((2 * k + 1) * u * PI / 16) * cos((2 * l + 1) * v * PI / 16));
+					sum += (double)(pixels[x + k][y + l] * cos((2 * k + 1) * u * PI / 16) * cos((2 * l + 1) * v * PI / 16));
 				}
 			}
 			result[u][v] = cu * cv * sum;
@@ -37,7 +37,7 @@ void DCT(RGB** pixels, double** result, int x, int y) {
 	}
 }
 //
-void IDCT(RGB** pixels, double** result, int x, int y) {
+void IDCT(uint8_t** pixels, double** result, int x, int y) {
 	for (int k = 0; k < 8; k++) {
 		for (int l = 0; l < 8; l++) {
 			double sum = 0;
@@ -46,20 +46,20 @@ void IDCT(RGB** pixels, double** result, int x, int y) {
 					sum += (double)(coef(u) * coef(v) * result[u][v] * cos((2 * k + 1) * u * PI / 16) * cos((2 * l + 1) * v * PI / 16));
 				}
 			}
-			pixels[x + k][y + l].blue = sat(sum);
+			pixels[x + k][y + l] = sat(sum);
 		}
 	}
 
 }
 //
-void DFT(RGB** pixels, complex<double>** result, int x, int y) {
+void DFT(uint8_t** pixels, complex<double>** result, int x, int y) {
 	for (int u = 0; u < 8; u++) {
 		for (int v = 0; v < 8; v++) {
 			complex<double> sum(0.0, 0.0);
 			complex<double> NN(64.0, 0.0);
 			for (int k = 0; k < 8; k++) {
 				for (int l = 0; l < 8; l++) {
-					complex<double> pixel(pixels[x + k][y + l].blue, 0.0);
+					complex<double> pixel(pixels[x + k][y + l], 0.0);
 					complex<double> e(cos(2 * PI * (u * k / 8.0 + v * l / 8.0)), -sin(2 * PI * (u * k / 8.0 + v * l / 8.0)));
 					sum += pixel * e;
 				}
@@ -69,7 +69,7 @@ void DFT(RGB** pixels, complex<double>** result, int x, int y) {
 	}
 }
 //
-void IDFT(RGB** pixels, complex<double>** result, int x, int y) {
+void IDFT(uint8_t** pixels, complex<double>** result, int x, int y) {
 	for (int k = 0; k < 8; k++) {
 		for (int l = 0; l < 8; l++) {
 			complex<double> sum(0.0, 0.0);
@@ -80,60 +80,45 @@ void IDFT(RGB** pixels, complex<double>** result, int x, int y) {
 					sum += pixel * e;
 				}
 			}
-			pixels[x + k][y + l].blue = sat((double)sum.real());
+			pixels[x + k][y + l] = sat((double)sum.real());
 		}
 	}
 }
 //
-void PSNR(RGB** orig, RGB** re, long double& r, long double& g, long double& b, int height, int width) {
+long double PSNR(uint8_t** orig, uint8_t** re, int height, int width) {
 	long double znam = 0;
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			znam += pow((orig[i][j].red - re[i][j].red), 2);
+			znam += pow((orig[i][j] - re[i][j]), 2);
 		}
 	}
-	r = 10 * log10(height * width * pow(pow(2, 8) - 1, 2) / znam);
+	return 10 * log10(height * width * pow(pow(2, 8) - 1, 2) / znam);
 
-	znam = 0;
-	for (int i = 0; i < height; i++) {
-		for (int j = 0; j < width; j++) {
-			znam += pow((orig[i][j].green - re[i][j].green), 2);
-		}
-	}
-	g = 10 * log10(height * width * pow(pow(2, 8) - 1, 2) / znam);
-
-	znam = 0;
-	for (int i = 0; i < height; i++) {
-		for (int j = 0; j < width; j++) {
-			znam += pow((orig[i][j].blue - re[i][j].blue), 2);
-		}
-	}
-	b = 10 * log10(height * width * pow(pow(2, 8) - 1, 2) / znam);
 }
-double AverageIntensity(RGB** orig, int height, int width)
+double averageIntensity(uint8_t** orig, int height, int width)
 {
 	double ret = 0.0;
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			ret += orig[i][j].blue;
+			ret += orig[i][j];
 		}
 	}
 	return ret / (width * height);
 }
 //
-double CorrCoef(RGB** orig, RGB** re, int height, int width)
+double corrCoef(uint8_t** orig, uint8_t** re, int height, int width)
 {
-	double origAv = AverageIntensity(orig, height, width);
-	double reAv = AverageIntensity(re, height, width);
+	double origAv = averageIntensity(orig, height, width);
+	double reAv = averageIntensity(re, height, width);
 	double chisl = 0.0;
 	//
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			chisl += (orig[i][j].blue - origAv) * (re[i][j].blue - reAv);
+			chisl += (orig[i][j] - origAv) * (re[i][j] - reAv);
 		}
 	}
 	//
@@ -144,7 +129,7 @@ double CorrCoef(RGB** orig, RGB** re, int height, int width)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			origSum += pow((orig[i][j].blue - origAv), 2);
+			origSum += pow((orig[i][j] - origAv), 2);
 		}
 	}
 	double reSum = 0.0;
@@ -153,14 +138,14 @@ double CorrCoef(RGB** orig, RGB** re, int height, int width)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			reSum += pow((re[i][j].blue - reAv), 2);
+			reSum += pow((re[i][j] - reAv), 2);
 		}
 	}
 	znam = sqrt(origSum * reSum);
 	return chisl / znam;
 }
 //
-void encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key) {
+void encodeDCT(int width, uint8_t** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key) {
 	vector<double**> matrixes;
 	cout << "Before DCT" << endl;
 	int count = 0;
@@ -233,7 +218,7 @@ void encodeDCT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> se
 
 }
 //
-string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key) {
+string decodeDCT(int height, int width, uint8_t** pixels, uint8_t** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key) {
 	bitset<8> read;
 	bitset<16> readSize;
 	//
@@ -289,7 +274,7 @@ string decodeDCT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 	return result;
 }
 //
-void encodeDFT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key) {
+void encodeDFT(int width, uint8_t** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, complex<double> difference, vector<int> key) {
 	vector<complex<double>**> matrixes;
 	cout << "Before DFT" << endl;
 	int count = 0;
@@ -346,7 +331,7 @@ void encodeDFT(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> se
 
 }
 //
-string decodeDFT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key) {
+string decodeDFT(int height, int width, uint8_t** pixels, uint8_t** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key) {
 	bitset<8> read;
 	bitset<16> readSize;
 	//
@@ -402,7 +387,7 @@ string decodeDFT(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bi
 	cout << "After decoding DFT" << endl;
 	return result;
 }
-void encodeDCTKoch(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key)
+void encodeDCTKoch(int width, uint8_t** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key)
 {
 	vector<double**> matrixes;
 	cout << "Before DCT" << endl;
@@ -512,7 +497,7 @@ void encodeDCTKoch(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16
 	cout << "After IDCT" << endl;
 	return;
 }
-string decodeDCTKoch(int height, int width, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, int difference, vector<int> key)
+string decodeDCTKoch(int height, int width, uint8_t** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, int difference, vector<int> key)
 {
 	bitset<8> read;
 	bitset<16> readSize;
@@ -581,7 +566,7 @@ string decodeDCTKoch(int height, int width, RGB** pixelsNew, vector<bitset<8>> v
 	return result;
 }
 //
-void encodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size) {
+void encodeLSB(int width, uint8_t** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size) {
 	ifstream keyRead("key.txt");
 	if (!(keyRead.is_open())) {
 		cout << "Error while opening file." << endl;
@@ -593,20 +578,20 @@ void encodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> se
 		if (channel == 0) {
 			if (i < 16) {
 				if (secr_size[i] == 1) {
-					pixelsNew[index / width][index % width].blue |= 1;
+					pixelsNew[index / width][index % width] |= 1;
 				}
 				else {
-					pixelsNew[index / width][index % width].blue &= ~(1);
+					pixelsNew[index / width][index % width] &= ~(1);
 				}
 			}
 			else
 			{
 				if ((vect[i / 8][i % 8] == 1))
 				{
-					pixelsNew[index / width][index % width].blue |= 1;
+					pixelsNew[index / width][index % width] |= 1;
 				}
 				else {
-					pixelsNew[index / width][index % width].blue &= ~(1);
+					pixelsNew[index / width][index % width] &= ~(1);
 				}
 			}
 		}
@@ -620,7 +605,7 @@ void encodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> se
 	cout << "After LSB" << endl;
 }
 //
-string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat) {
+string decodeLSB(int width, uint8_t** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat) {
 	BYTE channelByte;
 	ifstream keyRead1("key.txt");
 	if (!(keyRead1.is_open())) {
@@ -637,7 +622,7 @@ string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, vector<bits
 	for (int i = 0; i < vect.size() * 8; i++) {
 		int index;
 		keyRead1 >> index;
-		channelByte = pixelsNew[index / width][index % width].blue;
+		channelByte = pixelsNew[index / width][index % width];
 		if (pixCount < 16) {
 			readSize[pixCount] = channelByte & 1;
 			pixCount++;
@@ -663,18 +648,15 @@ string decodeLSB(int width, RGB** pixelsNew, vector<bitset<8>> vect, vector<bits
 // Добавьте эти функции в stego.cpp
 
 // Прямое вейвлет-преобразование Хаара для блока 8x8
-void HaarWavelet(RGB** pixels, double** result, int x, int y) {
-	// Временный массив для хранения промежуточных результатов
+void HaarWavelet(uint8_t** pixels, double** result, int x, int y) {
 	double temp[8][8];
 
-	// Копируем значения синего канала
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
-			temp[i][j] = (double)pixels[x + i][y + j].blue;
+			temp[i][j] = (double)pixels[x + i][y + j];
 		}
 	}
 
-	// Применяем преобразование Хаара по строкам
 	for (int i = 0; i < 8; i++) {
 		int step = 8;
 		while (step > 1) {
@@ -682,14 +664,13 @@ void HaarWavelet(RGB** pixels, double** result, int x, int y) {
 			for (int j = 0; j < halfStep; j++) {
 				double a = temp[i][j * 2];
 				double b = temp[i][j * 2 + 1];
-				temp[i][j] = (a + b) / sqrt(2.0);  // Низкочастотная составляющая
-				temp[i][j + halfStep] = (a - b) / sqrt(2.0);  // Высокочастотная составляющая
+				temp[i][j] = (a + b) / sqrt(2.0);
+				temp[i][j + halfStep] = (a - b) / sqrt(2.0);
 			}
 			step = halfStep;
 		}
 	}
 
-	// Применяем преобразование Хаара по столбцам
 	for (int j = 0; j < 8; j++) {
 		double col[8];
 		for (int i = 0; i < 8; i++) {
@@ -709,7 +690,7 @@ void HaarWavelet(RGB** pixels, double** result, int x, int y) {
 		}
 
 		for (int i = 0; i < 8; i++) {
-			double orig = (double)pixels[x + i][y + j].blue;
+			double orig = (double)pixels[x + i][y + j];
 			double tmp = col[i];
 			result[i][j] = col[i];
 		}
@@ -717,7 +698,7 @@ void HaarWavelet(RGB** pixels, double** result, int x, int y) {
 }
 
 // Обратное вейвлет-преобразование Хаара для блока 8x8
-void IHaarWavelet(RGB** pixels, double** result, int x, int y) {
+void IHaarWavelet(uint8_t** pixels, double** result, int x, int y) {
 	double temp[8][8];
 
 	// Копируем коэффициенты
@@ -775,132 +756,225 @@ void IHaarWavelet(RGB** pixels, double** result, int x, int y) {
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			BYTE tmp = sat(temp[i][j]);
-			pixels[x + i][y + j].blue = sat(temp[i][j]);			
+			pixels[x + i][y + j] = sat(temp[i][j]);			
 		}
 	}
 }
 
-// Внедрение с использованием вейвлет-преобразования Хаара
-void encodeHaar(int width, RGB** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, double difference, vector<int> key) {
-	vector<double**> matrixes;
-	difference = 0;
-	cout << "Before Haar Wavelet" << endl;
-
-	int count = 0;
-	while (count < vect.size() * 8) {
-		double** res = new double* [8];
-		for (int z = 0; z < 8; z++) {
-			res[z] = new double[8];
-		}
-		HaarWavelet(pixelsNew, res, 8 * (key[count] / (width / 8)), 8 * (key[count] % (width / 8)));
-		matrixes.push_back(res);
-		count++;
+void HaarWaveletFull(uint8_t** pixels, uint8_t** result, int x, int y)
+{
+	double** temp = new double* [512];
+	for (int z = 0; z < 512; z++) {
+		temp[z] = new double[512];
 	}
+	double** res = new double* [512];
+	for (int z = 0; z < 512; z++) {
+		res[z] = new double[512];
+	}
+	// Копируем значения синего канала
+	for (int i = 0; i < 512; i++) {
+		for (int j = 0; j < 512; j++) {
+			temp[i][j] = (double)pixels[i][j];
+		}
+	}
+	double min{ 0.0 }, max{ 0.0 };
+	// Применяем преобразование Хаара по строкам
+	for (int i = 0; i < 512; i++) {
+		int step = 512;
+		while (step > 1) {
+			int halfStep = step / 2;
+			for (int j = 0; j < halfStep; j++) {
+				double a = temp[i][j * 2];
+				double b = temp[i][j * 2 + 1];
+				temp[i][j] = (a + b) / sqrt(2.0);  // Низкочастотная составляющая
+				temp[i][j + halfStep] = (a - b) / sqrt(2.0);  // Высокочастотная составляющая
+			}
+			step = halfStep;
+		}
+	}
+
+	// Применяем преобразование Хаара по столбцам
+	for (int j = 0; j < 512; j++) {
+		double col[512];
+		for (int i = 0; i < 512; i++) {
+			col[i] = temp[i][j];
+		}
+
+		int step = 512;
+		while (step > 1) {
+			int halfStep = step / 2;
+			for (int i = 0; i < halfStep; i++) {
+				double a = col[i * 2];
+				double b = col[i * 2 + 1];
+				col[i] = (a + b) / sqrt(2.0);
+				col[i + halfStep] = (a - b) / sqrt(2.0);
+			}
+			step = halfStep;
+		}
+
+		for (int i = 0; i < 512; i++) {
+			double orig = (double)pixels[i][j];
+			double tmp = col[i];
+			if (col[i] < min)
+				min = col[i];
+			if (col[i] > max)
+				max = col[i];
+			res[i][j] = col[i];
+		}
+	}
+	normalizeForDisplay(res, result);
+	for (int i = 0; i < 512; i++)
+		delete[] temp[i];
+	delete[] temp;
+
+}
+
+void IHaarWaveletFull(uint8_t** pixels, uint8_t** result, int x, int y)
+{
+}
+
+// Внедрение с использованием вейвлет-преобразования Хаара
+void encodeHaar(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, bitset<16> secr_size, double difference, vector<int> key) {
+	vector<double**> matrixes;
+	dwt::FloatMatrix floatRes;
+	uint8_t** res = new uint8_t * [width];
+		for (int z = 0; z < width; z++) {
+			res[z] = new uint8_t[width];
+		}
+	cout << "Before Haar Wavelet" << endl;
+	//HaarWaveletFull(pixelsNew, res, 0, 0);
+	dwt::dwt2d(pixelsNew, res, width, width, dwt::Wavelet::HAAR);
+	floatRes = dwt::dwt2d_float(pixelsNew, width, width, dwt::Wavelet::HAAR);
+	for (int i = 0; i < width; i++)
+		for (int j = 0; j < width; j++)
+			pixelsWavelet[i][j] = res[i][j];
+
+	//int count = 0;
+	//while (count < vect.size() * 8) {
+	//	uint8_t** res = new uint8_t* [512];
+	//	for (int z = 0; z < 512; z++) {
+	//		res[z] = new uint8_t[512];
+	//	}
+	//	HaarWaveletFull(pixelsNew, res, 8 * (key[count] / (width / 8)), 8 * (key[count] % (width / 8)));
+	//	//matrixes.push_back(res);
+	//	count++;
+	//}
 
 	cout << "After Haar Wavelet" << endl;
 
-	int pixCount = 0;
-	while ((pixCount / 8) < vect.size()) {
-		if (pixCount < 16) {
-			if (secr_size[pixCount] == 1) {
-				matrixes[pixCount][5][4] += difference;
+	ifstream keyRead("key.txt");
+	if (!(keyRead.is_open())) {
+		cout << "Error while opening file." << endl;
+	}
+	for (int i = 0; i < vect.size() * 8; i++) {
+		int index;
+		int channel = 0;
+		keyRead >> index;
+		if (channel == 0) {
+			if (i < 16) {
+				if (secr_size[i] == 1) {
+					floatRes[index / width][index % width] += difference;
+				}
+				else {
+					floatRes[index / width][index % width] -= difference;
+				}
 			}
-			else {
-				matrixes[pixCount][5][4] -= difference;
+			else
+			{
+				if ((vect[i / 8][i % 8] == 1))
+				{
+					floatRes[index / width][index % width] += difference;
+				}
+				else {
+					floatRes[index / width][index % width] -= difference;
+				}
 			}
 		}
-		else {
-			if ((vect[pixCount / 8][pixCount % 8] == 1)) {
-				matrixes[pixCount][5][4] += difference;
-			}
-			else {
-				matrixes[pixCount][5][4] -= difference;
-			}
-		}
-		pixCount++;
 	}
-
-	int indCount = 0;
-	while (indCount < vect.size() * 8) {
-		IHaarWavelet(pixelsNew, matrixes[indCount], 8 * (key[indCount] / (width / 8)), 8 * (key[indCount] % (width / 8)));
-		indCount++;
-	}
-
-	// Освобождаем память
-	for (int i = 0; i < matrixes.size(); i++) {
-		for (int j = 0; j < 8; j++) {
-			delete[] matrixes[i][j];
-		}
-		delete[] matrixes[i];
-	}
+	//for (int i = 0; i < width; i++)
+	//	for (int j = 0; j < width; j++)
+	//	{
+	//		if((i > width / 2) && (j > width / 2))
+	//			floatRes[i][j] += 10;
+	//	}
+			
+	//int indCount = 0;
+	//while (indCount < vect.size() * 8) {
+	//	IHaarWavelet(pixelsNew, matrixes[indCount], 8 * (key[indCount] / (width / 8)), 8 * (key[indCount] % (width / 8)));
+	//	indCount++;
+	//}
+	dwt::idwt2d(floatRes, pixelsNew, width, width, dwt::Wavelet::HAAR);
 
 	cout << "After Inverse Haar Wavelet" << endl;
+	for (int i = 0; i < width; i++)
+		delete[] res[i];
+	//
+	delete[] res;
 	return;
 }
 
 // Извлечение с использованием вейвлет-преобразования Хаара
-string decodeHaar(int height, int width, RGB** pixels, RGB** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key) {
+string decodeHaar(int height, int width, uint8_t** pixels, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key) {
 	bitset<8> read;
 	bitset<16> readSize;
+
+	dwt::FloatMatrix floatResOrig;
+	dwt::FloatMatrix floatResNew;
+
+	uint8_t** res = new uint8_t * [width];
+	for (int z = 0; z < width; z++) {
+		res[z] = new uint8_t[width];
+	}
+	dwt::dwt2d(pixelsNew, res, width, width, dwt::Wavelet::HAAR);
+	for (int i = 0; i < width; i++)
+		for (int j = 0; j < width; j++)
+			pixelsWavelet[i][j] = res[i][j];
+
+	floatResOrig = dwt::dwt2d_float(pixels, width, width, dwt::Wavelet::HAAR);
+	floatResNew = dwt::dwt2d_float(pixelsNew, width, width, dwt::Wavelet::HAAR);
 
 	bool stop = false;
 	int pixCount = 0;
 	int bits = 1000;
 	string result = "";
 
-	for (int x = 0; x < height; x += 8) {
-		if (pixCount == vect.size() * 8) break;
+	while(pixCount < vect.size() * 8)
+	{
+		int index = key[pixCount];
+		double cf1 = floatResOrig[index / width][index % width];
+		double cf2 = floatResNew[index / width][index % width];
 
-		for (int y = 0; y < width; y += 8) {
-			double** res = new double* [8];
-			for (int z = 0; z < 8; z++) {
-				res[z] = new double[8];
+		if (pixCount < 16) 
+		{
+			if (cf1 < cf2) readSize[pixCount] = 1;
+			else readSize[pixCount] = 0;
+			pixCount++;
+
+			if (pixCount == 16) 
+			{
+				bits = readSize.to_ulong();
+				cout << "bits = " << bits << endl;
+			}
+		}
+		else 
+		{
+			if (cf1 < cf2) 
+				read[pixCount % 8] = 1;
+			else 
+				read[pixCount % 8] = 0;
+			pixCount++;
+
+			if ((pixCount % 8) == 0) 
+			{
+				if (!stop)
+					result += read.to_ulong();
+				vectSzhat.push_back(read);
 			}
 
-			if (width > 8 * (key[pixCount] / (width / 8))) {
-				HaarWavelet(pixels, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
-			}
-			else {
-				return "Error! " + result;
-			}
+			if (pixCount == (bits * 8 + 16))
+				stop = true;
 
-			double cf1 = res[5][4];
-
-			HaarWavelet(pixelsNew, res, 8 * (key[pixCount] / (width / 8)), 8 * (key[pixCount] % (width / 8)));
-			double cf2 = res[5][4];
-
-			// Освобождаем память для текущей матрицы
-			for (int z = 0; z < 8; z++) {
-				delete[] res[z];
-			}
-			delete[] res;
-
-			if (pixCount < 16) {
-				if (cf1 < cf2) readSize[pixCount] = 1;
-				else readSize[pixCount] = 0;
-				pixCount++;
-
-				if (pixCount == 16) {
-					bits = readSize.to_ulong();
-					cout << "bits = " << bits << endl;
-				}
-			}
-			else {
-				if (cf1 < cf2) read[pixCount % 8] = 1;
-				else read[pixCount % 8] = 0;
-				pixCount++;
-
-				if ((pixCount % 8) == 0) {
-					if (!stop)
-						result += read.to_ulong();
-					vectSzhat.push_back(read);
-				}
-
-				if (pixCount == (bits * 8 + 16))
-					stop = true;
-
-				if (pixCount == vect.size() * 8) break;
-			}
+			if (pixCount == vect.size() * 8) break;
 		}
 	}
 
@@ -908,7 +982,7 @@ string decodeHaar(int height, int width, RGB** pixels, RGB** pixelsNew, vector<b
 	return result;
 }
 //
-RGB** ReadFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1)
+RGB** readFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1)
 {
 	BITMAPFILEHEADER bmfHeader;
 	BITMAPINFOHEADER bmiHeader;
@@ -971,7 +1045,7 @@ RGB** ReadFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String
 			g = colors[1];
 			b = colors[0];
 			//
-			pixels[indCount / w][indCount % w] = MakeColor(r, g, b);
+			pixels[indCount / w][indCount % w] = makeColor(r, g, b);
 			indCount++;
 		}
 	}
@@ -982,14 +1056,14 @@ RGB** ReadFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String
 			g = colors1[1];
 			b = colors1[0];
 			//
-			pixels[indCount / w][indCount % w] = MakeColor(r, g, b);
+			pixels[indCount / w][indCount % w] = makeColor(r, g, b);
 			indCount++;
 		}
 	}
 	fclose(_file);
 	return pixels;
 }
-uint8_t** ReadFileMono(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1)
+uint8_t** readFileMono(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1)
 {
 	BITMAPFILEHEADER bmfHeader;
 	BITMAPINFOHEADER bmiHeader;
@@ -1025,6 +1099,10 @@ uint8_t** ReadFileMono(const wchar_t* _filename, int& h, int& w, int& size, juce
 	retStr += "biclr = ";
 	retStr += juce::String(to_string(bmiHeader.biClrUsed));
 	retStr += "\n";
+	retStr += "bfOffBits = ";
+	retStr += juce::String(to_string(bmfHeader.bfOffBits));
+	retStr += "\n";
+	
 	h = bmiHeader.biHeight;
 	w = bmiHeader.biWidth;
 	size = bmiHeader.biWidth * bmiHeader.biHeight;
@@ -1037,13 +1115,17 @@ uint8_t** ReadFileMono(const wchar_t* _filename, int& h, int& w, int& size, juce
 		return NULL;
 	}
 	retStr1 = retStr;
-	uint8_t** pixels = new uint8_t * [h + 2];
-	for (int i = 0; i < h + 2; i++) pixels[i] = new uint8_t[w + 1];
+	uint8_t** pixels = new uint8_t * [h + 5];
+	for (int i = 0; i < h + 2; i++) pixels[i] = new uint8_t[w + 5];
 	//
 	int depth = (bmiHeader.biBitCount == 24) ? 3 : 4;
 	uint8_t color;
 	int indCount = 0;
+	int byteCount = 0;
+	int imageOffset = bmfHeader.bfOffBits - sizeof(BITMAPFILEHEADER) - sizeof(BITMAPINFOHEADER);
 	while (fread(&color, 1, sizeof(color), _file) > 0) {
+		if (byteCount++ < imageOffset)
+			continue;
 		pixels[indCount / w][indCount % w] = color;
 		indCount++;
 	}
@@ -1051,7 +1133,7 @@ uint8_t** ReadFileMono(const wchar_t* _filename, int& h, int& w, int& size, juce
 	return pixels;
 }
 //
-FILE* Create_File(const char* _filename, const wchar_t* _origFile)
+FILE* createFileBmp(const char* _filename, const wchar_t* _origFile)
 {
 	BITMAPFILEHEADER bmfHeader;
 	BITMAPINFOHEADER bmiHeader;
@@ -1075,11 +1157,69 @@ FILE* Create_File(const char* _filename, const wchar_t* _origFile)
 	}
 	fwrite(&bmfHeader, 1, sizeof(bmfHeader), newFile);
 	fwrite(&bmiHeader, 1, sizeof(bmiHeader), newFile);
+
+	int imageOffset = bmfHeader.bfOffBits - sizeof(BITMAPFILEHEADER) - sizeof(BITMAPINFOHEADER);
+	//imageOffset = 12;
+	uint8_t header;
+	int byteCount = 0;
+	while (byteCount++ < imageOffset)
+	{
+		if (fread((LPSTR)&header, 1, sizeof(header), origFile) != sizeof(header)) {
+			fputs("File info header corrupted?", stderr);
+			return NULL;
+		}
+		int tmp = fwrite(&header, 1, sizeof(header), newFile);
+
+	}
+	
+	fclose(origFile);
+	return newFile;
+}
+FILE* CreateFileFromMono(const char* _filename, const wchar_t* _origFile)
+{
+	BITMAPFILEHEADER bmfHeader;
+	BITMAPINFOHEADER bmiHeader;
+	FILE* origFile = _wfopen(_origFile, L"rb");
+	FILE* newFile = fopen(_filename, "wb");
+	if (origFile == NULL) {
+		fputs("File opening error.", stderr);
+		return NULL;
+	}
+	if (fread((LPSTR)&bmfHeader, 1, sizeof(bmfHeader), origFile) != sizeof(bmfHeader)) {
+		fputs("File header corrupted?", stderr);
+		return NULL;
+	}
+	if (fread((LPSTR)&bmiHeader, 1, sizeof(bmiHeader), origFile) != sizeof(bmiHeader)) {
+		fputs("File info header corrupted?", stderr);
+		return NULL;
+	}
+	if (newFile == NULL) {
+		fputs("File creating error.", stderr);
+		return NULL;
+	}
+	bmiHeader.biBitCount = 24;
+	bmiHeader.biClrUsed = 0;
+	fwrite(&bmfHeader, 1, sizeof(bmfHeader), newFile);
+	fwrite(&bmiHeader, 1, sizeof(bmiHeader), newFile);
+	int imageOffset = bmfHeader.bfOffBits - sizeof(BITMAPFILEHEADER) - sizeof(BITMAPINFOHEADER);
+	//imageOffset = 12;
+	uint8_t header;
+	int byteCount = 0;
+	while (byteCount++ < imageOffset)
+	{
+		if (fread((LPSTR)&header, 1, sizeof(header), origFile) != sizeof(header)) {
+			fputs("File info header corrupted?", stderr);
+			return NULL;
+		}
+		int tmp = fwrite(&header, 1, sizeof(header), newFile);
+
+	}
+
 	fclose(origFile);
 	return newFile;
 }
 //
-vector<int> CreateKey(const char* _filename, int size, int vectSize, bool blocks)
+vector<int> CreateKey(const char* _filename, int size, int vectSize, Stego::AlgNum alg)
 {
 	random_device gen;
 	ofstream keyFile(_filename);
@@ -1092,13 +1232,21 @@ vector<int> CreateKey(const char* _filename, int size, int vectSize, bool blocks
 	cout << "Key vect creation" << endl;
 	while (i < vectSize * 8) {
 		int rand_num = 0;
-		if (blocks)
+		if (alg == Stego::DCT ||
+			alg == Stego::DFT || 
+			alg == Stego::DCT_KOCH)
 		{
 			rand_num = gen() % (size / 64);
 		}
-		else
+		else if(alg == Stego::LSB)
 		{
 			rand_num = gen() % size;
+		}
+		else if (alg == Stego::HAAR)
+		{
+			do {
+				rand_num = gen() % (size / 2) + (size / 2);
+			} while (rand_num % (int)sqrt(size) < (int)sqrt(size) / 2);
 		}
 		if (count(key.begin(), key.end(), rand_num) == 0) {
 			key.push_back(rand_num);
@@ -1137,6 +1285,14 @@ void WriteToFile(FILE* newFile, RGB** pixels, int height, int width)
 			colors[0] = pixels[i][j].blue;
 			//
 			fwrite(&colors, 1, sizeof(colors), newFile);
+		}
+	}
+}
+void WriteToFileMono(FILE* newFile, uint8_t** pixels, int height, int width)
+{
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			fwrite(&pixels[i][j], 1, sizeof(uint8_t), newFile);
 		}
 	}
 }
@@ -1195,8 +1351,8 @@ void CreateDiffFile(const wchar_t* _filename1, const wchar_t* _filename2, const 
 	int size;
 	juce::String info;
 	//
-	RGB** pixels1 = ReadFile(_filename1, height, width, size, info);
-	RGB** pixels2 = ReadFile(_filename2, height, width, size, info); 
+	RGB** pixels1 = readFile(_filename1, height, width, size, info);
+	RGB** pixels2 = readFile(_filename2, height, width, size, info); 
 	//
 	RGB** pixelsNew = new RGB * [height + 2];
 	for (int i = 0; i < height + 2; i++) pixelsNew[i] = new RGB[width + 1];
@@ -1218,7 +1374,7 @@ void CreateDiffFile(const wchar_t* _filename1, const wchar_t* _filename2, const 
 			}
 		}
 	}
-	FILE* newFile = Create_File(_newfile, _filename1);
+	FILE* newFile = createFileBmp(_newfile, _filename1);
 	WriteToFile(newFile, pixelsNew, height, width);
 	//
 	for (int i = 0; i < height + 2; i++)
@@ -1232,4 +1388,82 @@ void CreateDiffFile(const wchar_t* _filename1, const wchar_t* _filename2, const 
 	delete[] pixels2;
 	delete[] pixelsNew;
 }
-//
+void CreateDiffFileMono(const wchar_t* _filename1, const wchar_t* _filename2, const char* _newfile)
+{
+	int height;
+	int width;
+	int size;
+	juce::String info;
+	//
+	uint8_t** pixels1 = readFileMono(_filename1, height, width, size, info);
+	uint8_t** pixels2 = readFileMono(_filename2, height, width, size, info);
+	//
+	RGB** pixelsNew = new RGB * [height + 2];
+	for (int i = 0; i < height + 2; i++) pixelsNew[i] = new RGB[width + 1];
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			if (pixels1[i][j] != pixels2[i][j])
+			{
+				int diff = (int)fabs(pixels1[i][j] - pixels2[i][j]);
+				//
+				pixelsNew[i][j].red = sat((double)(0 + 100 * ((diff - 2))));
+				pixelsNew[i][j].green = sat((double)(255 - 200 * (diff - 1)));
+				pixelsNew[i][j].blue = sat((double)(255 * (diff > 1) - 100 * (diff - 2)));
+			}
+			else
+			{
+				pixelsNew[i][j].red = pixels1[i][j];
+				pixelsNew[i][j].green = pixels1[i][j];
+				pixelsNew[i][j].blue = pixels1[i][j];
+			}
+		}
+	}
+	FILE* newFile = CreateFileFromMono(_newfile, _filename1);
+	WriteToFile(newFile, pixelsNew, height, width);
+	//
+	for (int i = 0; i < height + 2; i++)
+	{
+		delete[] pixels1[i];
+		delete[] pixels2[i];
+		delete[] pixelsNew[i];
+	}
+	//
+	delete[] pixels1;
+	delete[] pixels2;
+	delete[] pixelsNew;
+}
+void normalizeForDisplay(double** data, uint8_t** res)
+{
+	double minVal = data[0][0];
+	double maxVal = data[0][0];
+
+	// Находим min и max
+	for (int y = 0; y < 512; y++) {
+		for (int x = 0; x < 512; x++) {
+			if (data[y][x] < minVal) minVal = data[y][x];
+			if (data[y][x] > maxVal) maxVal = data[y][x];
+		}
+	}
+
+	// Нормализуем в диапазон [0, 255]
+	double range = maxVal - minVal;
+	if (range == 0) range = 1;
+
+	for (int y = 0; y < 512; y++) {
+		for (int x = 0; x < 512; x++) {
+			// Для коэффициентов детализации используем абсолютные значения
+			// и увеличиваем контраст для лучшей видимости
+			double val = data[y][x];
+
+			// Усиливаем контраст для LH, HL, HH
+			if (x >= 512 / 2 || y >= 512 / 2) {
+				val = std::abs(val) * 4; // Усиление для лучшей видимости
+			}
+
+			int normVal = static_cast<int>(((val - minVal) / range) * 255);
+			if (normVal < 0) normVal = 0;
+			if (normVal > 255) normVal = 255;
+			res[y][x] = normVal;
+		}
+	}
+}

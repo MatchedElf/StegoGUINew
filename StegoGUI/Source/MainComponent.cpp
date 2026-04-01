@@ -110,19 +110,21 @@ void MainComponent::buttonClicked(Button* butt)
     {
        if ((_menuC->imageName != "-1") && (_menuC->secrName != "-1"))
        {
-          LoadWindow* processWnd = new LoadWindow(TRANS(std::wstring(L"Load").c_str()),
-                                                       TRANS(std::wstring(L"Load...").c_str()),
-                                                       MessageBoxIconType::NoIcon);
-             processWnd->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.3), (int)(getWidth() * 0.1), (int)(getHeight() * 0.4));
-             processWnd->enterModalState(true, nullptr, true);
-             MessageManager::callAsync([this, processWnd]()
-                {
-                   startDecode();
-                   if (nullptr != processWnd)
-                   {
-                      processWnd->exitModalState();
-                   }
-                });
+           startDecode();
+          //LoadWindow* processWnd = new LoadWindow(TRANS(std::wstring(L"Load").c_str()),
+          //                                             TRANS(std::wstring(L"Load...").c_str()),
+          //                                             MessageBoxIconType::NoIcon);
+          //   processWnd->setBounds((int)(getWidth() * 0.45), (int)(getHeight() * 0.3), (int)(getWidth() * 0.1), (int)(getHeight() * 0.4));
+          //   processWnd->enterModalState(true, nullptr, true);
+          //   MessageManager::callAsync([this, processWnd]()
+          //      {
+          //         startDecode();
+          //         if (nullptr != processWnd)
+          //         {
+          //            processWnd->exitModalState();
+          //         }
+          //      });
+       
        }
        else
        {
@@ -394,7 +396,7 @@ void MainComponent::paintOrig(bool error)
       int size;
       String info;
       //
-      ReadFile(_menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
+      readFileMono(_menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
       _origInfo->setText(info, sendNotification);
       if ((size < 100) || (height < 32) || (height > 5000) || (width < 32) || (width > 5000))
       {
@@ -486,7 +488,7 @@ void MainComponent::startDecode()
     srand((unsigned int)time(NULL));
     _origInfo->setText("In progress", dontSendNotification);
     _decodeInfo->setText("In progress", dontSendNotification);
-    int difference = 4;
+    int difference = 1;
     complex<double> differenceComplex(2.0, 0.0);
     string message1;
     //
@@ -504,34 +506,45 @@ void MainComponent::startDecode()
     //
     String info;
     //
-    RGB** pixels = ReadFile(_menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
-    RGB** pixelsNew;
+    uint8_t** pixels = readFileMono(_menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
+    uint8_t** pixelsNew;
+    uint8_t** pixelsWave = new uint8_t * [width];
+    for (int z = 0; z < width; z++) {
+        pixelsWave[z] = new uint8_t[width];
+    }
+    uint8_t** pixelsNewWave = new uint8_t * [width];
+    for (int z = 0; z < width; z++) {
+        pixelsNewWave[z] = new uint8_t[width];
+    }
     //
     _origInfo->setText(info, dontSendNotification);
     //
     string result;
     //
     FILE* newFile;
+    FILE* waveFile;
+    FILE* waveNewFile;
     vector<int> key;
     key = ReadKey("key.txt", vect);
     if (_menuC->isAttack)
     {
        if (_edited) {
-          pixelsNew = ReadFile(L"../../Images/Results/new1.bmp", height, width, size, info);
+          pixelsNew = readFileMono(L"../../Images/Results/new1.bmp", height, width, size, info);
        }
        else
        {
-         pixelsNew = ReadFile(L"../../Images/Results/new.bmp", height, width, size, info);
+         pixelsNew = readFileMono(L"../../Images/Results/new.bmp", height, width, size, info);
        }
        
     }
     else
     {
        _edited = false;
-       newFile = Create_File("../../Images/Results/new.bmp", _menuC->imageFile.getFullPathName().toWideCharPointer());
-       pixelsNew = ReadFile(_menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
+       newFile = createFileBmp("../../Images/Results/new.bmp", _menuC->imageFile.getFullPathName().toWideCharPointer());
+       
+       pixelsNew = readFileMono(_menuC->imageFile.getFullPathName().toWideCharPointer(), height, width, size, info);
     }
-    if ((_menuC->selectedTr != Stego::LSB) && !(_menuC->isAttack))
+    if ((_menuC->selectedTr != Stego::LSB) && !(_menuC->isAttack) && (_menuC->selectedTr != Stego::HAAR))
     {
        if ((vect.size() * 8) >= (size / 64))
        {
@@ -543,9 +556,9 @@ void MainComponent::startDecode()
     {
        if (!_menuC->isAttack)
        {
-          //key = CreateKey("key.txt", size, (int)vect.size(), true);
+          key = CreateKey("key.txt", size, (int)vect.size(), Stego::DCT);
           encodeDCT(width, pixelsNew, vect, secr_size, difference, key);
-          WriteToFile(newFile, pixelsNew, height, width);
+          WriteToFileMono(newFile, pixelsNew, height, width);
        }
        result = decodeDCT(height, width, pixels, pixelsNew, vect, vectSzhat, key);
     }
@@ -553,9 +566,9 @@ void MainComponent::startDecode()
     {
        if (!_menuC->isAttack)
        {
-          //key = CreateKey("key.txt", size, (int)vect.size(), true);
+          key = CreateKey("key.txt", size, (int)vect.size(), Stego::DFT);
           encodeDFT(width, pixelsNew, vect, secr_size, differenceComplex, key);
-          WriteToFile(newFile, pixelsNew, height, width);
+          WriteToFileMono(newFile, pixelsNew, height, width);
        }
        result = decodeDFT(height, width, pixels, pixelsNew, vect, vectSzhat, key);
     }
@@ -563,9 +576,9 @@ void MainComponent::startDecode()
     {
        if (!_menuC->isAttack)
        {
-          //key = CreateKey("key.txt", size, (int)vect.size(), false);
+          key = CreateKey("key.txt", size, (int)vect.size(), Stego::LSB);
           encodeLSB(width, pixelsNew, vect, secr_size);
-          WriteToFile(newFile, pixelsNew, height, width);
+          WriteToFileMono(newFile, pixelsNew, height, width);
        }
        result = decodeLSB(width, pixelsNew, vect, vectSzhat);
     }
@@ -573,21 +586,27 @@ void MainComponent::startDecode()
     {
        if (!_menuC->isAttack)
        {
-          //key = CreateKey("key.txt", size, (int)vect.size(), true);
+          key = CreateKey("key.txt", size, (int)vect.size(), Stego::DCT_KOCH);
           encodeDCTKoch(width, pixelsNew, vect, secr_size, difference, key);
-          WriteToFile(newFile, pixelsNew, height, width);
+          WriteToFileMono(newFile, pixelsNew, height, width);
        }
        result = decodeDCTKoch(height, width, pixelsNew, vect, vectSzhat, difference, key);
     }
     else if (_menuC->selectedTr == Stego::HAAR)
     {
+        waveNewFile = createFileBmp("../../Images/Results/newWave.bmp", _menuC->imageFile.getFullPathName().toWideCharPointer());
         if (!_menuC->isAttack)
         {
-            //key = CreateKey("key.txt", size, (int)vect.size(), true);
-            encodeHaar(width, pixelsNew, vect, secr_size, difference, key);
-            WriteToFile(newFile, pixelsNew, height, width);
+            waveFile = createFileBmp("../../Images/Results/origWave.bmp", _menuC->imageFile.getFullPathName().toWideCharPointer());
+            key = CreateKey("key.txt", size, (int)vect.size(), Stego::HAAR);
+            encodeHaar(width, pixelsNew, pixelsWave, vect, secr_size, difference, key);
+            WriteToFileMono(newFile, pixelsNew, height, width);
+            WriteToFileMono(waveFile, pixelsWave, height, width);
+            fclose(waveFile);
         }
-        result = decodeHaar(height, width, pixels, pixelsNew, vect, vectSzhat, key);
+        result = decodeHaar(height, width, pixels, pixelsNew, pixelsNewWave, vect, vectSzhat, key);
+        WriteToFileMono(waveNewFile, pixelsNewWave, height, width);
+        fclose(waveNewFile);
     }
     if (!_menuC->isAttack)
     {
@@ -600,7 +619,7 @@ void MainComponent::startDecode()
     //setProgress(progressStatus);
     //repaint();
     long double redP, greenP, blueP;
-    PSNR(pixels, pixelsNew, redP, greenP, blueP, height, width);
+    long double psnrRes = PSNR(pixels, pixelsNew, height, width);
     String inf = "";
     inf += String((std::wstring(L"Алгоритм: ")).c_str());
     if (_menuC->selectedTr == Stego::DCT) inf += "DCT\n";
@@ -609,7 +628,7 @@ void MainComponent::startDecode()
     if (_menuC->selectedTr == Stego::DCT_KOCH) inf += "DCT Koch\n";
     if (_menuC->selectedTr == Stego::HAAR) inf += "Haar\n";
     inf += "PSNR = ";
-    inf += String(to_string(blueP));
+    inf += String(to_string(psnrRes));
     inf += "\n";
     //
     inf += String((std::wstring(L"Коэффициент использования = ")).c_str());
@@ -631,15 +650,15 @@ void MainComponent::startDecode()
     inf += "\n";
     //
     inf += String((std::wstring(L"Коэффициент корреляции = ")).c_str());
-    double corr = CorrCoef(pixels, pixelsNew, height, width);
+    double corr = corrCoef(pixels, pixelsNew, height, width);
     inf += String(to_string(corr));
     inf += "\n";
     //
     _progressStatus = 50;
     if(_edited)
-       CreateDiffFile(_menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new1.bmp", "diff.bmp");
+       CreateDiffFileMono(_menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new1.bmp", "diff.bmp");
     else
-       CreateDiffFile(_menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new.bmp", "diff.bmp");
+       CreateDiffFileMono(_menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new.bmp", "diff.bmp");
     doDecode(L"diff.bmp", "diff.png");
     //
     _decodeInfo->setText(inf, dontSendNotification);
@@ -652,14 +671,18 @@ void MainComponent::startDecode()
     _newIm->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("new.png")));
     _progressStatus = 75;
     //
-    for (int i = 0; i < height + 2; i++)
+    for (int i = 0; i < height; i++)
     {
         delete[] pixels[i];
         delete[] pixelsNew[i];
+        delete[] pixelsWave[i];
+        delete[] pixelsNewWave[i];
     }
     //
     delete[] pixels;
     delete[] pixelsNew;
+    delete[] pixelsWave;
+    delete[] pixelsNewWave;
     //
     _progressStatus = 100;
     String check = _decodeText->getText();
