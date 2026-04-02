@@ -1608,6 +1608,9 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_gui_extra.cpp">
       <Filter>JUCE Library Code</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\bmp_to_png.cpp">
+      <Filter>StegoGUI\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\BlackComponent.h">
@@ -3117,6 +3120,9 @@
       <Filter>JUCE Library Code</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Include\Dwt2d.hpp">
+      <Filter>StegoGUI\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\bmp_to_png.h">
       <Filter>StegoGUI\Include</Filter>
     </ClInclude>
   </ItemGroup>

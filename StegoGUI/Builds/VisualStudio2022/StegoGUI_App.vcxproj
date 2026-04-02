@@ -134,6 +134,7 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\bmp_to_png.cpp" />
     <ClCompile Include="..\..\Source\EditComponent.cpp" />
     <ClCompile Include="..\..\Source\HelpComponent.cpp" />
     <ClCompile Include="..\..\Source\BlackComponent.cpp" />
@@ -1475,6 +1476,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\BlackComponent.h" />
+    <ClInclude Include="..\..\Include\bmp_to_png.h" />
     <ClInclude Include="..\..\Include\DecodeBMP.h" />
     <ClInclude Include="..\..\Include\Dwt2d.hpp" />
     <ClInclude Include="..\..\Include\EditComponent.h" />
