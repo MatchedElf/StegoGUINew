@@ -9,6 +9,7 @@
 #include "EditComponent.h"
 #include "LoadWindow.h"
 #include <cstdlib>
+#include "bmp_to_png.h"
 
 
 //

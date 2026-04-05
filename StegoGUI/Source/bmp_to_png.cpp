@@ -90,7 +90,8 @@ ConvertResult bmpToPng(const std::string& bmpFile,
 
     // ── 1. Открыть и прочитать BMP ──────────────────────────────
     std::ifstream bmp(bmpFile, std::ios::binary);
-    if (!bmp.is_open()) return ConvertResult::ERROR_BMP_OPEN;
+    if (!bmp.is_open()) 
+        return ConvertResult::ERROR_BMP_OPEN;
 
     BmpFileHeader fh{};
     BmpInfoHeader ih{};
@@ -98,9 +99,12 @@ ConvertResult bmpToPng(const std::string& bmpFile,
     bmp.read(reinterpret_cast<char*>(&fh), sizeof(fh));
     bmp.read(reinterpret_cast<char*>(&ih), sizeof(ih));
 
-    if (!bmp || fh.signature != 0x4D42) return ConvertResult::ERROR_BMP_INVALID;
-    if (ih.headerSize < 40)              return ConvertResult::ERROR_BMP_INVALID;
-    if (ih.compression != 0)             return ConvertResult::ERROR_BMP_UNSUPPORTED;
+    if (!bmp || fh.signature != 0x4D42) 
+        return ConvertResult::ERROR_BMP_INVALID;
+    if (ih.headerSize < 40)              
+        return ConvertResult::ERROR_BMP_INVALID;
+    if (ih.compression != 0)             
+        return ConvertResult::ERROR_BMP_UNSUPPORTED;
     if (ih.bitsPerPixel != 8 && ih.bitsPerPixel != 24)
         return ConvertResult::ERROR_BMP_UNSUPPORTED;
 
@@ -109,7 +113,8 @@ ConvertResult bmpToPng(const std::string& bmpFile,
     const bool     topDown = (ih.height < 0);
     const uint16_t bpp = ih.bitsPerPixel;
 
-    if (W <= 0 || absH <= 0) return ConvertResult::ERROR_BMP_INVALID;
+    if (W <= 0 || absH <= 0) 
+        return ConvertResult::ERROR_BMP_INVALID;
 
     if (verbose)
         std::cerr << "[bmpToPng] " << W << "x" << absH
@@ -126,7 +131,8 @@ ConvertResult bmpToPng(const std::string& bmpFile,
         uint32_t numColors = ih.colorsInTable ? ih.colorsInTable : 256u;
         palette.resize(numColors * 4);
         bmp.read(reinterpret_cast<char*>(palette.data()), palette.size());
-        if (!bmp) return ConvertResult::ERROR_BMP_INVALID;
+        if (!bmp) 
+            return ConvertResult::ERROR_BMP_INVALID;
     }
 
     // ── 3. Прочитать пиксельные данные ──────────────────────────
@@ -139,7 +145,8 @@ ConvertResult bmpToPng(const std::string& bmpFile,
 
     std::vector<uint8_t> bmpPixels(size_t(rowBytes) * absH);
     bmp.read(reinterpret_cast<char*>(bmpPixels.data()), bmpPixels.size());
-    if (!bmp) return ConvertResult::ERROR_BMP_INVALID;
+    if (!bmp) 
+        return ConvertResult::ERROR_BMP_INVALID;
     bmp.close();
 
     // ── 4. Преобразовать в RGB ───────────────────────────────────
@@ -191,7 +198,8 @@ ConvertResult bmpToPng(const std::string& bmpFile,
     int zret = compress2(compressed.data(), &compBound,
         filtered.data(), filteredSize,
         6 /* уровень сжатия */);
-    if (zret != Z_OK) return ConvertResult::ERROR_MEMORY;
+    if (zret != Z_OK) 
+        return ConvertResult::ERROR_MEMORY;
     compressed.resize(compBound);
 
     if (verbose)
@@ -200,7 +208,8 @@ ConvertResult bmpToPng(const std::string& bmpFile,
 
     // ── 6. Записать PNG файл ─────────────────────────────────────
     std::ofstream png(pngFile, std::ios::binary);
-    if (!png.is_open()) return ConvertResult::ERROR_PNG_OPEN;
+    if (!png.is_open()) 
+        return ConvertResult::ERROR_PNG_OPEN;
 
     // PNG сигнатура
     const uint8_t pngSig[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
@@ -226,7 +235,8 @@ ConvertResult bmpToPng(const std::string& bmpFile,
     // IEND chunk
     writePngChunkV2(png, "IEND", nullptr, 0);
 
-    if (!png) return ConvertResult::ERROR_PNG_WRITE;
+    if (!png) 
+        return ConvertResult::ERROR_PNG_WRITE;
     png.close();
 
     if (verbose)

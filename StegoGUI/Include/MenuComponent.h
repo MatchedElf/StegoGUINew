@@ -23,6 +23,7 @@ public:
    void startDecode();
    void drawToggleButton(Graphics& g, ToggleButton& button,
                          bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
+   int getDiff();
    //
    int selectedTr = 1;
    bool isAttack = false;
@@ -43,9 +44,11 @@ private:
    Label* secrTitle;
    Label* algTitle;
    Label* attackTitle;
+   Label* diffTitle;
    //
    ImageButton* secrCh;
    ComboBox* algCh;
+   Slider* diffSlider;
    ToggleButton* attack;
    //
    Component* costyl;

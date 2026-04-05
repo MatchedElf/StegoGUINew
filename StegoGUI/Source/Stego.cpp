@@ -144,6 +144,30 @@ double corrCoef(uint8_t** orig, uint8_t** re, int height, int width)
 	znam = sqrt(origSum * reSum);
 	return chisl / znam;
 }
+double dispersy(dwt::FloatMatrix orig, int row, int column, int& highestRow, int& highestColumn)
+{
+	double maxDisp = 0.0;
+	double sum = 0.0;
+	highestRow = highestColumn = 0;
+	for (int i = row; i < row + 4; i++)
+		for (int j = column; j < column + 4; j++)
+			sum += orig[i][j];
+	double average = sum / 16;
+	sum = 0.0;
+	for (int i = row; i < row + 4; i++) {
+		for (int j = column; j < column + 4; j++) {
+			double val = pow(orig[i][j] - average, 2);
+			if (val > maxDisp)
+			{
+				maxDisp = val;
+				highestRow = i;
+				highestColumn = j;
+			}
+			sum += val;
+		}
+	}
+	return sum / 16;
+}
 //
 void encodeDCT(int width, uint8_t** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key) {
 	vector<double**> matrixes;
@@ -974,6 +998,226 @@ string decodeHaar(int height, int width, uint8_t** pixels, uint8_t** pixelsNew, 
 			if (pixCount == (bits * 8 + 16))
 				stop = true;
 
+			if (pixCount == vect.size() * 8) break;
+		}
+	}
+
+	cout << "After decoding Haar Wavelet" << endl;
+	return result;
+}
+void encodeHaarKoch(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, bitset<16> secr_size, double difference, vector<int> key)
+{
+	vector<double**> matrixes;
+	dwt::FloatMatrix floatRes;
+	uint8_t** res = new uint8_t * [width];
+	for (int z = 0; z < width; z++) {
+		res[z] = new uint8_t[width];
+	}
+	cout << "Before Haar Wavelet" << endl;
+	dwt::dwt2d(pixelsNew, res, width, width, dwt::Wavelet::HAAR);
+	floatRes = dwt::dwt2d_float(pixelsNew, width, width, dwt::Wavelet::HAAR);
+	for (int i = 0; i < width; i++)
+		for (int j = 0; j < width; j++)
+			pixelsWavelet[i][j] = res[i][j];
+
+	cout << "After Haar Wavelet" << endl;
+
+	ofstream keyWrite("key.txt");
+	if (!(keyWrite.is_open())) {
+		cout << "Error while opening file." << endl;
+	}
+	//for (int i = 0; i < vect.size() * 8; i++) {
+	//	int index;
+	//	int channel = 0;
+	//	keyRead >> index;
+	//	if (channel == 0) {
+	//		if (i < 16) {
+	//			if (secr_size[i] == 1) {
+	//				floatRes[index / width][index % width] += difference;
+	//			}
+	//			else {
+	//				floatRes[index / width][index % width] -= difference;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			if ((vect[i / 8][i % 8] == 1))
+	//			{
+	//				floatRes[index / width][index % width] += difference;
+	//			}
+	//			else {
+	//				floatRes[index / width][index % width] -= difference;
+	//			}
+	//		}
+	//	}
+	//}
+	int highI, highJ;
+	int pixCount = 0;
+	bool isBreak = false;
+	for (int i = 0; i < width / 2; i += 4) {
+		if (isBreak)
+			break;
+		for (int j = width / 2; j < width; j += 4)
+		{
+			if (pixCount == vect.size())
+			{
+				isBreak = true;
+				break;
+			}
+				
+			double disp = dispersy(floatRes, i, j, highI, highJ);
+			float tmp = floatRes[highI][highJ];
+			if (disp > 30.0)
+			{
+				keyWrite << i * width + j << " ";
+				double abs = fabs(floatRes[i + 3][j] - floatRes[i][j + 3]);
+				double tmp = floatRes[i + 3][j];
+				double tmp2 = floatRes[i][j + 3];
+
+				int bit = 0;
+				if (pixCount < 16) bit = secr_size[pixCount];
+				else bit = vect[pixCount / 8][pixCount % 8];
+				if (bit == 1) {
+					if (abs <= difference)
+					{
+						//int chhh = 0;
+					}
+					else
+					{
+						int sign = 0;
+						if (fabs(tmp) > fabs(tmp2))
+							sign = (floatRes[i + 3][j] < 0) ? -1 : +1;
+						else
+							sign = (floatRes[i][j + 3] < 0) ? -1 : +1;
+						floatRes[i + 3][j] = (fabs(floatRes[i + 3][j]) >= fabs(floatRes[i][j + 3]))
+							? floatRes[i + 3][j] + ((abs - difference) / 2 + 0.5) * (-sign)
+							: floatRes[i + 3][j] + ((abs - difference) / 2 + 0.5) * sign;
+						//
+						//sign = (floatRes[i][j + 3] < 0) ? -1 : +1;
+						floatRes[i][j + 3] = (fabs(floatRes[i][j + 3]) > fabs(tmp))
+							? floatRes[i][j + 3] + ((abs - difference) / 2 + 0.5) * (-sign)
+							: floatRes[i][j + 3] + ((abs - difference) / 2 + 0.5) * sign;
+						double abs1 = fabs(floatRes[i + 3][j] - floatRes[i][j + 3]);
+						sign = 0;
+						if (abs1 > difference)
+						{
+							sign = 0;
+						}
+						//if (abs1 > 6.8)
+						//{
+						//	sign = 0;
+						//}
+					}
+				}
+				else {
+					if (abs > difference)
+					{
+						//int chh = 0;
+					}
+					else
+					{
+						int sign = 0;
+						if (fabs(tmp) > fabs(tmp2))
+							sign = (floatRes[i + 3][j] < 0) ? -1 : +1;
+						else
+							sign = (floatRes[i][j + 3] < 0) ? -1 : +1;
+						floatRes[i + 3][j] = (fabs(floatRes[i + 3][j]) >= fabs(floatRes[i][j + 3]))
+							? floatRes[i + 3][j] + (difference / 2 + 1) * sign
+							: floatRes[i + 3][j] + (difference / 2 + 1) * (-sign);
+						//
+						//sign = (floatRes[i][j + 3] < 0) ? -1 : +1;
+						floatRes[i][j + 3] = (fabs(floatRes[i][j + 3]) > fabs(tmp))
+							? floatRes[i][j + 3] + (difference / 2 + 1) * sign
+							: floatRes[i][j + 3] + (difference / 2 + 1) * (-sign);
+						double abs1 = fabs(floatRes[i + 3][j] - floatRes[i][j + 3]);
+						sign = 0;
+						if (abs1 <= difference)
+						{
+							sign = 0;
+						}
+						//if (abs1 < 9.5)
+						//{
+						//	sign = 0;
+						//}
+					}
+				}
+				pixCount++;
+			}
+		}
+	}
+	keyWrite.close();
+	dwt::idwt2d(floatRes, pixelsNew, width, width, dwt::Wavelet::HAAR);
+
+	cout << "After Inverse Haar Wavelet" << endl;
+	for (int i = 0; i < width; i++)
+		delete[] res[i];
+	//
+	delete[] res;
+	return;
+}
+string decodeHaarKoch(int height, int width, uint8_t * *pixels, uint8_t * *pixelsNew, uint8_t * *pixelsWavelet, vector<bitset<8>> vect, vector<bitset<8>>&vectSzhat, double difference, vector<int> key)
+{
+	bitset<8> read;
+	bitset<16> readSize;
+
+	dwt::FloatMatrix floatResOrig;
+	dwt::FloatMatrix floatResNew;
+
+	uint8_t** res = new uint8_t * [width];
+	for (int z = 0; z < width; z++) {
+		res[z] = new uint8_t[width];
+	}
+	dwt::dwt2d(pixelsNew, res, width, width, dwt::Wavelet::HAAR);
+	for (int i = 0; i < width; i++)
+		for (int j = 0; j < width; j++)
+			pixelsWavelet[i][j] = res[i][j];
+
+	floatResOrig = dwt::dwt2d_float(pixels, width, width, dwt::Wavelet::HAAR);
+	floatResNew = dwt::dwt2d_float(pixelsNew, width, width, dwt::Wavelet::HAAR);
+
+	bool stop = false;
+	int pixCount = 0;
+	int bits = 1000;
+	string result = "";
+	while (pixCount < vect.size())
+	{
+		int row = key[pixCount] / width;
+		int column = key[pixCount] % width;
+		double cf1 = floatResNew[row + 3][column];
+		double cf2 = floatResNew[row][column + 3];
+		double abs = fabs(cf1 - cf2);
+		if (pixCount < 16) {
+			if (abs > difference)
+				readSize[pixCount] = 0;
+			else
+				readSize[pixCount] = 1;
+			pixCount++;
+			if (pixCount == 16) {
+				bits = readSize.to_ulong();
+				cout << "bits = " << bits << endl;
+			}
+		}
+		else {
+			if (abs > difference)
+				read[pixCount % 8] = 0;
+			else
+				read[pixCount % 8] = 1;
+			if (read[pixCount % 8] != vect[(pixCount / 8)][pixCount % 8])
+			{
+				//int sign = 0;
+			}
+			pixCount++;
+			if ((pixCount % 8) == 0) {
+				if (!stop)
+					result += read.to_ulong();
+				vectSzhat.push_back(read);
+				if (vect[(pixCount / 8) - 1] != vectSzhat[(pixCount / 8) - 1])
+				{
+					//int sign = 0;
+				}
+			}
+			if (pixCount == (bits * 8 + 16))
+				stop = true;
 			if (pixCount == vect.size() * 8) break;
 		}
 	}

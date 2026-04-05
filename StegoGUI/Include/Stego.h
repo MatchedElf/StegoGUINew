@@ -30,7 +30,8 @@ namespace Stego
         DFT = 2,
         LSB = 3,
         DCT_KOCH = 4,
-        HAAR = 5
+        HAAR = 5,
+        HAAR_KOCH = 6
     };
 }
 using namespace std;
@@ -62,6 +63,8 @@ double averageIntensity(uint8_t** orig, int height, int width);
 //
 double corrCoef(uint8_t** orig, uint8_t** re, int height, int width);
 //
+double dispersy(dwt::FloatMatrix orig, int row, int column, int& highestRow, int& highestColumn);
+//
 void encodeDCT(int width, uint8_t** pixelsNew, vector<bitset<8>> vect, bitset<16> secr_size, int difference, vector<int> key);
 //
 string decodeDCT(int height, int width, uint8_t** pixels, uint8_t** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key);
@@ -89,6 +92,10 @@ void IHaarWaveletFull(uint8_t** pixels, uint8_t** result, int x, int y);
 void encodeHaar(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, bitset<16> secr_size, double difference, vector<int> key);
 //
 string decodeHaar(int height, int width, uint8_t** pixels, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key);
+//
+void encodeHaarKoch(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, bitset<16> secr_size, double difference, vector<int> key);
+//
+string decodeHaarKoch(int height, int width, uint8_t** pixels, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, double difference, vector<int> key);
 //
 RGB** readFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1);
 //
