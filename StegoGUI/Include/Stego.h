@@ -59,6 +59,8 @@ void IDFT(uint8_t** pixels, complex<double>** result, int x, int y);
 //
 long double PSNR(uint8_t** orig, uint8_t** re, int height, int width);
 //
+long double MSE(uint8_t** orig, uint8_t** re, int height, int width);
+//
 double averageIntensity(uint8_t** orig, int height, int width);
 //
 double corrCoef(uint8_t** orig, uint8_t** re, int height, int width);

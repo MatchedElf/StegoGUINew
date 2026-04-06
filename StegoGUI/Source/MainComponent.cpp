@@ -638,6 +638,7 @@ void MainComponent::startDecode()
     //repaint();
     long double redP, greenP, blueP;
     long double psnrRes = PSNR(pixels, pixelsNew, height, width);
+    long double mseRes = MSE(pixels, pixelsNew, height, width);
     String inf = "";
     inf += String((std::wstring(L"Алгоритм: ")).c_str());
     if (_menuC->selectedTr == Stego::DCT) inf += "DCT\n";
@@ -648,6 +649,9 @@ void MainComponent::startDecode()
     if (_menuC->selectedTr == Stego::HAAR_KOCH) inf += "Haar Koch\n";
     inf += "PSNR = ";
     inf += String(to_string(psnrRes));
+    inf += "\n";
+    inf += "MSE = ";
+    inf += String(to_string(mseRes));
     inf += "\n";
     //
     inf += String((std::wstring(L"Коэффициент использования = ")).c_str());
@@ -671,6 +675,8 @@ void MainComponent::startDecode()
     inf += String((std::wstring(L"Коэффициент корреляции = ")).c_str());
     double corr = corrCoef(pixels, pixelsNew, height, width);
     inf += String(to_string(corr));
+    inf += "\n";
+    inf += String((std::wstring(L"Сделать гистограммы!!! ")).c_str());
     inf += "\n";
     //
     _progressStatus = 50;

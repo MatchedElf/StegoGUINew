@@ -95,6 +95,16 @@ long double PSNR(uint8_t** orig, uint8_t** re, int height, int width) {
 	return 10 * log10(height * width * pow(pow(2, 8) - 1, 2) / znam);
 
 }
+long double MSE(uint8_t** orig, uint8_t** re, int height, int width)
+{
+	long double sum = 0;
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			sum += pow((orig[i][j] - re[i][j]), 2);
+		}
+	}
+	return sum / (width * height);
+}
 double averageIntensity(uint8_t** orig, int height, int width)
 {
 	double ret = 0.0;
@@ -1026,31 +1036,7 @@ void encodeHaarKoch(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vec
 	if (!(keyWrite.is_open())) {
 		cout << "Error while opening file." << endl;
 	}
-	//for (int i = 0; i < vect.size() * 8; i++) {
-	//	int index;
-	//	int channel = 0;
-	//	keyRead >> index;
-	//	if (channel == 0) {
-	//		if (i < 16) {
-	//			if (secr_size[i] == 1) {
-	//				floatRes[index / width][index % width] += difference;
-	//			}
-	//			else {
-	//				floatRes[index / width][index % width] -= difference;
-	//			}
-	//		}
-	//		else
-	//		{
-	//			if ((vect[i / 8][i % 8] == 1))
-	//			{
-	//				floatRes[index / width][index % width] += difference;
-	//			}
-	//			else {
-	//				floatRes[index / width][index % width] -= difference;
-	//			}
-	//		}
-	//	}
-	//}
+
 	int highI, highJ;
 	int pixCount = 0;
 	bool isBreak = false;
@@ -1059,7 +1045,7 @@ void encodeHaarKoch(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vec
 			break;
 		for (int j = width / 2; j < width; j += 4)
 		{
-			if (pixCount == vect.size())
+			if (pixCount == vect.size() * 8)
 			{
 				isBreak = true;
 				break;
@@ -1179,7 +1165,7 @@ string decodeHaarKoch(int height, int width, uint8_t * *pixels, uint8_t * *pixel
 	int pixCount = 0;
 	int bits = 1000;
 	string result = "";
-	while (pixCount < vect.size())
+	while (pixCount < vect.size() * 8)
 	{
 		int row = key[pixCount] / width;
 		int column = key[pixCount] % width;
@@ -1216,9 +1202,9 @@ string decodeHaarKoch(int height, int width, uint8_t * *pixels, uint8_t * *pixel
 					//int sign = 0;
 				}
 			}
-			if (pixCount == (bits * 8 + 16))
-				stop = true;
-			if (pixCount == vect.size() * 8) break;
+			//if (pixCount == (bits * 8 + 16))
+			//	stop = true;
+			//if (pixCount == vect.size() * 8) break;
 		}
 	}
 
