@@ -1015,9 +1015,8 @@ string decodeHaar(int height, int width, uint8_t** pixels, uint8_t** pixelsNew, 
 	cout << "After decoding Haar Wavelet" << endl;
 	return result;
 }
-void encodeHaarKoch(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, bitset<16> secr_size, double difference, vector<int> key)
+void encodeHaarKoch(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, bitset<16> secr_size, double difference, int dispMin, vector<int> key)
 {
-	vector<double**> matrixes;
 	dwt::FloatMatrix floatRes;
 	uint8_t** res = new uint8_t * [width];
 	for (int z = 0; z < width; z++) {
@@ -1053,7 +1052,7 @@ void encodeHaarKoch(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vec
 				
 			double disp = dispersy(floatRes, i, j, highI, highJ);
 			float tmp = floatRes[highI][highJ];
-			if (disp > 30.0)
+			if (disp > dispMin)
 			{
 				keyWrite << i * width + j << " ";
 				double abs = fabs(floatRes[i + 3][j] - floatRes[i][j + 3]);
@@ -1191,6 +1190,198 @@ string decodeHaarKoch(int height, int width, uint8_t * *pixels, uint8_t * *pixel
 			if (read[pixCount % 8] != vect[(pixCount / 8)][pixCount % 8])
 			{
 				//int sign = 0;
+			}
+			pixCount++;
+			if ((pixCount % 8) == 0) {
+				if (!stop)
+					result += read.to_ulong();
+				vectSzhat.push_back(read);
+				if (vect[(pixCount / 8) - 1] != vectSzhat[(pixCount / 8) - 1])
+				{
+					//int sign = 0;
+				}
+			}
+			//if (pixCount == (bits * 8 + 16))
+			//	stop = true;
+			//if (pixCount == vect.size() * 8) break;
+		}
+	}
+
+	cout << "After decoding Haar Wavelet" << endl;
+	return result;
+}
+void encodeHaarMy(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, bitset<16> secr_size, double difference, int dispMin, vector<int> key)
+{
+	dwt::FloatMatrix floatRes;
+	uint8_t** res = new uint8_t * [width];
+	for (int z = 0; z < width; z++) {
+		res[z] = new uint8_t[width];
+	}
+	cout << "Before Haar Wavelet" << endl;
+	dwt::dwt2d(pixelsNew, res, width, width, dwt::Wavelet::HAAR);
+	floatRes = dwt::dwt2d_float(pixelsNew, width, width, dwt::Wavelet::HAAR);
+	for (int i = 0; i < width; i++)
+		for (int j = 0; j < width; j++)
+			pixelsWavelet[i][j] = res[i][j];
+
+	cout << "After Haar Wavelet" << endl;
+
+	vector<int> keyTmp(vect.size() * 8);
+	queue<int> pend0, pend1;
+
+	ofstream keyWrite("key.txt");
+	if (!(keyWrite.is_open())) {
+		cout << "Error while opening file." << endl;
+	}
+
+	int highI, highJ;
+	int pixCount = 0;
+	bool isBreak = false;
+	for (int i = 0; i < width / 2; i += 4) {
+		if (isBreak)
+			break;
+		for (int j = width / 2; j < width; j += 4)
+		{
+			if (pixCount == vect.size() * 8)
+			{
+				isBreak = true;
+				break;
+			}
+
+			double disp = dispersy(floatRes, i, j, highI, highJ);
+			float highest = floatRes[highI][highJ];
+
+			if (disp > dispMin)
+			{
+				int bit = 0;
+				if (pixCount < 16) bit = secr_size[pixCount];
+				else bit = vect[pixCount / 8][pixCount % 8];
+				int pixelIndex = i * width + j;
+				if (bit == 0) {
+					if (highest < 0)
+					{
+						if (pend0.empty())
+							keyTmp[pixCount++] = pixelIndex;
+						else
+						{
+							keyTmp[pixCount++] = pend0.front();
+							pend0.pop();
+							pend0.push(pixelIndex);
+						}
+					}
+					else
+					{
+						if (!pend0.empty()) {
+							keyTmp[pixCount++] = pend0.front();
+							pend0.pop();
+							
+						}
+						pend1.push(pixelIndex);
+					}
+					
+				}
+				else {
+					if (highest >= 0)
+					{
+						if (pend1.empty())
+							keyTmp[pixCount++] = pixelIndex;
+						else
+						{
+							keyTmp[pixCount++] = pend1.front();
+							pend1.pop();
+							pend1.push(pixelIndex);
+						}
+					}
+					else
+					{
+						if (!pend1.empty()) {
+							keyTmp[pixCount++] = pend1.front();
+							pend1.pop();
+							
+						}
+						pend0.push(pixelIndex);
+					}
+				}
+			}
+		}
+	}
+	for (int i = 0; i < keyTmp.size(); i++)
+	{
+		int bit = 0;
+		if (i < 16) bit = secr_size[i];
+		else bit = vect[i / 8][i % 8];
+		int row = keyTmp[i] / width;
+
+		int column = keyTmp[i] % width;
+		double disp = dispersy(floatRes, row, column, highI, highJ);
+		float highest = floatRes[highI][highJ];
+		if (highest < 0.0)
+			floatRes[highI][highJ] -= difference;
+		else
+			floatRes[highI][highJ] += difference;
+		keyWrite << keyTmp[i] << " ";
+	}
+	keyWrite.close();
+	dwt::idwt2d(floatRes, pixelsNew, width, width, dwt::Wavelet::HAAR);
+
+	cout << "After Inverse Haar Wavelet" << endl;
+	for (int i = 0; i < width; i++)
+		delete[] res[i];
+	//
+	delete[] res;
+	return;
+}
+string decodeHaarMy(int height, int width, uint8_t * *pixels, uint8_t * *pixelsNew, uint8_t * *pixelsWavelet, vector<bitset<8>> vect, vector<bitset<8>>&vectSzhat, double difference, vector<int> key)
+{
+	bitset<8> read;
+	bitset<16> readSize;
+
+	dwt::FloatMatrix floatResOrig;
+	dwt::FloatMatrix floatResNew;
+
+	uint8_t** res = new uint8_t * [width];
+	for (int z = 0; z < width; z++) {
+		res[z] = new uint8_t[width];
+	}
+	dwt::dwt2d(pixelsNew, res, width, width, dwt::Wavelet::HAAR);
+	for (int i = 0; i < width; i++)
+		for (int j = 0; j < width; j++)
+			pixelsWavelet[i][j] = res[i][j];
+
+	floatResOrig = dwt::dwt2d_float(pixels, width, width, dwt::Wavelet::HAAR);
+	floatResNew = dwt::dwt2d_float(pixelsNew, width, width, dwt::Wavelet::HAAR);
+
+	bool stop = false;
+	int pixCount = 0;
+	int bits = 1000;
+	string result = "";
+	int highI, highJ;
+	while (pixCount < vect.size() * 8)
+	{
+		int row = key[pixCount] / width ;
+		
+		int column = key[pixCount] % width;
+		double disp = dispersy(floatResNew, row, column, highI, highJ);
+		float highest = floatResNew[highI][highJ];
+		if (pixCount < 16) {
+			if (highest < 0.0)
+				readSize[pixCount] = 0;
+			else
+				readSize[pixCount] = 1;
+			pixCount++;
+			if (pixCount == 16) {
+				bits = readSize.to_ulong();
+				cout << "bits = " << bits << endl;
+			}
+		}
+		else {
+			if (highest < 0.0)
+				read[pixCount % 8] = 0;
+			else
+				read[pixCount % 8] = 1;
+			if (read[pixCount % 8] != vect[(pixCount / 8)][pixCount % 8])
+			{
+				int sign = 0;
 			}
 			pixCount++;
 			if ((pixCount % 8) == 0) {
@@ -1696,4 +1887,14 @@ void normalizeForDisplay(double** data, uint8_t** res)
 			res[y][x] = normVal;
 		}
 	}
+}
+
+void writeToLog(string& message)
+{
+	ofstream logWrite("log.txt", ios::app);  // ios::app - режим добавления в конец
+	if (!(logWrite.is_open())) {
+		cout << "Error while opening file." << endl;
+	}
+	logWrite << message << " ";
+	logWrite.close();
 }

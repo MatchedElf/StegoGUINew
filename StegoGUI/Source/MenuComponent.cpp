@@ -7,7 +7,7 @@ MenuComponent::MenuComponent(Component* _costyl)
    Font font;
    font.setHeight(20);
    //
-   compsList = new Component * [11];
+   compsList = new Component * [13];
    //
    addComponentListener(this);
    //
@@ -69,6 +69,7 @@ MenuComponent::MenuComponent(Component* _costyl)
    algCh->addItem("DCT Koch", 4);
    algCh->addItem("Haar", 5);
    algCh->addItem("Haar Koch", 6);
+   algCh->addItem("Haar My", 7);
    algCh->setSelectedId(1);
    addAndMakeVisible(algCh);
    algCh->addListener(this);
@@ -80,7 +81,16 @@ MenuComponent::MenuComponent(Component* _costyl)
    //
    diffSlider = new Slider(Slider::LinearHorizontal, Slider::TextBoxRight);
    addAndMakeVisible(diffSlider);
-   diffSlider->setRange(0, 200, 5);
+   diffSlider->setRange(0, 100, 1);
+   //
+   dispTitle = new Label();
+   dispTitle->setFont(font);
+   dispTitle->setText(String((std::wstring(L"Минимальная дисперсия")).c_str()), dontSendNotification);
+   addAndMakeVisible(dispTitle);
+   //
+   dispSlider = new Slider(Slider::LinearHorizontal, Slider::TextBoxRight);
+   addAndMakeVisible(dispSlider);
+   dispSlider->setRange(0, 100, 1);
    //
    attack = new ToggleButton("ddd");
    attack->setButtonText(String((std::wstring(L"Только извлечение")).c_str()));
@@ -96,8 +106,10 @@ MenuComponent::MenuComponent(Component* _costyl)
    compsList[6] = algCh;
    compsList[7] = diffTitle;
    compsList[8] = diffSlider;
-   compsList[9] = attackTitle;
-   compsList[10] = attack;
+   compsList[9] = dispTitle;
+   compsList[10] = dispSlider;
+   compsList[11] = attackTitle;
+   compsList[12] = attack;
    //
    FSizer = new StretchableLayoutManager();
    FSizer->setItemLayout(0, 1, 100000, -1);
@@ -111,6 +123,8 @@ MenuComponent::MenuComponent(Component* _costyl)
    FSizer->setItemLayout(8, 1, 100000, -1);
    FSizer->setItemLayout(9, 1, 100000, -1);
    FSizer->setItemLayout(10, 1, 100000, -1);
+   FSizer->setItemLayout(11, 1, 100000, -1);
+   FSizer->setItemLayout(12, 1, 100000, -1);
    costyl = _costyl;
    //
    /*imageFile = new File();
@@ -130,6 +144,8 @@ MenuComponent::~MenuComponent()
    deleteAndZero(algCh);
    deleteAndZero(diffTitle);
    deleteAndZero(diffSlider);
+   deleteAndZero(dispTitle);
+   deleteAndZero(dispSlider);
    deleteAndZero(attack);
    deleteAndZero(FSizer);
    myChooser.reset();
@@ -145,7 +161,7 @@ void MenuComponent::paint(juce::Graphics& g)
 //
 void MenuComponent::resized()
 {
-   FSizer->layOutComponents(compsList, 11, (int)(getWidth() * 0.05), (int)(getHeight() * 0.05), (int)(getWidth() * 0.9), (int)(getHeight() * 0.95), true, true);
+   FSizer->layOutComponents(compsList, 13, (int)(getWidth() * 0.05), (int)(getHeight() * 0.05), (int)(getWidth() * 0.9), (int)(getHeight() * 0.95), true, true);
 }
 //
 void MenuComponent::buttonClicked(Button* butt)
@@ -265,4 +281,9 @@ void MenuComponent::drawToggleButton(Graphics& g, ToggleButton& button,
 int MenuComponent::getDiff()
 {
     return diffSlider->getValue();
+}
+
+int MenuComponent::getDispersyMin()
+{
+    return dispSlider->getValue();
 }

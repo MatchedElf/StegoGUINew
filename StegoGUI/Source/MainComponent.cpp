@@ -490,6 +490,7 @@ void MainComponent::startDecode()
     _origInfo->setText("In progress", dontSendNotification);
     _decodeInfo->setText("In progress", dontSendNotification);
     int difference = _menuC->getDiff();
+    int dispMin = _menuC->getDispersyMin();
     complex<double> differenceComplex(_menuC->getDiff(), 0.0);
     string message1;
     //
@@ -616,13 +617,30 @@ void MainComponent::startDecode()
         {
             waveFile = createFileBmp("../../Images/Results/origWave.bmp", _menuC->imageFile.getFullPathName().toWideCharPointer());
             //key = CreateKey("key.txt", size, (int)vect.size(), Stego::HAAR);
-            encodeHaarKoch(width, pixelsNew, pixelsWave, vect, secr_size, difference, key);
+            encodeHaarKoch(width, pixelsNew, pixelsWave, vect, secr_size, difference, dispMin, key);
             key = ReadKey("key.txt", vect);
             WriteToFileMono(newFile, pixelsNew, height, width);
             WriteToFileMono(waveFile, pixelsWave, height, width);
             fclose(waveFile);
         }
         result = decodeHaarKoch(height, width, pixels, pixelsNew, pixelsNewWave, vect, vectSzhat, difference, key);
+        WriteToFileMono(waveNewFile, pixelsNewWave, height, width);
+        fclose(waveNewFile);
+    }
+    else if (_menuC->selectedTr == Stego::HAAR_MY)
+    {
+        waveNewFile = createFileBmp("../../Images/Results/newWave.bmp", _menuC->imageFile.getFullPathName().toWideCharPointer());
+        if (!_menuC->isAttack)
+        {
+            waveFile = createFileBmp("../../Images/Results/origWave.bmp", _menuC->imageFile.getFullPathName().toWideCharPointer());
+            //key = CreateKey("key.txt", size, (int)vect.size(), Stego::HAAR);
+            encodeHaarMy(width, pixelsNew, pixelsWave, vect, secr_size, difference, dispMin, key);
+            key = ReadKey("key.txt", vect);
+            WriteToFileMono(newFile, pixelsNew, height, width);
+            WriteToFileMono(waveFile, pixelsWave, height, width);
+            fclose(waveFile);
+        }
+        result = decodeHaarMy(height, width, pixels, pixelsNew, pixelsNewWave, vect, vectSzhat, difference, key);
         WriteToFileMono(waveNewFile, pixelsNewWave, height, width);
         fclose(waveNewFile);
     }
@@ -642,11 +660,12 @@ void MainComponent::startDecode()
     String inf = "";
     inf += String((std::wstring(L"Алгоритм: ")).c_str());
     if (_menuC->selectedTr == Stego::DCT) inf += "DCT\n";
-    if (_menuC->selectedTr == Stego::DFT) inf += "DFT\n";
-    if (_menuC->selectedTr == Stego::LSB) inf += "LSB\n";
-    if (_menuC->selectedTr == Stego::DCT_KOCH) inf += "DCT Koch\n";
-    if (_menuC->selectedTr == Stego::HAAR) inf += "Haar\n";
-    if (_menuC->selectedTr == Stego::HAAR_KOCH) inf += "Haar Koch\n";
+    else if (_menuC->selectedTr == Stego::DFT) inf += "DFT\n";
+    else if (_menuC->selectedTr == Stego::LSB) inf += "LSB\n";
+    else if (_menuC->selectedTr == Stego::DCT_KOCH) inf += "DCT Koch\n";
+    else if (_menuC->selectedTr == Stego::HAAR) inf += "Haar\n";
+    else if (_menuC->selectedTr == Stego::HAAR_KOCH) inf += "Haar Koch\n";
+    else if (_menuC->selectedTr == Stego::HAAR_MY) inf += "Haar My\n";
     inf += "PSNR = ";
     inf += String(to_string(psnrRes));
     inf += "\n";
@@ -676,8 +695,6 @@ void MainComponent::startDecode()
     double corr = corrCoef(pixels, pixelsNew, height, width);
     inf += String(to_string(corr));
     inf += "\n";
-    inf += String((std::wstring(L"Сделать гистограммы!!! ")).c_str());
-    inf += "\n";
     //
     _progressStatus = 50;
     if(_edited)
@@ -685,7 +702,7 @@ void MainComponent::startDecode()
     else
        CreateDiffFileMono(_menuC->imageFile.getFullPathName().toWideCharPointer(), L"../../Images/Results/new.bmp", "diff.bmp");
     doDecode(L"diff.bmp", "diff.png");
-    bmpToPng("diff.bmp", "diff.png");
+    bmpToPng("diff.bmp", "diff1.png");
     //
     _decodeInfo->setText(inf, dontSendNotification);
     _diff->setImage(ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("diff.png")));

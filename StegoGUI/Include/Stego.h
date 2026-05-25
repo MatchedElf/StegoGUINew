@@ -31,7 +31,8 @@ namespace Stego
         LSB = 3,
         DCT_KOCH = 4,
         HAAR = 5,
-        HAAR_KOCH = 6
+        HAAR_KOCH = 6,
+        HAAR_MY = 7,
     };
 }
 using namespace std;
@@ -83,21 +84,17 @@ void encodeLSB(int width, uint8_t** pixelsNew, vector<bitset<8>> vect, bitset<16
 //
 string decodeLSB(int width, uint8_t** pixelsNew, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat);
 //
-void HaarWavelet(uint8_t** pixels, uint8_t** result, int x, int y);
-//
-void IHaarWavelet(uint8_t** pixels, double** result, int x, int y);
-//
-void HaarWaveletFull(uint8_t** pixels, uint8_t** result, int x, int y);
-//
-void IHaarWaveletFull(uint8_t** pixels, uint8_t** result, int x, int y);
-//
 void encodeHaar(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, bitset<16> secr_size, double difference, vector<int> key);
 //
 string decodeHaar(int height, int width, uint8_t** pixels, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, vector<int> key);
 //
-void encodeHaarKoch(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, bitset<16> secr_size, double difference, vector<int> key);
+void encodeHaarKoch(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, bitset<16> secr_size, double difference, int dispMin, vector<int> key);
 //
 string decodeHaarKoch(int height, int width, uint8_t** pixels, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, double difference, vector<int> key);
+//
+void encodeHaarMy(int width, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, bitset<16> secr_size, double difference, int dispMin, vector<int> key);
+//
+string decodeHaarMy(int height, int width, uint8_t** pixels, uint8_t** pixelsNew, uint8_t** pixelsWavelet, vector<bitset<8>> vect, vector<bitset<8>>& vectSzhat, double difference, vector<int> key);
 //
 RGB** readFile(const wchar_t* _filename, int& h, int& w, int& size, juce::String& retStr1);
 //
@@ -124,4 +121,6 @@ void CreateDiffFile(const wchar_t* _filename1, const wchar_t* _filename2, const 
 void CreateDiffFileMono(const wchar_t* _filename1, const wchar_t* _filename2, const char* _newfile);
 //
 void normalizeForDisplay(double** data, uint8_t**res);
+//
+void writeToLog(string& message);
 #endif // !STEGO_H

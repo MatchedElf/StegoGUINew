@@ -24,6 +24,7 @@ public:
    void drawToggleButton(Graphics& g, ToggleButton& button,
                          bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
    int getDiff();
+   int getDispersyMin();
    //
    int selectedTr = 1;
    bool isAttack = false;
@@ -45,10 +46,12 @@ private:
    Label* algTitle;
    Label* attackTitle;
    Label* diffTitle;
+   Label* dispTitle;
    //
    ImageButton* secrCh;
    ComboBox* algCh;
    Slider* diffSlider;
+   Slider* dispSlider;
    ToggleButton* attack;
    //
    Component* costyl;
